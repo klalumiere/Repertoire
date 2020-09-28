@@ -1,5 +1,7 @@
 package com.example.repertoire
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -36,8 +38,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val addSongsContract = registerForActivityResult(
-            ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
+    class OpenableMultipleDocuments : ActivityResultContracts.OpenMultipleDocuments() {
+        override fun createIntent(context: Context, input: Array<out String>): Intent {
+            return super.createIntent(context, input).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+            }
+        }
+    }
+    private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
+    { uris: List<Uri> ->
         for(uri in uris) Log.w("Uris", uri.toString())
     }
 }

@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.navigation.fragment.findNavController
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -25,9 +23,11 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         /*
-        TODO: Use the comment below as an example to navigate to a new fragment
-        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        TODO: Use the comment below as an examples if needed
+        view.findViewById<Button>(R.id.button_first).setOnClickListener { view ->
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
         }
         */
     }

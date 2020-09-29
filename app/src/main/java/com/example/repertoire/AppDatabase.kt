@@ -16,6 +16,11 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        fun createInMemoryDatabase(context: Context): AppDatabase {
+            return Room.inMemoryDatabaseBuilder(context,AppDatabase::class.java).build()
+        }
+
+
         private fun createDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context,AppDatabase::class.java,
                 context.getString(R.string.repertoire_db)

@@ -12,3 +12,4 @@ jobs:
         with:
           api-level: 30
           script: ./gradlew connectedCheck
+

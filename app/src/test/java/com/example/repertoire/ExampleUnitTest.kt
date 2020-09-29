@@ -3,7 +3,7 @@ package com.example.repertoire
 import org.junit.Test
 
 import org.junit.Assert.*
-
+// TODO: Remove this file when real unit tests exist
 /**
  * Example local unit test, which will execute on the development machine (host).
  *

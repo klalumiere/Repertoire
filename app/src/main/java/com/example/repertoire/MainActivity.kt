@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     }
     private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
     { uris: List<Uri> ->
+        AppDatabase.getInstance(this) // Just to be sure the database is actually used
         for(uri in uris) Log.w("Uris", uri.toString())
     }
 }

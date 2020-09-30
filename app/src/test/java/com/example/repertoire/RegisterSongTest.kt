@@ -11,7 +11,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28]) // 29 not supported right now by Android Studio
+@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class RegisterSongTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
 

@@ -1,5 +1,6 @@
 package com.example.repertoire
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -34,6 +35,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun registerSong(uri: Uri, resolver: ContentResolver = contentResolver) {
+        resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        AppDatabase.getInstance(this) // Just to be sure the database is actually used
+    }
+
+
     class OpenableMultipleDocuments : ActivityResultContracts.OpenMultipleDocuments() {
         override fun createIntent(context: Context, input: Array<out String>): Intent {
             return super.createIntent(context, input).apply {
@@ -43,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     }
     private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
     { uris: List<Uri> ->
-        AppDatabase.getInstance(this) // Just to be sure the database is actually used
-        for(uri in uris) Log.w("Uris", uri.toString())
+        uris.forEach() { uri -> registerSong(uri) }
     }
 }

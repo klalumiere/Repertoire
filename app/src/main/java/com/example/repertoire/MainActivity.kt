@@ -1,11 +1,10 @@
 package com.example.repertoire
 
-import android.content.ContentResolver
+import SongRegister
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -35,21 +34,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun registerSong(uri: Uri, name: String, resolver: ContentResolver = contentResolver,
-        db: AppDatabase = AppDatabase.getInstance(this))
-    {
-        resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().insert(Song(uri = uri.toString(), name = name))
-    }
-
-    fun unregisterSong(uri: Uri, resolver: ContentResolver = contentResolver,
-        db: AppDatabase = AppDatabase.getInstance(this))
-    {
-        resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().delete(uri.toString())
-    }
-
-
     class OpenableMultipleDocuments : ActivityResultContracts.OpenMultipleDocuments() {
         override fun createIntent(context: Context, input: Array<out String>): Intent {
             return super.createIntent(context, input).apply {
@@ -59,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     }
     private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
     { uris: List<Uri> ->
-        uris.forEach() { uri -> registerSong(uri, "") }
+        val register = SongRegister(contentResolver, AppDatabase.getInstance(this))
+        uris.forEach() { uri -> register.add(uri, "") }
     }
 }

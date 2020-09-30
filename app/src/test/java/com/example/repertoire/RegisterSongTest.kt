@@ -1,13 +1,15 @@
 package com.example.repertoire
 
+import SongRegister
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import androidx.room.Room
-import androidx.test.core.app.launchActivity
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,63 +22,51 @@ import org.robolectric.annotation.Config
 class RegisterSongTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
+    private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
+    private lateinit var register: SongRegister
     private lateinit var songDao: SongDao
 
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
+        contentResolver = mock<ContentResolver>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries().build()
+        register = SongRegister(contentResolver, db)
         songDao = db.songDao()
     }
 
     @Test
-    fun registerSongTakesPersistableUriPermission() {
-        val contentResolver = mock<ContentResolver>()
-        val scenario = launchActivity<MainActivity>()
-        scenario.onActivity { activity ->
-            activity.registerSong(contentUri, songName, resolver = contentResolver, db = db)
-        }
+    fun addTakesPersistableUriPermission() {
+        register.add(contentUri, songName)
         verify(contentResolver).takePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
-    fun unregisterSongReleasesPersistableUriPermission() {
-        val contentResolver = mock<ContentResolver>()
-        val scenario = launchActivity<MainActivity>()
-        scenario.onActivity { activity ->
-            activity.unregisterSong(contentUri, resolver = contentResolver, db = db)
-        }
+    fun removeReleasesPersistableUriPermission() {
+        register.remove(contentUri)
         verify(contentResolver).releasePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
-//    @Test
-//    fun registerSongAddsSongToDb() {
-//        val contentResolver = mock<ContentResolver>()
-//        val scenario = launchActivity<MainActivity>()
-//        scenario.onActivity { activity ->
-//            activity.registerSong(contentUri, songName, resolver = contentResolver, db = db)
-//        }
-//        val song = Song(
-//            uri = contentUri.toString(),
-//            name = songName
-//        )
-//        assertEquals(songDao.getAll(), listOf(song))
-//    }
-//
-//    @Test
-//    fun unregisterSongRemovesSongFromDb() {
-//        val contentResolver = mock<ContentResolver>()
-//        val scenario = launchActivity<MainActivity>()
-//        scenario.onActivity { activity ->
-//            activity.registerSong(contentUri, songName, resolver = contentResolver, db = db)
-//            activity.unregisterSong(contentUri, resolver = contentResolver, db = db)
-//        }
-//        assertTrue(songDao.getAll().isEmpty())
-//    }
+    @Test
+    fun addAddsSongToDb() {
+        register.add(contentUri, songName)
+        val song = Song(
+            uri = contentUri.toString(),
+            name = songName
+        )
+        assertEquals(songDao.getAll(), listOf(song))
+    }
+
+    @Test
+    fun removeRemovesSongFromDb() {
+        register.add(contentUri, songName)
+        register.remove(contentUri)
+        assertTrue(songDao.getAll().isEmpty())
+    }
 
 
     @After

@@ -42,6 +42,13 @@ class AppDatabaseTest {
     }
 
     @Test
+    fun canDeleteFromUri() {
+        songDao.insert(arbitrarySong)
+        songDao.delete(arbitrarySong.uri)
+        assertThat(songDao.getAll(),empty())
+    }
+
+    @Test
     fun ignoreDuplicateUri() {
         songDao.insert(arbitrarySong)
         songDao.insert(arbitrarySong)

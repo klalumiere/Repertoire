@@ -15,4 +15,7 @@ interface SongDao {
 
     @Delete
     fun delete(song: Song)
+
+    @Query("DELETE FROM song WHERE uri = :uri")
+    fun delete(uri: String)
 }

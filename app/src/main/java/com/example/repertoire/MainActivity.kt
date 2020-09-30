@@ -35,9 +35,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun registerSong(uri: Uri, resolver: ContentResolver = contentResolver) {
+    fun registerSong(uri: Uri, name: String, resolver: ContentResolver = contentResolver,
+        db: AppDatabase = AppDatabase.getInstance(this))
+    {
         resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        AppDatabase.getInstance(this) // Just to be sure the database is actually used
+        db.songDao().insert(Song(uri = uri.toString(), name = name))
+    }
+
+    fun unregisterSong(uri: Uri, resolver: ContentResolver = contentResolver,
+        db: AppDatabase = AppDatabase.getInstance(this))
+    {
+        resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        db.songDao().delete(uri.toString())
     }
 
 
@@ -50,6 +59,6 @@ class MainActivity : AppCompatActivity() {
     }
     private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
     { uris: List<Uri> ->
-        uris.forEach() { uri -> registerSong(uri) }
+        uris.forEach() { uri -> registerSong(uri, "") }
     }
 }

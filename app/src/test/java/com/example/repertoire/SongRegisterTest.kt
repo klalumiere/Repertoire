@@ -3,13 +3,12 @@ package com.example.repertoire
 import SongRegister
 import android.content.ContentResolver
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
+import com.nhaarman.mockitokotlin2.*
+import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -66,6 +65,29 @@ class RegisterSongTest {
         register.add(contentUri, songName)
         register.remove(contentUri)
         assertTrue(songDao.getAll().isEmpty())
+    }
+
+    @Test
+    fun addWithoutNameUseContentResolverToFindName() {
+        val cursor = mock<Cursor>() {
+            on { moveToFirst() } doReturn true
+            on { getString(anyOrNull()) } doReturn songName
+        }
+        val contentResolver = mock<ContentResolver>() {
+            on {
+                query(same(contentUri),
+                    anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+            } doReturn cursor
+        }
+        val register = SongRegister(contentResolver, db)
+
+        register.add(contentUri)
+
+        val song = Song(
+            uri = contentUri.toString(),
+            name = songName
+        )
+        assertEquals(songDao.getAll(), listOf(song))
     }
 
 

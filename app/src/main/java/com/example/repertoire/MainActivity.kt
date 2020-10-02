@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -44,6 +45,10 @@ class MainActivity : AppCompatActivity() {
     private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
     { uris: List<Uri> ->
         val register = SongRegister(contentResolver, AppDatabase.getInstance(this))
-        uris.forEach() { uri -> register.add(uri) }
+        Thread(Runnable {
+            uris.forEach() { uri -> register.add(uri) }
+            val allSongs = AppDatabase.getInstance(this).songDao().getAll()
+            allSongs.forEach() { song -> Log.i("Song", song.name) }
+        }).start()
     }
 }

@@ -24,7 +24,7 @@ class AppDatabaseTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = AppDatabase.createInMemoryDatabase(context)
+        db = AppDatabase.createInMemoryDatabaseBuilder(context).build()
         songDao = db.songDao()
     }
 
@@ -38,6 +38,13 @@ class AppDatabaseTest {
     fun canDelete() {
         songDao.insert(arbitrarySong)
         songDao.delete(arbitrarySong)
+        assertThat(songDao.getAll(),empty())
+    }
+
+    @Test
+    fun canDeleteFromUri() {
+        songDao.insert(arbitrarySong)
+        songDao.delete(arbitrarySong.uri)
         assertThat(songDao.getAll(),empty())
     }
 

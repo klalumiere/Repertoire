@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28]) // >= 29 not supported by Android Studio right now
-class RegisterSongTest {
+class SongRegisterTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
     private lateinit var contentResolver: ContentResolver
@@ -27,11 +27,10 @@ class RegisterSongTest {
     private lateinit var songDao: SongDao
 
     @Before
-    fun createDb() {
+    fun createRegister() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock<ContentResolver>()
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
-            .allowMainThreadQueries().build()
+        db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
         register = SongRegister(contentResolver, db)
         songDao = db.songDao()
     }

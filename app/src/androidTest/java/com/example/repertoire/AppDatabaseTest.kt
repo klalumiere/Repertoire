@@ -24,7 +24,7 @@ class AppDatabaseTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = AppDatabase.createInMemoryDatabase(context)
+        db = AppDatabase.createInMemoryDatabaseBuilder(context).build()
         songDao = db.songDao()
     }
 

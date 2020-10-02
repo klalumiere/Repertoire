@@ -31,7 +31,10 @@ class SongRegister(
             arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
-                name = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if(index >= 0) {
+                    name = it.getString(index)
+                }
             }
         }
         return name

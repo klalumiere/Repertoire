@@ -44,6 +44,6 @@ class MainActivity : AppCompatActivity() {
     private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
     { uris: List<Uri> ->
         val register = SongRegister(contentResolver, AppDatabase.getInstance(this))
-        uris.forEach() { uri -> register.add(uri, "") }
+        uris.forEach() { uri -> register.add(uri) }
     }
 }

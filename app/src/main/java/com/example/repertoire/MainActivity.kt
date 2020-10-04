@@ -21,9 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        addSongsFAB.setOnClickListener {
-            addSongsContract.launch(arrayOf("text/*"))
-        }
+        addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
 
         val viewManager = LinearLayoutManager(this)
@@ -51,16 +49,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    class OpenableMultipleDocuments : ActivityResultContracts.OpenMultipleDocuments() {
+
+    private val contract = object : ActivityResultContracts.OpenMultipleDocuments() {
         override fun createIntent(context: Context, input: Array<out String>): Intent {
             return super.createIntent(context, input).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
             }
         }
     }
-    private val addSongsContract = registerForActivityResult(OpenableMultipleDocuments())
-    { uris: List<Uri> ->
-        val register = SongRegister(contentResolver, AppDatabase.getInstance(this))
+    private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
+        val context = this.applicationContext
+        val register = SongRegister(contentResolver, AppDatabase.getInstance(context))
         Thread(Runnable {
             uris.forEach() { uri -> register.add(uri) }
         }).start()

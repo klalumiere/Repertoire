@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -13,15 +12,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setSupportActionBar(toolbar)
 
-        findViewById<FloatingActionButton>(R.id.addSongsFAB).setOnClickListener {
+        addSongsFAB.setOnClickListener {
             addSongsContract.launch(arrayOf("text/*"))
         }
 
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
         viewModel.songList.observe(this, observer)
 
-        songListView = findViewById<RecyclerView>(R.id.song_list_view).apply {
+        song_list_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = songAdapter
@@ -65,6 +65,4 @@ class MainActivity : AppCompatActivity() {
             uris.forEach() { uri -> register.add(uri) }
         }).start()
     }
-
-    private lateinit var songListView: RecyclerView
 }

@@ -2,17 +2,14 @@ package com.example.repertoire
 
 import android.app.Application
 import android.view.ViewGroup
-import android.webkit.WebSettings
 import android.widget.TextView
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.repertoire.SongDao
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
-    private val songDao = AppDatabase.getInstance(application.applicationContext).songDao()
+    private val songDao = AppDatabase.getInstance(application).songDao()
     val songList = songDao.getAllLive()
 }
 

@@ -5,16 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ListView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -39,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = songAdapter
-
         }
     }
 
@@ -67,8 +63,6 @@ class MainActivity : AppCompatActivity() {
         val register = SongRegister(contentResolver, AppDatabase.getInstance(this))
         Thread(Runnable {
             uris.forEach() { uri -> register.add(uri) }
-            val allSongs = AppDatabase.getInstance(this).songDao().getAll()
-            allSongs.forEach() { song -> Log.i("Song", song.name) }
         }).start()
     }
 

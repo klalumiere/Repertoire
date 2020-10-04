@@ -10,7 +10,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ListView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +26,20 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<FloatingActionButton>(R.id.addSongsFAB).setOnClickListener {
             addSongsContract.launch(arrayOf("text/*"))
+        }
+
+
+        val viewManager = LinearLayoutManager(this)
+        val viewModel: SongViewModel by viewModels()
+        val songAdapter = SongAdapter()
+        val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
+        viewModel.songList.observe(this, observer)
+
+        songListView = findViewById<RecyclerView>(R.id.song_list_view).apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = songAdapter
+
         }
     }
 
@@ -51,4 +71,6 @@ class MainActivity : AppCompatActivity() {
             allSongs.forEach() { song -> Log.i("Song", song.name) }
         }).start()
     }
+
+    private lateinit var songListView: RecyclerView
 }

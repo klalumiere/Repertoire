@@ -1,19 +1,27 @@
 package com.example.repertoire
 
 import android.app.Application
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.AndroidViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import java.io.File
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
     private val songDao = AppDatabase.getInstance(application).songDao()
     val songList = songDao.getAllLive()
 }
 
-class SongViewHolder(val view: TextView) : RecyclerView.ViewHolder(view)
+class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    companion object {
+        const val resourceId = android.R.layout.simple_list_item_1
+    }
+    val nameView = view.findViewById(android.R.id.text1) as TextView
+}
 
 class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK) {
     companion object {
@@ -28,10 +36,13 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.view.text = getItem(position).name
+        holder.nameView.text = File(getItem(position).name).nameWithoutExtension
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        return SongViewHolder(TextView(parent.context))
+        val itemLayout = LayoutInflater
+            .from(parent.context)
+            .inflate(SongViewHolder.resourceId, parent, false)
+        return SongViewHolder(itemLayout)
     }
 }

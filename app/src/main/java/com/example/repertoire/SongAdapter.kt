@@ -16,7 +16,9 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     val songList = songDao.getAllLive()
 }
 
-class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+class SongViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    private val view = v
+
     companion object {
         const val resourceId = android.R.layout.simple_list_item_1
     }

@@ -23,13 +23,10 @@ class MainActivity : AppCompatActivity() {
 
         addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
-
-        val viewModel: SongViewModel by viewModels()
-        val songAdapter = SongAdapter()
-        val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
-        viewModel.songList.observe(this, observer)
-
         linearLayoutManager = LinearLayoutManager(this)
+        songAdapter = SongAdapter()
+        val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
+        songViewModel.songList.observe(this, observer)
         song_list_view.apply {
             setHasFixedSize(true)
             layoutManager = linearLayoutManager
@@ -65,4 +62,6 @@ class MainActivity : AppCompatActivity() {
         }).start()
     }
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var songAdapter: SongAdapter
+    private val songViewModel: SongViewModel by viewModels()
 }

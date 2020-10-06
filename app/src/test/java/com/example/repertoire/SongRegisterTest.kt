@@ -5,7 +5,6 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
-import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.*

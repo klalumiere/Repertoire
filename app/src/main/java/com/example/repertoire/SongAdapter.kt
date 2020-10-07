@@ -1,6 +1,7 @@
 package com.example.repertoire
 
 import android.app.Application
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +17,19 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     val songList = songDao.getAllLive()
 }
 
-class SongViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-    private val view = v
-
+class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     companion object {
         const val resourceId = android.R.layout.simple_list_item_1
     }
-    val nameView = view.findViewById(android.R.id.text1) as TextView
+
+    fun bind(songRhs: Song) {
+        song = songRhs
+        nameView.text = File(song.name).nameWithoutExtension
+        view.setOnClickListener() { Log.i("Click", song.uri ) }
+    }
+
+    private lateinit var song: Song
+    private val nameView = view.findViewById(android.R.id.text1) as TextView
 }
 
 class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK) {
@@ -38,7 +45,7 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.nameView.text = File(getItem(position).name).nameWithoutExtension
+        holder.bind(getItem(position))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {

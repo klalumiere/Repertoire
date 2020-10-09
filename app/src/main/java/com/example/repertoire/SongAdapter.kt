@@ -10,7 +10,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import java.io.File
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
     private val songDao = AppDatabase.getInstance(application).songDao()
@@ -24,7 +23,7 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(songRhs: Song) {
         song = songRhs
-        nameView.text = File(song.name).nameWithoutExtension
+        nameView.text = song.name
         view.setOnClickListener() { Log.i("Click", song.uri ) }
     }
 

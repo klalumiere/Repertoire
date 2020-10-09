@@ -59,6 +59,16 @@ class SongRegisterTest {
     }
 
     @Test
+    fun addRemovesExtensionFromSongName() {
+        register.add(contentUri, "Pantera - Walk.md")
+        val song = Song(
+            uri = contentUri.toString(),
+            name = "Pantera - Walk"
+        )
+        assertEquals(songDao.getAll(), listOf(song))
+    }
+
+    @Test
     fun removeRemovesSongFromDb() {
         register.add(contentUri, songName)
         register.remove(contentUri)

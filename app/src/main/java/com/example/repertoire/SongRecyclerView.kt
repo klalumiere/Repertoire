@@ -25,7 +25,7 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     fun bind(songRhs: Song) {
         song = songRhs
         nameView.text = song.name
-        view.setOnClickListener() { Log.i("Click", song.uri ) }
+        view.setOnClickListener { Log.i("Click", song.uri ) }
     }
     fun getContentUri(): String {
         return song.uri
@@ -38,12 +38,12 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val nameView = view.findViewById(android.R.id.text1) as TextView
 }
 
-class SongItemCallback() : DiffUtil.ItemCallback<Song>() {
+class SongItemCallback : DiffUtil.ItemCallback<Song>() {
     override fun areItemsTheSame(old: Song, new: Song): Boolean  {
-        return old.uri == new.uri;
+        return old.uri == new.uri
     }
     override fun areContentsTheSame(old: Song, new: Song): Boolean {
-        return old == new;
+        return old == new
     }
 }
 

@@ -57,9 +57,9 @@ class MainActivity : AppCompatActivity() {
     private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
         val context = this.applicationContext
         val register = SongRegister(contentResolver, AppDatabase.getInstance(context))
-        Thread(Runnable {
-            uris.forEach() { uri -> register.add(uri) }
-        }).start()
+        Thread {
+            uris.forEach { uri -> register.add(uri) }
+        }.start()
     }
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var songAdapter: SongAdapter

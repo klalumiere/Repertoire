@@ -11,11 +11,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class SongViewModel(application: Application) : AndroidViewModel(application) {
-    private val songDao = AppDatabase.getInstance(application).songDao()
-    val songList = songDao.getAllLive()
-}
-
 class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     companion object {
         const val resourceId = android.R.layout.simple_list_item_1
@@ -31,16 +26,18 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val nameView = view.findViewById(android.R.id.text1) as TextView
 }
 
+class SongItemCallback() : DiffUtil.ItemCallback<Song>() {
+    override fun areItemsTheSame(old: Song, new: Song): Boolean  {
+        return old.uri == new.uri;
+    }
+    override fun areContentsTheSame(old: Song, new: Song): Boolean {
+        return old == new;
+    }
+}
+
 class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK) {
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Song>() {
-            override fun areItemsTheSame(old: Song, new: Song): Boolean  {
-                return old.uri == new.uri;
-            }
-            override fun areContentsTheSame(old: Song, new: Song): Boolean {
-                return old == new;
-            }
-        }
+        val DIFF_CALLBACK = SongItemCallback()
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
@@ -53,4 +50,9 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
             .inflate(SongViewHolder.resourceId, parent, false)
         return SongViewHolder(itemLayout)
     }
+}
+
+class SongViewModel(application: Application) : AndroidViewModel(application) {
+    private val songDao = AppDatabase.getInstance(application).songDao()
+    val songList = songDao.getAllLive()
 }

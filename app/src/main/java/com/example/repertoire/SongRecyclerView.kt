@@ -13,13 +13,25 @@ import androidx.recyclerview.widget.RecyclerView
 
 class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     companion object {
-        const val resourceId = android.R.layout.simple_list_item_1
+        fun create(parent: ViewGroup): SongViewHolder {
+            val resourceId = android.R.layout.simple_list_item_1
+            val itemLayout = LayoutInflater
+                .from(parent.context)
+                .inflate(resourceId, parent, false)
+            return SongViewHolder(itemLayout)
+        }
     }
 
     fun bind(songRhs: Song) {
         song = songRhs
         nameView.text = song.name
         view.setOnClickListener() { Log.i("Click", song.uri ) }
+    }
+    fun getContentUri(): String {
+        return song.uri
+    }
+    fun getTextViewed(): CharSequence {
+        return nameView.text
     }
 
     private lateinit var song: Song
@@ -45,10 +57,7 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        val itemLayout = LayoutInflater
-            .from(parent.context)
-            .inflate(SongViewHolder.resourceId, parent, false)
-        return SongViewHolder(itemLayout)
+        return SongViewHolder.create(parent)
     }
 }
 

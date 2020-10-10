@@ -1,7 +1,6 @@
 package com.example.repertoire
 
 import android.app.Application
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -47,6 +46,9 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     }
     fun getTextViewed(): CharSequence {
         return nameView.text
+    }
+    fun isViewActivated(): Boolean {
+        return view.isActivated
     }
 
 

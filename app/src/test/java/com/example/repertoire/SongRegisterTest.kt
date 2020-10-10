@@ -77,11 +77,11 @@ class SongRegisterTest {
 
     @Test
     fun addWithoutNameUseContentResolverToFindName() {
-        val cursor = mock<Cursor>() {
+        val cursor = mock<Cursor> {
             on { moveToFirst() } doReturn true
             on { getString(anyOrNull()) } doReturn songName
         }
-        val contentResolver = mock<ContentResolver>() {
+        val contentResolver = mock<ContentResolver> {
             on {
                 query(same(contentUri),
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())

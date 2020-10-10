@@ -15,6 +15,7 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -27,8 +28,9 @@ class MainActivity : AppCompatActivity() {
         addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
         linearLayoutManager = LinearLayoutManager(this)
-        songAdapter = SongAdapter()
-
+        songAdapter = SongAdapter().apply {
+            tracker = createTracker(song_list_view, this)
+        }
         val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
         songViewModel.songList.observe(this, observer)
         song_list_view.apply {
@@ -36,17 +38,6 @@ class MainActivity : AppCompatActivity() {
             layoutManager = linearLayoutManager
             adapter = songAdapter
         }
-
-        val tracker = SelectionTracker
-            .Builder<String>(
-                "SongSelection",
-                song_list_view,
-                SongItemKeyProvider(songAdapter),
-                SongItemDetailsLookup(song_list_view),
-                StorageStrategy.createStringStorage())
-            .withSelectionPredicate(SelectionPredicates.createSelectAnything())
-            .build()
-        songAdapter.tracker = tracker
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -59,6 +50,21 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun createTracker(view: RecyclerView, adapter: SongAdapter)
+            : SelectionTracker<String>
+    {
+        view.adapter = adapter // Required, otherwise throws
+        return SelectionTracker
+            .Builder<String>(
+                "SongSelection",
+                view,
+                SongItemKeyProvider(adapter),
+                SongItemDetailsLookup(view),
+                StorageStrategy.createStringStorage())
+            .withSelectionPredicate(SelectionPredicates.createSelectAnything())
+            .build()
     }
 
 

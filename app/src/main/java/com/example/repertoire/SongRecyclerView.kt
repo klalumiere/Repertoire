@@ -49,6 +49,7 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         return nameView.text
     }
 
+
     private var song: Song? = null
     private val nameView = view.findViewById(android.R.id.text1) as TextView
 }
@@ -84,6 +85,7 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         return SongViewHolder.create(parent)
     }
+
 
     var tracker: SelectionTracker<String>? = null
 }

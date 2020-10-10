@@ -5,6 +5,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import com.example.repertoire.AppDatabase
 import com.example.repertoire.Song
+import java.io.File
 
 class SongRegister(
     private val resolver: ContentResolver,
@@ -17,7 +18,7 @@ class SongRegister(
 
     fun add(uri: Uri, name: String) {
         resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().insert(Song(uri = uri.toString(), name = name))
+        db.songDao().insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
     }
 
     fun remove(uri: Uri) {

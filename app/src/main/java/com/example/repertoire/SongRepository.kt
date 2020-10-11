@@ -17,11 +17,11 @@ class SongRepository(
     constructor(application: Application)
             : this(application.contentResolver, AppDatabase.getInstance(application))
 
-    fun add(uri: Uri) {
+    suspend fun add(uri: Uri) {
         add(uri, resolveName(uri))
     }
 
-    fun add(uri: Uri, name: String) {
+    suspend fun add(uri: Uri, name: String) {
         resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         songDao.insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
     }

@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
-        Thread { songViewModel.add(uris) }.start()
+        songViewModel.add(uris)
     }
     private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager

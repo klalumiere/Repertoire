@@ -5,11 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        deleteAction = menu.findItem(R.id.action_delete)
         return true
     }
 
@@ -52,11 +54,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun createSelectionObserver(tracker: SelectionTracker<String>)
+            : SelectionTracker.SelectionObserver<String>
+    {
+        return object : SelectionTracker.SelectionObserver<String>() {
+            override fun onSelectionChanged() {
+                super.onSelectionChanged()
+                deleteAction.isEnabled = tracker.selection.size() > 0
+            }
+        }
+    }
+
     private fun createTracker(view: RecyclerView, adapter: SongAdapter)
             : SelectionTracker<String>
     {
         view.adapter = adapter // Required, otherwise throws
-        return SelectionTracker
+        val tracker = SelectionTracker
             .Builder<String>(
                 "SongSelection",
                 view,
@@ -65,6 +79,8 @@ class MainActivity : AppCompatActivity() {
                 StorageStrategy.createStringStorage())
             .withSelectionPredicate(SelectionPredicates.createSelectAnything())
             .build()
+        tracker.addObserver(createSelectionObserver(tracker))
+        return tracker
     }
 
 
@@ -82,6 +98,7 @@ class MainActivity : AppCompatActivity() {
             uris.forEach { uri -> register.add(uri) }
         }.start()
     }
+    private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var songAdapter: SongAdapter
     private val songViewModel: SongViewModel by viewModels()

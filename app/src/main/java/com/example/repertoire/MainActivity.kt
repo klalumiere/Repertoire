@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
-        val register = SongRegister(application)
+        val register = SongRepository(application)
         Thread {
             uris.forEach { uri -> register.add(uri) }
         }.start()

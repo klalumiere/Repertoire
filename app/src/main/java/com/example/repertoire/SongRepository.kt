@@ -8,7 +8,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import java.io.File
 
-class SongRegister(
+class SongRepository(
     private val resolver: ContentResolver,
     private val db: AppDatabase
 )

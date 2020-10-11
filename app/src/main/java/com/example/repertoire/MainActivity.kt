@@ -10,7 +10,6 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
@@ -92,8 +91,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
-        val context = this.applicationContext
-        val register = SongRegister(contentResolver, AppDatabase.getInstance(context))
+        val register = SongRegister(application)
         Thread {
             uris.forEach { uri -> register.add(uri) }
         }.start()

@@ -1,3 +1,4 @@
+import android.app.Application
 import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
@@ -12,6 +13,9 @@ class SongRegister(
     private val db: AppDatabase
 )
 {
+    constructor(application: Application)
+            : this(application.contentResolver, AppDatabase.getInstance(application))
+
     fun add(uri: Uri) {
         add(uri, resolveName(uri))
     }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.lifecycle.LiveData
 import java.io.File
 
 class SongRepository(
@@ -22,12 +23,16 @@ class SongRepository(
 
     fun add(uri: Uri, name: String) {
         resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
+        songDao.insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
+    }
+
+    fun getAllSongsLive(): LiveData<List<Song>> {
+        return songDao.getAllLive()
     }
 
     fun remove(uri: Uri) {
         resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().delete(uri.toString())
+        songDao.delete(uri.toString())
     }
 
     private fun resolveName(uri: Uri): String {
@@ -44,4 +49,6 @@ class SongRepository(
         }
         return name
     }
+
+    private val songDao = db.songDao()
 }

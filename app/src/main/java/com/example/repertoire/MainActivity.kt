@@ -90,10 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
-        val register = SongRepository(application)
-        Thread {
-            uris.forEach { uri -> register.add(uri) }
-        }.start()
+        Thread { songViewModel.add(uris) }.start()
     }
     private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager

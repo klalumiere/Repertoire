@@ -1,11 +1,11 @@
+package com.example.repertoire
+
 import android.app.Application
 import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.example.repertoire.AppDatabase
-import com.example.repertoire.Song
 import java.io.File
 
 class SongRegister(

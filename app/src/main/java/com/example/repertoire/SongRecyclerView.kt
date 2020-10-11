@@ -92,11 +92,6 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
     var tracker: SelectionTracker<String>? = null
 }
 
-class SongViewModel(application: Application) : AndroidViewModel(application) {
-    private val songDao = AppDatabase.getInstance(application).songDao()
-    val songList = songDao.getAllLive()
-}
-
 class SongItemKeyProvider(private val adapter: SongAdapter)
     : ItemKeyProvider<String>(ItemKeyProvider.SCOPE_CACHED)
 {

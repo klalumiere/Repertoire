@@ -14,4 +14,3 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
         uris.forEach { uri -> repository.add(uri) }
     }
 }
-

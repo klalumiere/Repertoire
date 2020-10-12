@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.runBlocking
@@ -12,10 +13,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(AndroidJUnit4::class)
 @Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
@@ -97,7 +97,6 @@ class SongRepositoryTest {
         )
         assertEquals(songDao.getAll(), listOf(song))
     }
-
 
     @After
     fun closeDb() {

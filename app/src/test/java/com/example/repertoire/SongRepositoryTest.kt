@@ -1,12 +1,12 @@
 package com.example.repertoire
 
-import SongRegister
 import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
@@ -17,12 +17,12 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28]) // >= 29 not supported by Android Studio right now
-class SongRegisterTest {
+class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
     private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
-    private lateinit var register: SongRegister
+    private lateinit var register: SongRepository
     private lateinit var songDao: SongDao
 
     @Before
@@ -30,13 +30,13 @@ class SongRegisterTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock<ContentResolver>()
         db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
-        register = SongRegister(contentResolver, db)
+        register = SongRepository(contentResolver, db)
         songDao = db.songDao()
     }
 
     @Test
     fun addTakesPersistableUriPermission() {
-        register.add(contentUri, songName)
+        runBlocking { register.add(contentUri, songName) }
         verify(contentResolver).takePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
@@ -50,7 +50,7 @@ class SongRegisterTest {
 
     @Test
     fun addAddsSongToDb() {
-        register.add(contentUri, songName)
+        runBlocking { register.add(contentUri, songName) }
         val song = Song(
             uri = contentUri.toString(),
             name = songName
@@ -60,7 +60,7 @@ class SongRegisterTest {
 
     @Test
     fun addRemovesExtensionFromSongName() {
-        register.add(contentUri, "Pantera - Walk.md")
+        runBlocking { register.add(contentUri, "Pantera - Walk.md") }
         val song = Song(
             uri = contentUri.toString(),
             name = "Pantera - Walk"
@@ -70,7 +70,7 @@ class SongRegisterTest {
 
     @Test
     fun removeRemovesSongFromDb() {
-        register.add(contentUri, songName)
+        runBlocking { register.add(contentUri, songName) }
         register.remove(contentUri)
         assertTrue(songDao.getAll().isEmpty())
     }
@@ -87,9 +87,9 @@ class SongRegisterTest {
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
         }
-        val register = SongRegister(contentResolver, db)
+        val register = SongRepository(contentResolver, db)
 
-        register.add(contentUri)
+        runBlocking { register.add(contentUri) }
 
         val song = Song(
             uri = contentUri.toString(),

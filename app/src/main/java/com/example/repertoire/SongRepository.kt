@@ -1,29 +1,38 @@
+package com.example.repertoire
+
+import android.app.Application
 import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.example.repertoire.AppDatabase
-import com.example.repertoire.Song
+import androidx.lifecycle.LiveData
 import java.io.File
 
-class SongRegister(
+class SongRepository(
     private val resolver: ContentResolver,
     private val db: AppDatabase
 )
 {
-    fun add(uri: Uri) {
+    constructor(application: Application)
+            : this(application.contentResolver, AppDatabase.getInstance(application))
+
+    suspend fun add(uri: Uri) {
         add(uri, resolveName(uri))
     }
 
-    fun add(uri: Uri, name: String) {
+    suspend fun add(uri: Uri, name: String) {
         resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
+        songDao.insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
+    }
+
+    fun getAllSongsLive(): LiveData<List<Song>> {
+        return songDao.getAllLive()
     }
 
     fun remove(uri: Uri) {
         resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        db.songDao().delete(uri.toString())
+        songDao.delete(uri.toString())
     }
 
     private fun resolveName(uri: Uri): String {
@@ -40,4 +49,6 @@ class SongRegister(
         }
         return name
     }
+
+    private val songDao = db.songDao()
 }

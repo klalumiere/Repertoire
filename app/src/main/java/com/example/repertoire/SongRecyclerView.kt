@@ -1,13 +1,11 @@
 package com.example.repertoire
 
-import android.app.Application
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.AndroidViewModel
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
@@ -70,12 +68,6 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
         val DIFF_CALLBACK = SongItemCallback()
     }
 
-    init {
-        setHasStableIds(true)
-    }
-
-    override fun getItemId(position: Int): Long = position.toLong()
-
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song = getItem(position)
         holder.bind(song)
@@ -90,11 +82,6 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
 
 
     var tracker: SelectionTracker<String>? = null
-}
-
-class SongViewModel(application: Application) : AndroidViewModel(application) {
-    private val songDao = AppDatabase.getInstance(application).songDao()
-    val songList = songDao.getAllLive()
 }
 
 class SongItemKeyProvider(private val adapter: SongAdapter)

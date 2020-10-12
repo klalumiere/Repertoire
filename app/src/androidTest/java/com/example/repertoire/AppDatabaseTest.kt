@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.repertoire.AppDatabase
 import com.example.repertoire.Song
 import com.example.repertoire.SongDao
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.empty
@@ -30,28 +31,28 @@ class AppDatabaseTest {
 
     @Test
     fun canInsert() {
-        songDao.insert(arbitrarySong)
+        runBlocking { songDao.insert(arbitrarySong) }
         assertThat(songDao.getAll(),contains(arbitrarySong))
     }
 
     @Test
     fun canDelete() {
-        songDao.insert(arbitrarySong)
+        runBlocking { songDao.insert(arbitrarySong) }
         songDao.delete(arbitrarySong)
         assertThat(songDao.getAll(),empty())
     }
 
     @Test
     fun canDeleteFromUri() {
-        songDao.insert(arbitrarySong)
+        runBlocking { songDao.insert(arbitrarySong) }
         songDao.delete(arbitrarySong.uri)
         assertThat(songDao.getAll(),empty())
     }
 
     @Test
     fun ignoreDuplicateUri() {
-        songDao.insert(arbitrarySong)
-        songDao.insert(arbitrarySong)
+        runBlocking { songDao.insert(arbitrarySong) }
+        runBlocking { songDao.insert(arbitrarySong) }
         assertThat(songDao.getAll(),contains(arbitrarySong))
     }
 

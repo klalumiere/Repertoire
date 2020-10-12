@@ -11,7 +11,7 @@ interface SongDao {
     fun getAllLive(): LiveData<List<Song>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(song: Song)
+    suspend fun insert(song: Song)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg songs: Song)

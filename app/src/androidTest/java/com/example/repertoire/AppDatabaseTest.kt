@@ -38,14 +38,14 @@ class AppDatabaseTest {
     @Test
     fun canDelete() {
         runBlocking { songDao.insert(arbitrarySong) }
-        songDao.delete(arbitrarySong)
+        runBlocking { songDao.delete(arbitrarySong) }
         assertThat(songDao.getAll(),empty())
     }
 
     @Test
     fun canDeleteFromUri() {
         runBlocking { songDao.insert(arbitrarySong) }
-        songDao.delete(arbitrarySong.uri)
+        runBlocking { songDao.delete(arbitrarySong.uri) }
         assertThat(songDao.getAll(),empty())
     }
 

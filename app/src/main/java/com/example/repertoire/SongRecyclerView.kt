@@ -1,6 +1,6 @@
 package com.example.repertoire
 
-import android.util.Log
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -27,7 +27,7 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     fun bind(songRhs: Song) {
         song = songRhs
         nameView.text = song!!.name
-        view.setOnClickListener { Log.i("Click", song!!.uri ) }
+        view.setOnClickListener { onClick() }
     }
     fun setActivated(isActivated: Boolean) {
         view.isActivated = isActivated
@@ -49,6 +49,15 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         return view.isActivated
     }
 
+
+    private fun onClick() {
+        val context = view.context
+        val intent = Intent(context, SongActivity::class.java).apply {
+            putExtra(SongActivity.SONG_NAME, song!!.name)
+            putExtra(SongActivity.SONG_URI_AS_STRING, song!!.uri)
+        }
+        context.startActivity(intent)
+    }
 
     private var song: Song? = null
     private val nameView = view.findViewById(android.R.id.text1) as TextView

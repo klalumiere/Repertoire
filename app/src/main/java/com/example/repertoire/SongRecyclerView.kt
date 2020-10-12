@@ -68,12 +68,6 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
         val DIFF_CALLBACK = SongItemCallback()
     }
 
-    init {
-        setHasStableIds(true)
-    }
-
-    override fun getItemId(position: Int): Long = position.toLong()
-
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song = getItem(position)
         holder.bind(song)

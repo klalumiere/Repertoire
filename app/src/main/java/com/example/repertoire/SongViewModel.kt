@@ -19,7 +19,7 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
         uris.forEach { uri -> repository.remove(uri) }
     }
 
-    fun setSongContent(song: Song) = viewModelScope.launch {
-        repository.setSongContent(song)
+    fun setSongContent(uri: Uri) = viewModelScope.launch {
+        repository.setSongContent(uri)
     }
 }

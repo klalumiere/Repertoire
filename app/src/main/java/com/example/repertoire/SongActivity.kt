@@ -1,5 +1,6 @@
 package com.example.repertoire
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,15 +17,16 @@ class SongActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song)
         supportActionBar?.hide()
-        val observer = Observer<String> { content -> song_text_view.text = content }
-        songViewModel.songContent.observe(this, observer)
 
         val bundle = intent.extras!!
         song = Song (
             name = bundle[SONG_NAME] as String,
             uri = bundle[SONG_URI_AS_STRING] as String
         )
-        songViewModel.setSongContent(song)
+
+        val observer = Observer<String> { content -> song_text_view.text = "${song.name} $content" }
+        songViewModel.songContent.observe(this, observer)
+        songViewModel.setSongContent(Uri.parse(song.uri))
     }
 
 

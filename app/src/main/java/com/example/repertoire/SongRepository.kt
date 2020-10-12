@@ -43,6 +43,11 @@ class SongRepository(
         songDao.delete(uri.toString())
     }
 
+    fun setSongContent(uri: Uri) {
+        songContent.value = readSongFile(uri)
+    }
+
+
     private fun resolveName(uri: Uri): String {
         var name = "Name Not Found"
         val cursor: Cursor? = resolver.query(uri,
@@ -57,12 +62,6 @@ class SongRepository(
         }
         return name
     }
-
-    fun setSongContent(song: Song) {
-        val chords = readSongFile(Uri.parse(song.uri))
-        songContent.value = "${song.name} $chords"
-    }
-
 
     private fun readSongFile(uri: Uri): String {
         try {

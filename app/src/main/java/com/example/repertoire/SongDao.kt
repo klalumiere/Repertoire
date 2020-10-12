@@ -17,8 +17,8 @@ interface SongDao {
     fun insertAll(vararg songs: Song)
 
     @Delete
-    fun delete(song: Song)
+    suspend fun delete(song: Song)
 
     @Query("DELETE FROM song WHERE uri = :uri")
-    fun delete(uri: String)
+    suspend fun delete(uri: String)
 }

@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_delete -> true
+            R.id.action_delete -> onDeleteOptionItemSelected()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -79,6 +79,13 @@ class MainActivity : AppCompatActivity() {
             .build()
         tracker.addObserver(createSelectionObserver(tracker))
         return tracker
+    }
+
+    private fun onDeleteOptionItemSelected(): Boolean {
+        val uris = songAdapter.tracker!!.selection.map { Uri.parse(it) }
+        songAdapter.tracker?.clearSelection() // Important, otherwise, added songs might be selected
+        songViewModel.remove(uris)
+        return true
     }
 
 

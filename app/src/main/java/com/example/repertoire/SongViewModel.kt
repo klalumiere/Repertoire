@@ -13,4 +13,8 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     fun add(uris: List<Uri>) = viewModelScope.launch {
         uris.forEach { uri -> repository.add(uri) }
     }
+
+    fun remove(uris: List<Uri>) = viewModelScope.launch {
+        uris.forEach { uri -> repository.remove(uri) }
+    }
 }

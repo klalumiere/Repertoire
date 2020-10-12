@@ -43,7 +43,7 @@ class SongRepositoryTest {
 
     @Test
     fun removeReleasesPersistableUriPermission() {
-        register.remove(contentUri)
+        runBlocking { register.remove(contentUri) }
         verify(contentResolver).releasePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
@@ -71,7 +71,7 @@ class SongRepositoryTest {
     @Test
     fun removeRemovesSongFromDb() {
         runBlocking { register.add(contentUri, songName) }
-        register.remove(contentUri)
+        runBlocking { register.remove(contentUri) }
         assertTrue(songDao.getAll().isEmpty())
     }
 

@@ -30,7 +30,7 @@ class SongRepository(
         return songDao.getAllLive()
     }
 
-    fun remove(uri: Uri) {
+    suspend fun remove(uri: Uri) {
         resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         songDao.delete(uri.toString())
     }

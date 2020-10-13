@@ -69,7 +69,8 @@ class SongRepository(
         }
         catch(e: IOException) // Includes FileNotFoundException
         { }
-        return "Cannot read file \uD83D\uDE1E" // sad emoji
+        val sadEmoji = "\uD83D\uDE1E"
+        return "Cannot read file $sadEmoji"
     }
 
     private fun readSongFileUnsafe(uri: Uri): String {

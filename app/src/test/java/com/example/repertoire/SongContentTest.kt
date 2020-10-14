@@ -48,9 +48,9 @@ class VerseTest {
         assertEquals("There's a lady who's sure", verse.lyrics)
     }
 
-//    @Test
-//    fun parseDoNotIncludeChordsInLyrics() {
-//        val verse = Verse.parse("[J](F#)'entre avec l'aube")
-//        assertEquals("J'entre avec l'aube", verse.lyrics)
-//    }
+    @Test
+    fun parseDoNotIncludeChordsInLyrics() {
+        val verse = Verse.parse("[J](F#)'entre avec l'aube")
+        assertEquals("J'entre avec l'aube", verse.lyrics)
+    }
 }

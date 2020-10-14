@@ -52,6 +52,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        songAdapter.tracker?.onRestoreInstanceState(savedInstanceState)
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        songAdapter.tracker?.onSaveInstanceState(outState)
+    }
+
 
     private fun createSelectionObserver(tracker: SelectionTracker<String>)
             : SelectionTracker.SelectionObserver<String>

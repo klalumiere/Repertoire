@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     {
         view.adapter = adapter // Required, otherwise throws
         val tracker = SelectionTracker
-            .Builder<String>(
+            .Builder(
                 "SongSelection",
                 view,
                 SongItemKeyProvider(adapter),

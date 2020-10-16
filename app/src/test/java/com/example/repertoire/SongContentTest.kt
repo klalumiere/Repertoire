@@ -7,7 +7,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class ChordBuilderTest {
-    private val position = 4;
+    private val position = 4
     private val builder = Chord.Builder(position)
 
     @Test

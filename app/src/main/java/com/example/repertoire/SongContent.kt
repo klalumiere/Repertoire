@@ -1,6 +1,5 @@
 package com.example.repertoire
 
-import java.util.*
 import kotlin.text.StringBuilder
 
 data class Chord(
@@ -59,11 +58,12 @@ data class Verse(
 ) {
     companion object {
         fun parse(line: String): Verse {
-            val parser = VerseParser()
-            return parser.parse(line)
+            return VerseParser().parse(line)
         }
     }
-    private class VerseParser() {
+
+
+    private class VerseParser {
         fun parse(line: String): Verse {
             for(char in line) {
                 if(isReserved(char)) parseReserved(char)
@@ -72,6 +72,7 @@ data class Verse(
             }
             return Verse(lyricsBuilder.toString(), chords)
         }
+
 
         private fun isReserved(char: Char): Boolean {
             return char in Chord.Builder.RESERVED_CHARS && lookbehind != Chord.Builder.ESCAPE_CHAR

@@ -72,7 +72,7 @@ class SongItemCallback : DiffUtil.ItemCallback<Song>() {
     }
 }
 
-class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK) {
+class SongAdapter : ListAdapter<Song, SongViewHolder>(DIFF_CALLBACK) {
     companion object {
         val DIFF_CALLBACK = SongItemCallback()
     }
@@ -94,7 +94,7 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(SongAdapter.DIFF_CALLBACK)
 }
 
 class SongItemKeyProvider(private val adapter: SongAdapter)
-    : ItemKeyProvider<String>(ItemKeyProvider.SCOPE_CACHED)
+    : ItemKeyProvider<String>(SCOPE_CACHED)
 {
     override fun getKey(position: Int): String {
         return adapter.currentList[position].uri

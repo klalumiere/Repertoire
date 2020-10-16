@@ -7,7 +7,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class ChordBuilderTest {
-    private val position = 4L;
+    private val position = 4;
     private val builder = Chord.Builder(position)
 
     @Test
@@ -21,21 +21,9 @@ class ChordBuilderTest {
     }
 
     @Test
-    fun takeOrReturn_ReturnsInLyricMode() {
-        assertEquals('x', builder.takeOrReturn('x'))
-    }
-
-    @Test
-    fun takeOrReturn_TakesInChordMode() {
+    fun append() {
         builder.transitionToChordSate()
-        assertEquals(null, builder.takeOrReturn('F'))
-    }
-
-    @Test
-    fun takeOrReturnUsesWhatItTookToBuildChord() {
-        builder.transitionToChordSate()
-        builder.takeOrReturn('F')
-        builder.takeOrReturn('#')
+        builder.append('F').append('#')
         assertEquals(Chord(position,"F#"), builder.build())
     }
 
@@ -67,9 +55,32 @@ class VerseTest {
         assertEquals("[J'entre avec l'aube", verse.lyrics)
     }
 
-//    @Test
-//    fun parseDoNotIncludeChordsInLyrics() {
-//        val verse = Verse.parse("[J](F#)'entre avec l'aube")
-//        assertEquals("J'entre avec l'aube", verse.lyrics)
-//    }
+    @Test
+    fun parseDoesNotIncludeChordsInLyrics() {
+        val verse = Verse.parse("[J](F#)'entre avec l'aube")
+        assertEquals("J'entre avec l'aube", verse.lyrics)
+    }
+
+    @Test
+    fun parseRemembersChords() {
+        val verse = Verse.parse("[J](F#)'entre avec l'aube")
+        assertEquals(
+            Verse(
+                lyrics="J'entre avec l'aube",
+                listOf(Chord(0,"F#"))
+            ),
+            verse
+        )
+    }
+
+    @Test
+    fun parseRemembersChordsPositions() {
+        val verse = Verse.parse("[A](A) million miles awa[y](E)")
+        assertEquals(
+            Verse(lyrics="A million miles away",
+                listOf(Chord(0,"A"), Chord(19,"E"))
+            ),
+            verse
+        )
+    }
 }

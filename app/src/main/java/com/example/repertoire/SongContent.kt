@@ -59,39 +59,52 @@ data class Verse(
 ) {
     companion object {
         fun parse(line: String): Verse {
-            var chordBuilder: Chord.Builder? = null
-            val chords = mutableListOf<Chord>()
-            val lyricsBuilder = StringBuilder()
-            var lookbehind = 'x'
+            val parser = VerseParser()
+            return parser.parse(line)
+        }
+    }
+    private class VerseParser() {
+        fun parse(line: String): Verse {
             for(char in line) {
-                if(char in Chord.Builder.RESERVED_CHARS
-                    && lookbehind != Chord.Builder.ESCAPE_CHAR)
-                {
-                    when (char) {
-                        Chord.Builder.CREATE_DELIMITER -> {
-                            chordBuilder = Chord.Builder(lyricsBuilder.length)
-                        }
-                        Chord.Builder.COMPLETED_DELIMITER -> {
-                            chordBuilder?.build().also {
-                                if(it != null) chords.add(it)
-                            }
-                            chordBuilder = null
-                        }
-                        else -> {
-                            chordBuilder?.transition(char)
-                        }
-                    }
-                }
-                else {
-                    when (chordBuilder?.state) {
-                        Chord.Builder.State.CHORD -> { chordBuilder?.append(char) }
-                        else -> { lyricsBuilder.append(char) }
-                    }
-                }
+                if(isReserved(char)) parseReserved(char)
+                else parseRegular(char)
                 lookbehind = char
             }
             return Verse(lyricsBuilder.toString(), chords)
         }
+
+        private fun isReserved(char: Char): Boolean {
+            return char in Chord.Builder.RESERVED_CHARS && lookbehind != Chord.Builder.ESCAPE_CHAR
+        }
+
+        private fun parseReserved(char: Char) {
+            when (char) {
+                Chord.Builder.CREATE_DELIMITER -> {
+                    chordBuilder = Chord.Builder(lyricsBuilder.length)
+                }
+                Chord.Builder.COMPLETED_DELIMITER -> {
+                    chordBuilder?.build().also {
+                        if(it != null) chords.add(it)
+                    }
+                    chordBuilder = null
+                }
+                else -> {
+                    chordBuilder?.transition(char)
+                }
+            }
+        }
+
+        private fun parseRegular(char: Char) {
+            when (chordBuilder?.state) {
+                Chord.Builder.State.CHORD -> { chordBuilder?.append(char) }
+                else -> { lyricsBuilder.append(char) }
+            }
+        }
+
+        private var chordBuilder: Chord.Builder? = null
+        private var lookbehind = 'x'
+        private val chords = mutableListOf<Chord>()
+        private val lyricsBuilder = StringBuilder()
     }
 }
 

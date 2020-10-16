@@ -59,7 +59,7 @@ data class Verse(
 ) {
     companion object {
         fun parse(line: String): Verse {
-            val chordBuilders = ArrayDeque<Chord.Builder>()
+            var chordBuilder: Chord.Builder? = null
             val chords = mutableListOf<Chord>()
             val lyricsBuilder = StringBuilder()
             var lookbehind = 'x'
@@ -69,22 +69,22 @@ data class Verse(
                 {
                     when (char) {
                         Chord.Builder.CREATE_DELIMITER -> {
-                            chordBuilders.push(Chord.Builder(lyricsBuilder.length))
+                            chordBuilder = Chord.Builder(lyricsBuilder.length)
                         }
                         Chord.Builder.COMPLETED_DELIMITER -> {
-                            if(chordBuilders.isNotEmpty()) {
-                                chords.add(chordBuilders.peek()!!.build())
-                                chordBuilders.pop()
+                            chordBuilder?.build().also {
+                                if(it != null) chords.add(it)
                             }
+                            chordBuilder = null
                         }
                         else -> {
-                            chordBuilders.peek()?.transition(char)
+                            chordBuilder?.transition(char)
                         }
                     }
                 }
                 else {
-                    when (chordBuilders.peek()?.state) {
-                        Chord.Builder.State.CHORD -> { chordBuilders.peek()?.append(char) }
+                    when (chordBuilder?.state) {
+                        Chord.Builder.State.CHORD -> { chordBuilder?.append(char) }
                         else -> { lyricsBuilder.append(char) }
                     }
                 }

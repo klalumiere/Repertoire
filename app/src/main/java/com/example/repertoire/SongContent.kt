@@ -32,10 +32,7 @@ data class Chord(
             private set
 
         fun append(x: Char): Builder {
-            if (BuildConfig.DEBUG && state != State.CHORD) {
-                error("Assertion `state != State.CHORD` failed")
-            }
-            builder.append(x)
+            if(state == State.CHORD) builder.append(x)
             return this
         }
 
@@ -94,6 +91,14 @@ data class Verse(
                 lookbehind = char
             }
             return Verse(lyricsBuilder.toString(), chords)
+        }
+    }
+}
+
+data class SongContent(val verses: List<Verse>) {
+    companion object {
+        fun parse(songContent: String): SongContent {
+            return SongContent(songContent.lines().map { Verse.parse(it) })
         }
     }
 }

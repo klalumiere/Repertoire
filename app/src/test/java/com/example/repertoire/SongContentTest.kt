@@ -22,13 +22,13 @@ class ChordBuilderTest {
 
     @Test
     fun append() {
-        builder.transitionToChordSate()
+        builder.transitionToChordSateForTests()
         builder.append('F').append('#')
         assertEquals(Chord(position,"F#"), builder.build())
     }
 
 
-    private fun Chord.Builder.transitionToChordSate() {
+    private fun Chord.Builder.transitionToChordSateForTests() {
         this.transition(Chord.Builder.CHORD_STATE_DELIMITER_0)
             .transition(Chord.Builder.CHORD_STATE_DELIMITER_1)
     }
@@ -81,6 +81,30 @@ class VerseTest {
                 listOf(Chord(0,"A"), Chord(19,"E"))
             ),
             verse
+        )
+    }
+}
+
+@RunWith(JUnit4::class)
+class SongContentTest {
+    @Test
+    fun parse() {
+        val songContent = """
+            [J](F#)'entre avec l'aube
+            [A](A) million miles awa[y](E)
+        """.trimIndent()
+        val song = SongContent.parse(songContent)
+        assertEquals(
+            SongContent(listOf(
+                Verse(
+                    lyrics="J'entre avec l'aube",
+                    listOf(Chord(0,"F#"))
+                ),
+                Verse(lyrics="A million miles away",
+                    listOf(Chord(0,"A"), Chord(19,"E"))
+                )
+            )),
+            song
         )
     }
 }

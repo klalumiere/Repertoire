@@ -17,7 +17,7 @@ class ChordBuilderTest {
 
     @Test
     fun chordBuilderStartsInLyricMode() {
-        assertEquals(Chord.Builder.Mode.LYRIC, builder.mode)
+        assertEquals(Chord.Builder.State.LYRIC, builder.state)
     }
 
     @Test
@@ -27,16 +27,22 @@ class ChordBuilderTest {
 
     @Test
     fun takeOrReturn_TakesInChordMode() {
-        builder.mode = Chord.Builder.Mode.CHORD
+        builder.transitionToChordSate()
         assertEquals(null, builder.takeOrReturn('F'))
     }
 
     @Test
     fun takeOrReturnUsesWhatItTookToBuildChord() {
-        builder.mode = Chord.Builder.Mode.CHORD
+        builder.transitionToChordSate()
         builder.takeOrReturn('F')
         builder.takeOrReturn('#')
         assertEquals(Chord(position,"F#"), builder.build())
+    }
+
+
+    private fun Chord.Builder.transitionToChordSate() {
+        this.transition(Chord.Builder.CHORD_STATE_DELIMITER_0)
+            .transition(Chord.Builder.CHORD_STATE_DELIMITER_1)
     }
 }
 

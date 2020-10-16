@@ -8,39 +8,49 @@ data class Chord(
     val value: String
 ) {
     class Builder(val position: Long) {
-        enum class Mode {
+        enum class State {
             LYRIC, CHORD
         }
 
         companion object {
             const val CREATE_DELIMITER = '['
-            const val CHORD_MODE_DELIMITER_0 = ']'
-            const val CHORD_MODE_DELIMITER_1 = '('
+            const val CHORD_STATE_DELIMITER_0 = ']'
+            const val CHORD_STATE_DELIMITER_1 = '('
             const val COMPLETED_DELIMITER = ')'
             const val ESCAPE_CHAR = '\\'
 
             val RESERVED_CHARS = listOf(
                 CREATE_DELIMITER,
-                CHORD_MODE_DELIMITER_0,
-                CHORD_MODE_DELIMITER_1,
+                CHORD_STATE_DELIMITER_0,
+                CHORD_STATE_DELIMITER_1,
                 COMPLETED_DELIMITER,
                 ESCAPE_CHAR
             )
         }
 
-        var mode = Mode.LYRIC
+        var state = State.LYRIC
+            private set
 
         fun build(): Chord {
             return Chord(position, builder.toString())
         }
 
         fun takeOrReturn(x: Char): Char? {
-            if(mode == Mode.LYRIC) return x
+            if(state == State.LYRIC) return x
             builder.append(x)
             return null
         }
 
+        fun transition(x: Char): Builder {
+            if(lookbehind == CHORD_STATE_DELIMITER_0 && x == CHORD_STATE_DELIMITER_1) {
+                state = State.CHORD
+            }
+            lookbehind = x
+            return this
+        }
+
         private val builder = StringBuilder()
+        private var lookbehind = 'x'
     }
 }
 
@@ -54,7 +64,7 @@ data class Verse(
             val lyricsBuilder = StringBuilder()
             var lookbehind = 'x'
             for(char in line) {
-                if(Chord.Builder.RESERVED_CHARS.contains(char)
+                if(char in Chord.Builder.RESERVED_CHARS
                     && lookbehind != Chord.Builder.ESCAPE_CHAR)
                 {
 

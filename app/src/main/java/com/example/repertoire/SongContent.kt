@@ -17,6 +17,15 @@ data class Chord(
             const val CHORD_MODE_DELIMITER_0 = ']'
             const val CHORD_MODE_DELIMITER_1 = '('
             const val COMPLETED_DELIMITER = ')'
+            const val ESCAPE_CHAR = '\\'
+
+            val RESERVED_CHARS = listOf(
+                CREATE_DELIMITER,
+                CHORD_MODE_DELIMITER_0,
+                CHORD_MODE_DELIMITER_1,
+                COMPLETED_DELIMITER,
+                ESCAPE_CHAR
+            )
         }
 
         var mode = Mode.LYRIC
@@ -45,24 +54,13 @@ data class Verse(
             val lyricsBuilder = StringBuilder()
             var lookbehind = 'x'
             for(char in line) {
-                if(char == Chord.Builder.CREATE_DELIMITER) {
-                    chordBuilders.push(Chord.Builder(0))
-                }
-                else if(chordBuilders.peek()?.mode == Chord.Builder.Mode.CHORD) {
-                    if(char == Chord.Builder.COMPLETED_DELIMITER) chordBuilders.pop()
+                if(Chord.Builder.RESERVED_CHARS.contains(char)
+                    && lookbehind != Chord.Builder.ESCAPE_CHAR)
+                {
+
                 }
                 else {
-                    if(lookbehind == Chord.Builder.CHORD_MODE_DELIMITER_0) {
-                        if(char == Chord.Builder.CHORD_MODE_DELIMITER_1) {
-                            chordBuilders.peek()?.mode = Chord.Builder.Mode.CHORD
-                        }
-                        else {
-                            lyricsBuilder.append(lookbehind)
-                        }
-                    }
-                    else if(char != Chord.Builder.CHORD_MODE_DELIMITER_0) {
-                        lyricsBuilder.append(char)
-                    }
+                    lyricsBuilder.append(char)
                 }
                 lookbehind = char
             }

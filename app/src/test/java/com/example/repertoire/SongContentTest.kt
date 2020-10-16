@@ -49,8 +49,21 @@ class VerseTest {
     }
 
     @Test
-    fun parseDoNotIncludeChordsInLyrics() {
-        val verse = Verse.parse("[J](F#)'entre avec l'aube")
+    fun parseDoesNotIncludeSpecialCharactersInLyrics() {
+        val verse = Verse.parse("[J]()'entre avec l'aube")
         assertEquals("J'entre avec l'aube", verse.lyrics)
     }
+
+    @Test
+    fun parseIncludesEscapedSpecialCharactersInLyrics() {
+        val escape = Chord.Builder.ESCAPE_CHAR
+        val verse = Verse.parse("$escape[J]()'entre avec l'aube")
+        assertEquals("[J'entre avec l'aube", verse.lyrics)
+    }
+
+//    @Test
+//    fun parseDoNotIncludeChordsInLyrics() {
+//        val verse = Verse.parse("[J](F#)'entre avec l'aube")
+//        assertEquals("J'entre avec l'aube", verse.lyrics)
+//    }
 }

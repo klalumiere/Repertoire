@@ -21,7 +21,7 @@ class ChordBuilderTest {
     }
 
     @Test
-    fun append() {
+    fun appendsInChordMode() {
         builder.transitionToChordSateForTests()
         builder.append('F').append('#')
         assertEquals(Chord(position,"F#"), builder.build())

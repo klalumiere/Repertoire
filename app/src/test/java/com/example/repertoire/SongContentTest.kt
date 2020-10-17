@@ -22,8 +22,8 @@ class ChordBuilderTest {
 
     @Test
     fun canTransitionToChordState() {
-        builder.transition(Chord.Builder.CHORD_STATE_DELIMITER_0)
-            .transition(Chord.Builder.CHORD_STATE_DELIMITER_1)
+        builder.transition(Chord.Builder.CHORD_STATE_DELIMITER_0,
+            Chord.Builder.CHORD_STATE_DELIMITER_1)
         assertEquals(Chord.Builder.State.CHORD, builder.state)
     }
 
@@ -42,8 +42,8 @@ class ChordBuilderTest {
 
 
     private fun Chord.Builder.transitionToChordSateForTests() {
-        this.transition(Chord.Builder.CHORD_STATE_DELIMITER_0)
-            .transition(Chord.Builder.CHORD_STATE_DELIMITER_1)
+        this.transition(Chord.Builder.CHORD_STATE_DELIMITER_0,
+            Chord.Builder.CHORD_STATE_DELIMITER_1)
     }
 }
 
@@ -99,7 +99,7 @@ class VerseTest {
 
     @Test
     fun parseEmptyVerse() {
-        assertEquals(Verse(lyrics="", listOf<Chord>()), Verse.parse(""))
+        assertEquals(Verse(lyrics="", listOf()), Verse.parse(""))
     }
 }
 

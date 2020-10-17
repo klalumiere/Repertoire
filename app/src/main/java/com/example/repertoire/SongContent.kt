@@ -39,16 +39,14 @@ data class Chord(
             return Chord(position, builder.toString())
         }
 
-        fun transition(char: Char): Builder {
+        fun transition(lookbehind: Char, char: Char): Builder {
             if(lookbehind == CHORD_STATE_DELIMITER_0 && char == CHORD_STATE_DELIMITER_1) {
                 state = State.CHORD
             }
-            lookbehind = char
             return this
         }
 
         private val builder = StringBuilder()
-        private var lookbehind = 'x'
     }
 }
 
@@ -90,7 +88,7 @@ data class Verse(
                     chordBuilder = null
                 }
                 else -> {
-                    chordBuilder?.transition(char)
+                    chordBuilder?.transition(lookbehind, char)
                 }
             }
         }

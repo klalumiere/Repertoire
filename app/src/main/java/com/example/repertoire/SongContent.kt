@@ -39,11 +39,11 @@ data class Chord(
             return Chord(position, builder.toString())
         }
 
-        fun transition(x: Char): Builder {
-            if(lookbehind == CHORD_STATE_DELIMITER_0 && x == CHORD_STATE_DELIMITER_1) {
+        fun transition(char: Char): Builder {
+            if(lookbehind == CHORD_STATE_DELIMITER_0 && char == CHORD_STATE_DELIMITER_1) {
                 state = State.CHORD
             }
-            lookbehind = x
+            lookbehind = char
             return this
         }
 

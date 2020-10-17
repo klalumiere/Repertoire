@@ -16,12 +16,25 @@ class ChordBuilderTest {
     }
 
     @Test
-    fun chordBuilderStartsInLyricMode() {
+    fun chordBuilderStartsInLyricState() {
         assertEquals(Chord.Builder.State.LYRIC, builder.state)
     }
 
     @Test
-    fun appendsInChordMode() {
+    fun canTransitionToChordState() {
+        builder.transition(Chord.Builder.CHORD_STATE_DELIMITER_0)
+            .transition(Chord.Builder.CHORD_STATE_DELIMITER_1)
+        assertEquals(Chord.Builder.State.CHORD, builder.state)
+    }
+
+    @Test
+    fun doesNotAppendInLyricState() {
+        builder.append('F').append('#')
+        assertEquals(Chord(position,""), builder.build())
+    }
+
+    @Test
+    fun appendsInChordState() {
         builder.transitionToChordSateForTests()
         builder.append('F').append('#')
         assertEquals(Chord(position,"F#"), builder.build())
@@ -82,6 +95,11 @@ class VerseTest {
             ),
             verse
         )
+    }
+
+    @Test
+    fun parseEmptyVerse() {
+        assertEquals(Verse(lyrics="", listOf<Chord>()), Verse.parse(""))
     }
 }
 

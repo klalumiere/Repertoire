@@ -80,16 +80,40 @@ data class Verse(
         }
     }
 
-    fun renderText(screenWidth: Int): String {
+    fun renderText(screenWidth: Int,
+                   chordLineDecorator: (String) -> String = { x -> x }): String
+    {
         val builder =  StringBuilder()
         val chordsAsText = toText(chords, lyrics.length)
         for(i in lyrics.indices step screenWidth) {
-            builder.append(safeSubstring(chordsAsText, i, screenWidth))
+            builder.append(chordLineDecorator(safeSubstring(chordsAsText, i, screenWidth)))
             builder.append('\n')
             builder.append(safeSubstring(lyrics, i, screenWidth))
             builder.append('\n')
         }
         return builder.toString()
+    }
+
+    fun renderHtmlText(screenWidth: Int, chordFormat: String): String {
+        val chordLineDecorator = { line: String ->
+            val result = StringBuilder()
+            var chordBuffer = StringBuilder()
+            for(char in line) {
+                when(char) {
+                    ' ' -> {
+                        if(chordBuffer.isNotEmpty()) {
+                            result.append(chordFormat.format(chordBuffer))
+                            chordBuffer = StringBuilder()
+                        }
+                        result.append("&nbsp;")
+                    }
+                    else -> chordBuffer.append(char)
+                }
+            }
+            if(chordBuffer.isNotEmpty()) result.append(chordFormat.format(chordBuffer))
+            result.toString()
+        }
+        return renderText(screenWidth, chordLineDecorator)
     }
 
 

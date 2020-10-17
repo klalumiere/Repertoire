@@ -199,6 +199,39 @@ class VerseTest {
         """.trimIndent()
         assertEquals(expected, verse.renderText(10))
     }
+
+    @Test
+    fun renderHtmlTextNoChords() {
+        val verse = Verse.parse("A million miles away")
+        val expected = """
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            A million miles away
+            
+        """.trimIndent()
+        assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
+    }
+
+    @Test
+    fun renderHtmlSingleChord() {
+        val verse = Verse.parse("[J](F#)'entre avec l'aube")
+        val expected = """
+            <b>F#</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            J'entre avec l'aube
+            
+        """.trimIndent()
+        assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
+    }
+
+    @Test
+    fun renderHtmlTextTypicalCase() {
+        val verse = Verse.parse("[A](A) million miles awa[y](E)")
+        val expected = """
+            <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b>
+            A million miles away
+            
+        """.trimIndent()
+        assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
+    }
 }
 
 @RunWith(JUnit4::class)

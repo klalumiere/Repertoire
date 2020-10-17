@@ -30,8 +30,8 @@ data class Chord(
         var state = State.LYRIC
             private set
 
-        fun append(x: Char): Builder {
-            if(state == State.CHORD) builder.append(x)
+        fun append(char: Char): Builder {
+            if(state == State.CHORD) builder.append(char)
             return this
         }
 

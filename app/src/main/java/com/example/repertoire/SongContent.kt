@@ -174,15 +174,16 @@ data class SongContent(val verses: List<Verse>) {
                    newline: String = "\n"): String
     {
         val builder =  StringBuilder()
-        verses.forEach() {
-            builder.append(it.renderText(screenWidth, chordLineDecorator=chordLineDecorator))
+        verses.forEach {
+            builder.append(it.renderText(screenWidth, chordLineDecorator=chordLineDecorator,
+                newline=newline))
         }
         return builder.toString()
     }
 
     fun renderHtmlText(screenWidth: Int, chordFormat: String): String {
         val builder =  StringBuilder()
-        verses.forEach() { builder.append(it.renderHtmlText(screenWidth, chordFormat)) }
+        verses.forEach { builder.append(it.renderHtmlText(screenWidth, chordFormat)) }
         return builder.toString()
     }
 }

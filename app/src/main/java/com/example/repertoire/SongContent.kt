@@ -80,9 +80,7 @@ data class Verse(
         }
     }
 
-    fun renderText(screenWidth: Int,
-                   chordLineDecorator: (String) -> String = { x -> x }): String
-    {
+    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x }): String {
         val builder =  StringBuilder()
         val chordsAsText = toText(chords, lyrics.length)
         for(i in lyrics.indices step screenWidth) {
@@ -170,9 +168,15 @@ data class SongContent(val verses: List<Verse>) {
         }
     }
 
-    fun renderText(screenWidth: Int): String {
+    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x }): String {
         val builder =  StringBuilder()
-        verses.forEach() { builder.append(it.renderText(screenWidth)) }
+        verses.forEach() { builder.append(it.renderText(screenWidth, chordLineDecorator)) }
+        return builder.toString()
+    }
+
+    fun renderHtmlText(screenWidth: Int, chordFormat: String): String {
+        val builder =  StringBuilder()
+        verses.forEach() { builder.append(it.renderHtmlText(screenWidth, chordFormat)) }
         return builder.toString()
     }
 }

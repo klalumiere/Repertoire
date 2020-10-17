@@ -80,14 +80,16 @@ data class Verse(
         }
     }
 
-    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x }): String {
+    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x },
+                   newline: String = "\n"): String
+    {
         val builder =  StringBuilder()
         val chordsAsText = toText(chords, lyrics.length)
         for(i in lyrics.indices step screenWidth) {
             builder.append(chordLineDecorator(safeSubstring(chordsAsText, i, screenWidth)))
-            builder.append('\n')
+            builder.append(newline)
             builder.append(safeSubstring(lyrics, i, screenWidth))
-            builder.append('\n')
+            builder.append(newline)
         }
         return builder.toString()
     }
@@ -111,7 +113,7 @@ data class Verse(
             if(chordBuffer.isNotEmpty()) result.append(chordFormat.format(chordBuffer))
             result.toString()
         }
-        return renderText(screenWidth, chordLineDecorator)
+        return renderText(screenWidth, chordLineDecorator=chordLineDecorator, newline="<br>\n")
     }
 
 
@@ -168,9 +170,13 @@ data class SongContent(val verses: List<Verse>) {
         }
     }
 
-    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x }): String {
+    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x },
+                   newline: String = "\n"): String
+    {
         val builder =  StringBuilder()
-        verses.forEach() { builder.append(it.renderText(screenWidth, chordLineDecorator)) }
+        verses.forEach() {
+            builder.append(it.renderText(screenWidth, chordLineDecorator=chordLineDecorator))
+        }
         return builder.toString()
     }
 

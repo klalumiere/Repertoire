@@ -204,8 +204,8 @@ class VerseTest {
     fun renderHtmlTextNoChords() {
         val verse = Verse.parse("A million miles away")
         val expected = """
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            A million miles away
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            A million miles away<br>
             
         """.trimIndent()
         assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
@@ -215,8 +215,8 @@ class VerseTest {
     fun renderHtmlSingleChord() {
         val verse = Verse.parse("[J](F#)'entre avec l'aube")
         val expected = """
-            <b>F#</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            J'entre avec l'aube
+            <b>F#</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            J'entre avec l'aube<br>
             
         """.trimIndent()
         assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
@@ -226,8 +226,8 @@ class VerseTest {
     fun renderHtmlTextTypicalCase() {
         val verse = Verse.parse("[A](A) million miles awa[y](E)")
         val expected = """
-            <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b>
-            A million miles away
+            <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b><br>
+            A million miles away<br>
             
         """.trimIndent()
         assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
@@ -280,10 +280,10 @@ class SongContentTest {
             [A](A) million miles awa[y](E)
         """.trimIndent()
         val expected = """
-            <b>F#</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            J'entre avec l'aube
-            <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b>
-            A million miles away
+            <b>F#</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            J'entre avec l'aube<br>
+            <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b><br>
+            A million miles away<br>
             
         """.trimIndent()
         assertEquals(expected,SongContent.parse(songContent).renderHtmlText(1000, "<b>%s</b>"))

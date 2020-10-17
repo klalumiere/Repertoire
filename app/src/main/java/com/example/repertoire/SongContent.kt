@@ -1,5 +1,6 @@
 package com.example.repertoire
 
+import kotlinx.coroutines.flow.asFlow
 import kotlin.text.StringBuilder
 
 data class Chord(
@@ -58,6 +59,22 @@ data class Verse(
         fun parse(line: String): Verse {
             return VerseParser().parse(line)
         }
+    }
+
+    fun renderText(screenWidth: Int): String {
+        if(lyrics.isEmpty()) return ""
+        val builder =  StringBuilder()
+        val addSpaces = { count: Int ->
+            if(count > 0) builder.append(" ".repeat(count))
+        }
+        for(chord in chords) {
+            addSpaces(chord.position - builder.length)
+            builder.append(chord.value)
+        }
+        addSpaces(lyrics.length - builder.length)
+        builder.append('\n')
+        builder.append(lyrics)
+        return builder.toString()
     }
 
 

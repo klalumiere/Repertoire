@@ -49,6 +49,8 @@ class ChordBuilderTest {
 
 @RunWith(JUnit4::class)
 class VerseTest {
+    val screenWidth = 1000
+
     @Test
     fun parseLyrics() {
         val verse = Verse.parse("There's a lady who's sure")
@@ -100,6 +102,41 @@ class VerseTest {
     @Test
     fun parseEmptyVerse() {
         assertEquals(Verse(lyrics="", listOf()), Verse.parse(""))
+    }
+
+    @Test
+    fun renderTextEmptyVerse() {
+        assertEquals("", Verse(lyrics="", listOf()).renderText(screenWidth))
+    }
+
+    @Test
+    fun renderTextOnlyLyricsAddsLineOfSpaces() {
+        val verse = Verse.parse("A million miles away")
+        val expected = """
+                                
+            A million miles away
+        """.trimIndent()
+        assertEquals(expected, verse.renderText(screenWidth))
+    }
+
+    @Test
+    fun renderTextAddsChords() {
+        val verse = Verse.parse("[A](A) million miles awa[y](E)")
+        val expected = """
+            A                  E
+            A million miles away
+        """.trimIndent()
+        assertEquals(expected, verse.renderText(screenWidth))
+    }
+
+    @Test
+    fun renderTextHandleChordsWithManyChars() {
+        val verse = Verse.parse("[J](F#)'entre avec l'aub[e](F#)")
+        val expected = """
+            F#                F#
+            J'entre avec l'aube
+        """.trimIndent()
+        assertEquals(expected, verse.renderText(screenWidth))
     }
 }
 

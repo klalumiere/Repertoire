@@ -151,7 +151,7 @@ class VerseTest {
     }
 
     @Test
-    fun renderTextAddsChords() {
+    fun renderTextTypicalCase() {
         val verse = Verse.parse("[A](A) million miles awa[y](E)")
         val expected = """
             A                  E

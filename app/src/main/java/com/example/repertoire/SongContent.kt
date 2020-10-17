@@ -1,6 +1,6 @@
 package com.example.repertoire
 
-import kotlinx.coroutines.flow.asFlow
+import kotlin.math.max
 import kotlin.text.StringBuilder
 
 data class Chord(
@@ -59,19 +59,26 @@ data class Verse(
         fun parse(line: String): Verse {
             return VerseParser().parse(line)
         }
+
+        fun toText(chords: List<Chord>, lyricsLength: Int): String {
+            val builder =  StringBuilder()
+            val addSpaces = { count: Int ->
+                if(count > 0) builder.append(" ".repeat(count))
+            }
+            for(chord in chords) {
+                addSpaces(chord.position - builder.length)
+                builder.append(chord.value)
+                if(chord !== chords.last()) addSpaces(1)
+            }
+            addSpaces(lyricsLength - builder.length)
+            return builder.toString()
+        }
     }
 
     fun renderText(screenWidth: Int): String {
         if(lyrics.isEmpty()) return ""
         val builder =  StringBuilder()
-        val addSpaces = { count: Int ->
-            if(count > 0) builder.append(" ".repeat(count))
-        }
-        for(chord in chords) {
-            addSpaces(chord.position - builder.length)
-            builder.append(chord.value)
-        }
-        addSpaces(lyrics.length - builder.length)
+        builder.append(toText(chords, lyrics.length))
         builder.append('\n')
         builder.append(lyrics)
         return builder.toString()

@@ -49,8 +49,6 @@ class ChordBuilderTest {
 
 @RunWith(JUnit4::class)
 class VerseTest {
-    val screenWidth = 1000
-
     @Test
     fun parseLyrics() {
         val verse = Verse.parse("There's a lady who's sure")
@@ -104,19 +102,52 @@ class VerseTest {
         assertEquals(Verse(lyrics="", listOf()), Verse.parse(""))
     }
 
+
     @Test
-    fun renderTextEmptyVerse() {
-        assertEquals("", Verse(lyrics="", listOf()).renderText(screenWidth))
+    fun chordsToTextForNoChords() {
+        assertEquals(" ".repeat(5), Verse.toText(listOf(),5))
     }
 
     @Test
-    fun renderTextOnlyLyricsAddsLineOfSpaces() {
-        val verse = Verse.parse("A million miles away")
-        val expected = """
-                                
-            A million miles away
-        """.trimIndent()
-        assertEquals(expected, verse.renderText(screenWidth))
+    fun chordsToTextSingleChord() {
+        val chords = listOf(Chord(0, "A"))
+        assertEquals("A   ", Verse.toText(chords, 4))
+    }
+
+    @Test
+    fun chordsToTextSingleChordNotFirstNorLastPosition() {
+        val chords = listOf(Chord(2, "A"))
+        assertEquals("  A ", Verse.toText(chords, 4))
+    }
+
+    @Test
+    fun chordsToTextManyChords() {
+        val chords = listOf(Chord(0, "A"), Chord(3, "E"))
+        assertEquals("A  E", Verse.toText(chords, 4))
+    }
+
+    @Test
+    fun chordsToTextForChordsWithManyChar() {
+        val chords = listOf(Chord(0, "F#"), Chord(3, "E"))
+        assertEquals("F# E", Verse.toText(chords, 4))
+    }
+
+    @Test
+    fun chordsToTextForLyricLengthSmallerThanChordsLength() {
+        val chords = listOf(Chord(0, "F#"), Chord(3, "G#"))
+        assertEquals("F# G#", Verse.toText(chords, 3))
+    }
+
+    @Test
+    fun chordsToTextAlwaysAddsAtLeastOneSpaceBetweenChords() {
+        val chords = listOf(Chord(0, "F#"), Chord(1, "G#"))
+        assertEquals("F# G#", Verse.toText(chords, 3))
+    }
+
+
+    @Test
+    fun renderTextEmptyVerse() {
+        assertEquals("", Verse(lyrics="", listOf()).renderText(1000))
     }
 
     @Test
@@ -126,17 +157,7 @@ class VerseTest {
             A                  E
             A million miles away
         """.trimIndent()
-        assertEquals(expected, verse.renderText(screenWidth))
-    }
-
-    @Test
-    fun renderTextHandleChordsWithManyChars() {
-        val verse = Verse.parse("[J](F#)'entre avec l'aub[e](F#)")
-        val expected = """
-            F#                F#
-            J'entre avec l'aube
-        """.trimIndent()
-        assertEquals(expected, verse.renderText(screenWidth))
+        assertEquals(expected, verse.renderText(1000))
     }
 }
 

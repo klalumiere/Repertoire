@@ -1,7 +1,9 @@
 package com.example.repertoire
 
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -24,7 +26,14 @@ class SongActivity : AppCompatActivity() {
             uri = bundle[SONG_URI_AS_STRING] as String
         )
 
-        val observer = Observer<String> { content -> song_text_view.text = "${song.name} $content" }
+        val observer = Observer<SongContent> { content ->
+            val htmlText = content.renderHtmlText(song_text_view.maxWidth,"<b>%s</b>")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                song_text_view.text = Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT)
+            } else {
+                song_text_view.text = Html.fromHtml(htmlText)
+            }
+        }
         songViewModel.songContent.observe(this, observer)
         songViewModel.setSongContent(Uri.parse(song.uri))
     }

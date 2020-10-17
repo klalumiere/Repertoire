@@ -223,4 +223,20 @@ class SongContentTest {
             song
         )
     }
+
+    @Test
+    fun renderText() {
+        val songContent = """
+            [J](F#)'entre avec l'aube
+            [A](A) million miles awa[y](E)
+        """.trimIndent()
+        val expected = """
+            F#                 
+            J'entre avec l'aube
+            A                  E
+            A million miles away
+            
+        """.trimIndent()
+        assertEquals(expected,SongContent.parse(songContent).renderText(1000))
+    }
 }

@@ -145,4 +145,10 @@ data class SongContent(val verses: List<Verse>) {
             return SongContent(songContent.lines().map { Verse.parse(it) })
         }
     }
+
+    fun renderText(screenWidth: Int): String {
+        val builder =  StringBuilder()
+        verses.forEach() { builder.append(it.renderText(screenWidth)) }
+        return builder.toString()
+    }
 }

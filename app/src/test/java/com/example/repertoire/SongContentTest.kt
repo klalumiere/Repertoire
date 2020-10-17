@@ -146,6 +146,32 @@ class VerseTest {
 
 
     @Test
+    fun safeSubstringTypicalCase() {
+        assertEquals("bcd",Verse.safeSubstring("abcde",1,3))
+    }
+
+    @Test
+    fun safeSubstringBeginEqualsOrPassedEndOfString() {
+        assertEquals("",Verse.safeSubstring("ab",2,3))
+    }
+
+    @Test
+    fun safeSubstringLengthPassedEndOfString() {
+        assertEquals("bcd",Verse.safeSubstring("abcd",1,100))
+    }
+
+    @Test
+    fun safeSubstringOnlyFirstCharacter() { // test boundaries
+        assertEquals("a",Verse.safeSubstring("abcd",0,1))
+    }
+
+    @Test
+    fun safeSubstringOnlyLastCharacter() { // test boundaries
+        assertEquals("d",Verse.safeSubstring("abcd",3,1))
+    }
+
+
+    @Test
     fun renderTextEmptyVerse() {
         assertEquals("", Verse(lyrics="", listOf()).renderText(1000))
     }
@@ -156,8 +182,22 @@ class VerseTest {
         val expected = """
             A                  E
             A million miles away
+            
         """.trimIndent()
         assertEquals(expected, verse.renderText(1000))
+    }
+
+    @Test
+    fun renderTextSmallScreen() {
+        val verse = Verse.parse("[A](A) million miles awa[y](E)")
+        val expected = """
+            A         
+            A million 
+                     E
+            miles away
+            
+        """.trimIndent()
+        assertEquals(expected, verse.renderText(10))
     }
 }
 

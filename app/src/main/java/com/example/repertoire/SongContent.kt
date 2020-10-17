@@ -1,6 +1,6 @@
 package com.example.repertoire
 
-import kotlin.math.max
+import kotlin.math.min
 import kotlin.text.StringBuilder
 
 data class Chord(
@@ -73,14 +73,22 @@ data class Verse(
             addSpaces(lyricsLength - builder.length)
             return builder.toString()
         }
+
+        fun safeSubstring(string: String, begin: Int, length: Int): String {
+            if(begin >= string.length) return ""
+            return string.substring(begin, min(string.length, begin + length))
+        }
     }
 
     fun renderText(screenWidth: Int): String {
-        if(lyrics.isEmpty()) return ""
         val builder =  StringBuilder()
-        builder.append(toText(chords, lyrics.length))
-        builder.append('\n')
-        builder.append(lyrics)
+        val chordsAsText = toText(chords, lyrics.length)
+        for(i in lyrics.indices step screenWidth) {
+            builder.append(safeSubstring(chordsAsText, i, screenWidth))
+            builder.append('\n')
+            builder.append(safeSubstring(lyrics, i, screenWidth))
+            builder.append('\n')
+        }
         return builder.toString()
     }
 

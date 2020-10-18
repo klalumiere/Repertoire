@@ -9,11 +9,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <!-- Monospace fonts are important since we want to align chords and lyrics -->
         <TextView
             android:id="@+id/song_text_view"
             android:scrollbars="vertical"
+            android:typeface="monospace"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,7 +32,7 @@ class SongRepository(
         return songDao.getAllLive()
     }
 
-    fun getSongContentLive(): LiveData<String> {
+    fun getSongContentLive(): LiveData<SongContent> {
         return songContent
     }
 
@@ -42,7 +42,7 @@ class SongRepository(
     }
 
     fun setSongContent(uri: Uri) {
-        songContent.value = readSongFile(uri)
+        songContent.value = SongContent.parse(readSongFile(uri))
     }
 
 
@@ -74,5 +74,5 @@ class SongRepository(
     }
 
     private val songDao = db.songDao()
-    private val songContent = MutableLiveData<String>()
+    private val songContent = MutableLiveData<SongContent>()
 }

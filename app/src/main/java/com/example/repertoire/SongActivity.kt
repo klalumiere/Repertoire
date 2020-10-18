@@ -1,14 +1,13 @@
 package com.example.repertoire
 
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.coroutineScope
 import kotlinx.android.synthetic.main.activity_song.*
 
 class SongActivity : AppCompatActivity() {
@@ -29,18 +28,10 @@ class SongActivity : AppCompatActivity() {
         )
 
         song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
-
-        songViewModel.setSongContent(Uri.parse(song.uri))
     }
 
 
-    private fun convertToHtml(htmlText: String): Spanned {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            Html.fromHtml(htmlText)
-        }
-    }
+
 
     // Need to be called in or after `addOnGlobalLayoutListener` to call `paint` and `measuredWidth`
     private fun getScreenWidthInChar(): Int {
@@ -56,19 +47,23 @@ class SongActivity : AppCompatActivity() {
     }
 
     private fun onGlobalLayoutListener() {
-        if(songContentObserver != null) return
+        if(songContentAdapter != null) return
         // Need to be called in or after `addOnGlobalLayoutListener`
         val screenWidthInChar = getScreenWidthInChar()
-        songContentObserver = Observer<SongContent> { content ->
-            val htmlText = content.renderHtmlText(screenWidthInChar,
-                "<b>%s</b>")
-            song_text_view.text = convertToHtml(htmlText)
+        songContentAdapter = SongContentAdapter(screenWidthInChar)
+        val songContentObserver = Observer<SongContent> { content ->
+            songContentAdapter?.renderSongContent(content, lifecycle.coroutineScope)
         }
-        songViewModel.songContent.observe(this, songContentObserver!!)
+        val renderedSongContentObserver = Observer<Spanned> { content ->
+            song_text_view.text = content
+        }
+        songViewModel.songContent.observe(this, songContentObserver)
+        songContentAdapter?.getRenderedSongContent()?.observe(this, renderedSongContentObserver)
+        songViewModel.setSongContent(Uri.parse(song.uri), lifecycle.coroutineScope)
     }
 
 
     private lateinit var song: Song
-    private var songContentObserver: Observer<SongContent>? = null
+    private var songContentAdapter: SongContentAdapter? = null
     private val songViewModel: SongViewModel by viewModels()
 }

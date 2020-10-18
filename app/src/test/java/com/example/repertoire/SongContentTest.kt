@@ -173,7 +173,7 @@ class VerseTest {
 
     @Test
     fun renderTextEmptyVerse() {
-        assertEquals("", Verse(lyrics="", listOf()).renderText(1000))
+        assertEquals("\n\n", Verse(lyrics="", listOf()).renderText(1000))
     }
 
     @Test

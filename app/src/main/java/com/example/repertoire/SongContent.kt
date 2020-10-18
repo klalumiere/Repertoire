@@ -83,6 +83,7 @@ data class Verse(
     fun renderText(screenWidthInChar: Int, chordLineDecorator: (String) -> String = { x -> x },
                    newline: String = "\n"): String
     {
+        if(lyrics.isEmpty()) return newline.repeat(2)
         val builder =  StringBuilder()
         val chordsAsText = toText(chords, lyrics.length)
         for(i in lyrics.indices step screenWidthInChar) {

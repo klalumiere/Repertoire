@@ -80,21 +80,21 @@ data class Verse(
         }
     }
 
-    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x },
+    fun renderText(screenWidthInChar: Int, chordLineDecorator: (String) -> String = { x -> x },
                    newline: String = "\n"): String
     {
         val builder =  StringBuilder()
         val chordsAsText = toText(chords, lyrics.length)
-        for(i in lyrics.indices step screenWidth) {
-            builder.append(chordLineDecorator(safeSubstring(chordsAsText, i, screenWidth)))
+        for(i in lyrics.indices step screenWidthInChar) {
+            builder.append(chordLineDecorator(safeSubstring(chordsAsText, i, screenWidthInChar)))
             builder.append(newline)
-            builder.append(safeSubstring(lyrics, i, screenWidth))
+            builder.append(safeSubstring(lyrics, i, screenWidthInChar))
             builder.append(newline)
         }
         return builder.toString()
     }
 
-    fun renderHtmlText(screenWidth: Int, chordFormat: String): String {
+    fun renderHtmlText(screenWidthInChar: Int, chordFormat: String): String {
         val chordLineDecorator = { line: String ->
             val result = StringBuilder()
             var chordBuffer = StringBuilder()
@@ -113,7 +113,8 @@ data class Verse(
             if(chordBuffer.isNotEmpty()) result.append(chordFormat.format(chordBuffer))
             result.toString()
         }
-        return renderText(screenWidth, chordLineDecorator=chordLineDecorator, newline="<br>\n")
+        return renderText(screenWidthInChar, chordLineDecorator=chordLineDecorator,
+            newline="<br>\n")
     }
 
 
@@ -170,20 +171,20 @@ data class SongContent(val verses: List<Verse>) {
         }
     }
 
-    fun renderText(screenWidth: Int, chordLineDecorator: (String) -> String = { x -> x },
+    fun renderText(screenWidthInChar: Int, chordLineDecorator: (String) -> String = { x -> x },
                    newline: String = "\n"): String
     {
         val builder =  StringBuilder()
         verses.forEach {
-            builder.append(it.renderText(screenWidth, chordLineDecorator=chordLineDecorator,
+            builder.append(it.renderText(screenWidthInChar, chordLineDecorator=chordLineDecorator,
                 newline=newline))
         }
         return builder.toString()
     }
 
-    fun renderHtmlText(screenWidth: Int, chordFormat: String): String {
+    fun renderHtmlText(screenWidthInChar: Int, chordFormat: String): String {
         val builder =  StringBuilder()
-        verses.forEach { builder.append(it.renderHtmlText(screenWidth, chordFormat)) }
+        verses.forEach { builder.append(it.renderHtmlText(screenWidthInChar, chordFormat)) }
         return builder.toString()
     }
 }

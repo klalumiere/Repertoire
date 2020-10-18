@@ -1,9 +1,8 @@
+package com.example.repertoire
+
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.repertoire.AppDatabase
-import com.example.repertoire.Song
-import com.example.repertoire.SongDao
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains

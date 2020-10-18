@@ -34,6 +34,7 @@ class SongActivity : AppCompatActivity() {
 
     private fun onGlobalLayoutListener() {
         // Need to be in `addOnGlobalLayoutListener` to call `paint` and `measuredWidth`
+        if(songContentObserver != null) return
         val widthOfM = song_text_view.paint.measureText("M")
         val screenWidthInChar = (
                 if (widthOfM > 0) {

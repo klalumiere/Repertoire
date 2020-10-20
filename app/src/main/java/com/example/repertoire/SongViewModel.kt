@@ -3,6 +3,7 @@ package com.example.repertoire
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
@@ -19,7 +20,7 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
         uris.forEach { uri -> repository.remove(uri) }
     }
 
-    fun setSongContent(uri: Uri) = viewModelScope.launch {
+    fun setSongContent(uri: Uri, scope: LifecycleCoroutineScope) = scope.launch {
         repository.setSongContent(uri)
     }
 }

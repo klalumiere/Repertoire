@@ -30,7 +30,7 @@ class SongRepositoryTest {
     @Before
     fun createRegister() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        contentResolver = mock<ContentResolver>()
+        contentResolver = mock()
         db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
         register = SongRepository(contentResolver, db, context)
         songDao = db.songDao()

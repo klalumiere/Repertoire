@@ -1,5 +1,6 @@
 package com.example.repertoire
 
+import android.content.Context
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
@@ -8,7 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.launch
 
-class SongContentAdapter(private val screenWidthInChar: Int) {
+class SongContentAdapter(
+    private val screenWidthInChar: Int,
+//    context: Context
+) {
     fun getRenderedSongContent(): LiveData<Spanned> {
         return renderedSongContent
     }
@@ -29,4 +33,5 @@ class SongContentAdapter(private val screenWidthInChar: Int) {
     }
 
     private val renderedSongContent = MutableLiveData<Spanned>()
+//    private val chordColor = context.resources.getColor(R.color.colorSecondary)
 }

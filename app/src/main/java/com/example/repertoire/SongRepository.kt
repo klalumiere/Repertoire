@@ -2,6 +2,7 @@ package com.example.repertoire
 
 import android.app.Application
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
@@ -13,11 +14,12 @@ import java.io.IOException
 
 class SongRepository(
     private val resolver: ContentResolver,
-    private val db: AppDatabase
+    db: AppDatabase,
+    context: Context
 )
 {
     constructor(application: Application)
-            : this(application.contentResolver, AppDatabase.getInstance(application))
+            : this(application.contentResolver, AppDatabase.getInstance(application), application)
 
     suspend fun add(uri: Uri) {
         add(uri, resolveName(uri))
@@ -47,7 +49,7 @@ class SongRepository(
 
 
     private fun resolveName(uri: Uri): String {
-        var name = "Name Not Found"
+        var name = nameNotFoundErrorMessage
         val cursor: Cursor? = resolver.query(uri,
             arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
         cursor?.use {
@@ -69,10 +71,13 @@ class SongRepository(
         }
         catch(e: IOException)
         { }
-        val sadEmoji = "\uD83D\uDE1E"
-        return "Cannot read file $sadEmoji"
+        return cannotReadFileErrorMessage
     }
 
+    private val cannotReadFileErrorMessage =
+        context.resources.getString(R.string.cannot_read_file_error_message)
+    private val nameNotFoundErrorMessage =
+        context.resources.getString(R.string.name_not_found_error_message)
     private val songDao = db.songDao()
     private val songContent = MutableLiveData<SongContent>()
 }

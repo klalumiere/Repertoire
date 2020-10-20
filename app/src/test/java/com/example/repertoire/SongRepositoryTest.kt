@@ -1,6 +1,7 @@
 package com.example.repertoire
 
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
@@ -20,6 +21,7 @@ import org.robolectric.annotation.Config
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
+    private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
     private lateinit var register: SongRepository
@@ -27,10 +29,10 @@ class SongRepositoryTest {
 
     @Before
     fun createRegister() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock<ContentResolver>()
         db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
-        register = SongRepository(contentResolver, db)
+        register = SongRepository(contentResolver, db, context)
         songDao = db.songDao()
     }
 
@@ -87,7 +89,7 @@ class SongRepositoryTest {
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
         }
-        val register = SongRepository(contentResolver, db)
+        val register = SongRepository(contentResolver, db, context)
 
         runBlocking { register.add(contentUri) }
 

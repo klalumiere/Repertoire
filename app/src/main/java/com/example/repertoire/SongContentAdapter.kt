@@ -18,9 +18,9 @@ class SongContentAdapter(
     }
 
     fun renderSongContent(content: SongContent, scope: LifecycleCoroutineScope) = scope.launch {
-        val colorString = "#${Integer.toHexString(chordColor)}"
+        val colorString = Integer.toHexString(chordColor).substring(2) // strip alpha value
         val htmlText = content.renderHtmlText(screenWidthInChar,
-            "<font color=\"$colorString\"><b>%s</b></font>")
+            "<font color='#$colorString'><b style='color:'>%s</b></font>")
         renderedSongContent.value = HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 

@@ -27,6 +27,7 @@ class SongActivity : AppCompatActivity() {
             uri = bundle[SONG_URI_AS_STRING] as String
         )
 
+        song_title_text_view.text = song.name
         song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
     }
 
@@ -50,7 +51,7 @@ class SongActivity : AppCompatActivity() {
         if(songContentAdapter != null) return
         // Need to be called in or after `addOnGlobalLayoutListener`
         val screenWidthInChar = getScreenWidthInChar()
-        songContentAdapter = SongContentAdapter(screenWidthInChar)
+        songContentAdapter = SongContentAdapter(screenWidthInChar, this)
         val songContentObserver = Observer<SongContent> { content ->
             songContentAdapter?.renderSongContent(content, lifecycle.coroutineScope)
         }

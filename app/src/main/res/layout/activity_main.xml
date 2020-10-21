@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/addSongsFAB_margin"
+        android:layout_margin="@dimen/add_songs_FAB_margin"
         android:contentDescription="@string/add_songs"
         app:srcCompat="@drawable/ic_plus_24" />
 

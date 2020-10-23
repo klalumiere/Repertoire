@@ -10,8 +10,8 @@ Create your music chord files using a Markdown-like syntax and render them on yo
 
 ## Usage
 
-1. Transcribe (or write) your song. ![Transcribe (or write) your song.](images/0writeSong.png)
-1. Share the file with your cell phone, e.g. using Google Drive. *Tips:* star your song to find it more easily! ![Share the file with your cell phone.](images/1addFileGoogleDrive.png)
-1. Use the app to render your song. That's it, you're ready to rock! ![Use the app to render your song.](images/2readyToRock.png)
+1. Transcribe (or write) your song\*. ![Transcribe (or write) your song](images/0writeSong.png)
+1. Share the file with your cell phone, for instance using Google Drive. **Tips:** *star* your songs to find them more easily! ![Share the file with your cell phone](images/1addFileGoogleDrive.png)
+1. Use the app to render your song. That's it, you're ready to rock! 😎 ![Use the app to render your song](images/2readyToRock.png)
 
-Note that the characters `{` and `}` are reserved for future features.
+\* *Note that the characters `{` and `}` are reserved for future features.*

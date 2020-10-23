@@ -2,7 +2,7 @@
     <string name="app_name">Repertoire</string>
     <string name="action_delete">Delete</string>
     <string name="add_songs">Add songs</string>
-    <string name="cannot_read_file_error_message">Cannot read file 😞</string>
+    <string name="cannot_read_file_error_message">Cannot read file 😞. Did you move it?</string>
     <string name="name_not_found_error_message">Name Not Found</string>
     <string name="repertoire_db">RepertoireDb</string>
 </resources>

@@ -1,5 +1,5 @@
 <p align="center">
-    ![Repertoire](app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png)
+    <img width="192" height="192" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png">
 </p>
 
 # Repertoire

@@ -3,19 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SongActivity">
 
     <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <!-- Monospace fonts are important since we want to align chords and lyrics -->
-        <TextView
-            android:id="@+id/song_text_view"
-            android:scrollbars="vertical"
-            android:typeface="monospace"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/song_title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/song_title_text_view_padding"
+                android:typeface="monospace"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@id/song_text_view"/>
+
+            <!-- Monospace fonts are important since we want to align chords and lyrics -->
+            <TextView
+                android:id="@+id/song_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/song_text_view_margin"
+                android:layout_marginRight="@dimen/song_text_view_margin"
+                android:layout_marginLeft="@dimen/song_text_view_margin"
+                android:scrollbars="vertical"
+                android:typeface="monospace"
+                app:layout_constraintTop_toBottomOf="@id/song_title_text_view"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

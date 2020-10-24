@@ -18,6 +18,18 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
+// TODO: Unit/Integration test SongContentAdapter.kt
+// TODO: Unit/Integration test SongRecyclerView.kt [androidTest->SongRecyclerViewTest.kt, test->SongItemCallbackTest.kt]
+// TODO: Unit/Integration test SongRepository.kt [test->SongRepositoryTest.kt]
+// TODO: Unit/Integration test SongViewModel.kt
+
+// TODO: End to end tests
+// TODO: Can add song
+// TODO: Can delete song
+// TODO: Can render song
+// TODO: Selection is preserved when device is turned
+// TODO: Added, deleted and added song is not selected
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

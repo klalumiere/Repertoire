@@ -42,7 +42,7 @@ class SongActivity : AppCompatActivity() {
             // Moreover, could be problematic with non extended ascii (e.g. arabic char)
             (song_text_view.measuredWidth/widthOfM).toInt()
         } else {
-            Log.w("SongActivity","The width of `M` is 0.")
+            Log.w("SongActivity", "The width of `M` is 0.")
             30
         }
     }

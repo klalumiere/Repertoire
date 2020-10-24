@@ -18,8 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
-// TODO: Unit/Integration test SongContentAdapter.kt
-// TODO: Unit/Integration test SongRecyclerView.kt [androidTest->SongRecyclerViewTest.kt, test->SongItemCallbackTest.kt]
+// TODO: Unit/Integration test SongRecyclerView.kt [test->SongRecyclerViewTest.kt]
 // TODO: Unit/Integration test SongRepository.kt [test->SongRepositoryTest.kt]
 // TODO: Unit/Integration test SongViewModel.kt
 

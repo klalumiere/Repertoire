@@ -1,6 +1,5 @@
 package com.example.repertoire
 
-import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -12,15 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import java.io.File
 import java.io.IOException
 
-class SongRepository(
-    private val resolver: ContentResolver,
-    db: AppDatabase,
-    context: Context
-)
-{
-    constructor(application: Application)
-            : this(application.contentResolver, AppDatabase.getInstance(application), application)
-
+class SongRepository(context: Context) {
     suspend fun add(uri: Uri) {
         add(uri, resolveName(uri))
     }
@@ -36,6 +27,14 @@ class SongRepository(
 
     fun getSongContentLive(): LiveData<SongContent> {
         return songContent
+    }
+
+    fun injectContentResolverForTests(resolverRhs: ContentResolver) {
+        resolver = resolverRhs
+    }
+
+    fun injectDatabaseForTests(db: AppDatabase) {
+        songDao = db.songDao()
     }
 
     suspend fun remove(uri: Uri) {
@@ -78,6 +77,8 @@ class SongRepository(
         context.resources.getString(R.string.cannot_read_file_error_message)
     private val nameNotFoundErrorMessage =
         context.resources.getString(R.string.name_not_found_error_message)
-    private val songDao = db.songDao()
+
+    private var resolver = context.contentResolver
+    private var songDao = AppDatabase.getInstance(context).songDao()
     private val songContent = MutableLiveData<SongContent>()
 }

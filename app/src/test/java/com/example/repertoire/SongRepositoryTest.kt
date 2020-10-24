@@ -32,7 +32,10 @@ class SongRepositoryTest {
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock()
         db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
-        register = SongRepository(contentResolver, db, context)
+        register = SongRepository(context).apply {
+            injectContentResolverForTests(contentResolver)
+            injectDatabaseForTests(db)
+        }
         songDao = db.songDao()
     }
 
@@ -89,7 +92,7 @@ class SongRepositoryTest {
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
         }
-        val register = SongRepository(contentResolver, db, context)
+        register.injectContentResolverForTests(contentResolver)
 
         runBlocking { register.add(contentUri) }
 

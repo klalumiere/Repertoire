@@ -1,13 +1,20 @@
 package com.example.repertoire
 
+import android.os.Looper.getMainLooper
 import androidx.recyclerview.widget.RecyclerView
 import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.After
 import org.junit.Assert.*
+import org.junit.Before
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
+@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongRecyclerViewTest {
     private val song = Song(
         uri = "content://arbitrary/uri",
@@ -66,5 +73,18 @@ class SongRecyclerViewTest {
 
             assertEquals(holder.getItemDetails().selectionKey, song.uri)
         }
+    }
+
+    @Before
+    fun allowMainThreadQueriesInDatabase() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context)
+    }
+    @After
+    fun preventExceptions() {
+        shadowOf(getMainLooper()).idle()
+        
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context).close()
     }
 }

@@ -29,14 +29,6 @@ class SongRepository(context: Context) {
         return songContent
     }
 
-    fun injectContentResolverForTests(resolverRhs: ContentResolver) {
-        resolver = resolverRhs
-    }
-
-    fun injectDatabaseForTests(db: AppDatabase) {
-        songDao = db.songDao()
-    }
-
     suspend fun remove(uri: Uri) {
         resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         songDao.delete(uri.toString())
@@ -44,6 +36,15 @@ class SongRepository(context: Context) {
 
     fun setSongContent(uri: Uri) {
         songContent.value = SongContent.parse(readSongFile(uri))
+    }
+
+
+    fun injectContentResolverForTests(resolverRhs: ContentResolver) {
+        resolver = resolverRhs
+    }
+
+    fun injectDatabaseForTests(db: AppDatabase) {
+        songDao = db.songDao()
     }
 
 

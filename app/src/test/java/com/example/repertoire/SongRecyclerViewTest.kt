@@ -79,16 +79,11 @@ class SongViewHolderTest {
 
 
     @Before
-    fun allowMainThreadQueriesInDatabase() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context)
-    }
+    fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
     @After
     fun preventExceptions() {
         shadowOf(getMainLooper()).idle()
-        
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context).close()
+        closeDatabaseAllowingMainThreadQueries()
     }
 }
 
@@ -161,7 +156,7 @@ class SongAdapterTest {
         val scenario = launchActivity<MainActivity>()
         scenario.onActivity { activity ->
             val holder = createSongViewHolder(activity)
-            createSongAdapter(song).onBindViewHolder(holder,0)
+            createSongAdapter(listOf(song)).onBindViewHolder(holder,0)
             assertEquals(song.name, holder.getTextViewed())
         }
     }
@@ -178,7 +173,7 @@ class SongAdapterTest {
                     } doReturn booleanValue
                 }
 
-                createSongAdapter(song, mockedTracker).onBindViewHolder(holder,0)
+                createSongAdapter(listOf(song), mockedTracker).onBindViewHolder(holder,0)
 
                 assertEquals(booleanValue, holder.isViewActivated())
             }
@@ -190,29 +185,59 @@ class SongAdapterTest {
         val scenario = launchActivity<MainActivity>()
         scenario.onActivity { activity ->
             val group = activity.findViewById<RecyclerView>(R.id.song_list_view)
-            assertNotEquals(null, createSongAdapter(song).onCreateViewHolder(group,0))
+            assertNotEquals(null,
+                createSongAdapter(listOf(song)).onCreateViewHolder(group,0))
         }
     }
 
 
     @Before
-    fun allowMainThreadQueriesInDatabase() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context)
-    }
+    fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
     @After
     fun preventExceptions() {
         shadowOf(getMainLooper()).idle()
-
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context).close()
+        closeDatabaseAllowingMainThreadQueries()
     }
 }
 
 
-private fun createSongAdapter(song: Song, trackerRhs: SelectionTracker<String> = mock()): SongAdapter {
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
+class SongItemKeyProviderTest {
+    private val songs = listOf(
+        Song(uri = "content://arbitrary/uri", name = "Pearl Jam - Black"),
+        Song(uri = "content://arbitrary/uri2", name = "Foo Fighters - Walk")
+    )
+
+    @Test
+    fun getKey() {
+        val provider = SongItemKeyProvider(createSongAdapter(songs))
+        assertEquals(songs[0].uri, provider.getKey(0))
+    }
+
+    @Test
+    fun getPosition() {
+        val provider = SongItemKeyProvider(createSongAdapter(songs))
+        assertEquals(1, provider.getPosition(songs[1].uri))
+    }
+}
+
+
+private fun closeDatabaseAllowingMainThreadQueries() {
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
+    AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context).close()
+}
+
+private fun createDatabaseAllowingMainThreadQueries() {
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
+    AppDatabase.getInstanceAllowingMainThreadQueriesForTests(context)
+}
+
+private fun createSongAdapter(songs: List<Song>, trackerRhs: SelectionTracker<String> = mock())
+        : SongAdapter
+{
     return SongAdapter().apply {
-        submitList(listOf(song))
+        submitList(songs)
         tracker = trackerRhs
     }
 }

@@ -24,15 +24,15 @@ class SongRepositoryTest {
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
-    private lateinit var register: SongRepository
+    private lateinit var repository: SongRepository
     private lateinit var songDao: SongDao
 
     @Before
-    fun createRegister() {
+    fun createRepository() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock()
         db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
-        register = SongRepository(context).apply {
+        repository = SongRepository(context).apply {
             injectContentResolverForTests(contentResolver)
             injectDatabaseForTests(db)
         }
@@ -41,21 +41,21 @@ class SongRepositoryTest {
 
     @Test
     fun addTakesPersistableUriPermission() {
-        runBlocking { register.add(contentUri, songName) }
+        runBlocking { repository.add(contentUri, songName) }
         verify(contentResolver).takePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
     fun removeReleasesPersistableUriPermission() {
-        runBlocking { register.remove(contentUri) }
+        runBlocking { repository.remove(contentUri) }
         verify(contentResolver).releasePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
     fun addAddsSongToDb() {
-        runBlocking { register.add(contentUri, songName) }
+        runBlocking { repository.add(contentUri, songName) }
         val song = Song(
             uri = contentUri.toString(),
             name = songName
@@ -65,7 +65,7 @@ class SongRepositoryTest {
 
     @Test
     fun addRemovesExtensionFromSongName() {
-        runBlocking { register.add(contentUri, "Pantera - Walk.md") }
+        runBlocking { repository.add(contentUri, "Pantera - Walk.md") }
         val song = Song(
             uri = contentUri.toString(),
             name = "Pantera - Walk"
@@ -75,8 +75,8 @@ class SongRepositoryTest {
 
     @Test
     fun removeRemovesSongFromDb() {
-        runBlocking { register.add(contentUri, songName) }
-        runBlocking { register.remove(contentUri) }
+        runBlocking { repository.add(contentUri, songName) }
+        runBlocking { repository.remove(contentUri) }
         assertTrue(songDao.getAll().isEmpty())
     }
 
@@ -92,9 +92,9 @@ class SongRepositoryTest {
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
         }
-        register.injectContentResolverForTests(contentResolver)
+        repository.injectContentResolverForTests(contentResolver)
 
-        runBlocking { register.add(contentUri) }
+        runBlocking { repository.add(contentUri) }
 
         val song = Song(
             uri = contentUri.toString(),

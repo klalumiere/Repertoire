@@ -31,7 +31,7 @@ class SongRepositoryTest {
     fun createRegister() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock()
-        db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
+        db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
         register = SongRepository(context).apply {
             injectContentResolverForTests(contentResolver)
             injectDatabaseForTests(db)

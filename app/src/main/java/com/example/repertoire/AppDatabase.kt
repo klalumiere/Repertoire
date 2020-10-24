@@ -17,8 +17,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
 
-        // For instrumented tests
-        fun createInMemoryDatabaseBuilder(context: Context): Builder<AppDatabase> {
+        fun createInMemoryDatabaseBuilderForTests(context: Context): Builder<AppDatabase> {
             return Room.inMemoryDatabaseBuilder(context,AppDatabase::class.java)
         }
 

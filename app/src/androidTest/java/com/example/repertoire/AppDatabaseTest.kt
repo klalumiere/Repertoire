@@ -33,28 +33,28 @@ class AppDatabaseTest {
     @Test
     fun canInsert() {
         runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAllLive().getOrAwaitValue(),contains(arbitrarySong))
+        assertThat(songDao.getAll().getOrAwaitValue(),contains(arbitrarySong))
     }
 
     @Test
     fun canDelete() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.delete(arbitrarySong) }
-        assertThat(songDao.getAllLive().getOrAwaitValue(),empty())
+        assertThat(songDao.getAll().getOrAwaitValue(),empty())
     }
 
     @Test
     fun canDeleteFromUri() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.delete(arbitrarySong.uri) }
-        assertThat(songDao.getAllLive().getOrAwaitValue(),empty())
+        assertThat(songDao.getAll().getOrAwaitValue(),empty())
     }
 
     @Test
     fun ignoreDuplicateUri() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAllLive().getOrAwaitValue(),contains(arbitrarySong))
+        assertThat(songDao.getAll().getOrAwaitValue(),contains(arbitrarySong))
     }
 
     @Test
@@ -72,7 +72,7 @@ class AppDatabaseTest {
             name = "AC/DC - Back in Black"
         )
         songDao.insertAll(songL,songZ,songA)
-        assertThat(songDao.getAllLive().getOrAwaitValue(),contains(songA,songL,songZ))
+        assertThat(songDao.getAll().getOrAwaitValue(),contains(songA,songL,songZ))
     }
 
 

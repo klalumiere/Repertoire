@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = SongRepository(application)
-    val songList = repository.getAllSongsLive()
-    val songContent = repository.getSongContentLive()
+    val songList = repository.getAllSongs()
+    val songContent = repository.getSongContent()
 
     fun add(uris: List<Uri>) = viewModelScope.launch {
         uris.forEach { uri -> repository.add(uri) }

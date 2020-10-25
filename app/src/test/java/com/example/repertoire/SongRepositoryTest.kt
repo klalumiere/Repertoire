@@ -60,7 +60,7 @@ class SongRepositoryTest {
             uri = contentUri.toString(),
             name = songName
         )
-        assertEquals(repository.getAllSongsLive().getOrAwaitValue(), listOf(song))
+        assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
 
     @Test
@@ -70,14 +70,14 @@ class SongRepositoryTest {
             uri = contentUri.toString(),
             name = "Pantera - Walk"
         )
-        assertEquals(repository.getAllSongsLive().getOrAwaitValue(), listOf(song))
+        assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
 
     @Test
     fun removeRemovesSongFromDb() {
         runBlocking { repository.add(contentUri, songName) }
         runBlocking { repository.remove(contentUri) }
-        assertTrue(repository.getAllSongsLive().getOrAwaitValue().isEmpty())
+        assertTrue(repository.getAllSongs().getOrAwaitValue().isEmpty())
     }
 
     @Test
@@ -100,7 +100,7 @@ class SongRepositoryTest {
             uri = contentUri.toString(),
             name = songName
         )
-        assertEquals(repository.getAllSongsLive().getOrAwaitValue(), listOf(song))
+        assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
 
 

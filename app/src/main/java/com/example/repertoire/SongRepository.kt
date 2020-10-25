@@ -21,11 +21,11 @@ class SongRepository(context: Context) {
         songDao.insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
     }
 
-    fun getAllSongsLive(): LiveData<List<Song>> {
-        return songDao.getAllLive()
+    fun getAllSongs(): LiveData<List<Song>> {
+        return songDao.getAll()
     }
 
-    fun getSongContentLive(): LiveData<SongContent> {
+    fun getSongContent(): LiveData<SongContent> {
         return songContent
     }
 

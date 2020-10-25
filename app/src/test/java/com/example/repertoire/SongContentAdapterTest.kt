@@ -31,8 +31,9 @@ class SongContentAdapterTest {
         val lifecycleOwner = TestLifecycleOwner()
 
         val beforeRendering = adapter.getRenderedSongContent().value.toString()
+        val awaiter = LiveDataAwaiter(adapter.getRenderedSongContent())
         runBlocking { adapter.renderSongContent(songContent,lifecycleOwner.lifecycleScope) }
 
-        assertNotEquals(beforeRendering, adapter.getRenderedSongContent().value.toString())
+        assertNotEquals(beforeRendering, awaiter.getOrAwaitValue().toString())
     }
 }

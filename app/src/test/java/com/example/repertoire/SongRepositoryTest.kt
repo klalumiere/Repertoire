@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
@@ -12,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -25,7 +27,6 @@ class SongRepositoryTest {
     private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
     private lateinit var repository: SongRepository
-    private lateinit var songDao: SongDao
 
     @Before
     fun createRepository() {
@@ -36,7 +37,6 @@ class SongRepositoryTest {
             injectContentResolverForTests(contentResolver)
             injectDatabaseForTests(db)
         }
-        songDao = db.songDao()
     }
 
     @Test
@@ -60,7 +60,7 @@ class SongRepositoryTest {
             uri = contentUri.toString(),
             name = songName
         )
-        assertEquals(songDao.getAll(), listOf(song))
+        assertEquals(repository.getAllSongsLive().getOrAwaitValue(), listOf(song))
     }
 
     @Test
@@ -70,14 +70,14 @@ class SongRepositoryTest {
             uri = contentUri.toString(),
             name = "Pantera - Walk"
         )
-        assertEquals(songDao.getAll(), listOf(song))
+        assertEquals(repository.getAllSongsLive().getOrAwaitValue(), listOf(song))
     }
 
     @Test
     fun removeRemovesSongFromDb() {
         runBlocking { repository.add(contentUri, songName) }
         runBlocking { repository.remove(contentUri) }
-        assertTrue(songDao.getAll().isEmpty())
+        assertTrue(repository.getAllSongsLive().getOrAwaitValue().isEmpty())
     }
 
     @Test
@@ -100,11 +100,16 @@ class SongRepositoryTest {
             uri = contentUri.toString(),
             name = songName
         )
-        assertEquals(songDao.getAll(), listOf(song))
+        assertEquals(repository.getAllSongsLive().getOrAwaitValue(), listOf(song))
     }
+
 
     @After
     fun closeDb() {
         db.close()
     }
+
+    @Rule
+    @JvmField
+    val instantExecutorRule = InstantTaskExecutorRule()
 }

@@ -82,7 +82,7 @@ class SongViewHolderTest {
     fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
     @After
     fun preventExceptions() {
-        shadowOf(getMainLooper()).idle()
+        executeQueuedRunnables()
         closeDatabaseAllowingMainThreadQueries()
     }
 }
@@ -195,7 +195,7 @@ class SongAdapterTest {
     fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
     @After
     fun preventExceptions() {
-        shadowOf(getMainLooper()).idle()
+        executeQueuedRunnables()
         closeDatabaseAllowingMainThreadQueries()
     }
 }
@@ -245,4 +245,8 @@ private fun createSongAdapter(songs: List<Song>, trackerRhs: SelectionTracker<St
 private fun createSongViewHolder(activity: MainActivity): SongViewHolder {
     val group = activity.findViewById<RecyclerView>(R.id.song_list_view)
     return SongViewHolder.create(group)
+}
+
+private fun executeQueuedRunnables() {
+    shadowOf(getMainLooper()).idle()
 }

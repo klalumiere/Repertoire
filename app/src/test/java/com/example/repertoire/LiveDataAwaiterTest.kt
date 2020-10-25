@@ -21,7 +21,7 @@ class LiveDataAwaiterTest {
         assertEquals(5, awaiter.getOrAwaitValue())
     }
 
-    
+
     private fun executeQueuedRunnables() {
         shadowOf(getMainLooper()).idle()
     }

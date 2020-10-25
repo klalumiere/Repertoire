@@ -1,11 +1,13 @@
 package com.example.repertoire
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -31,9 +33,12 @@ class SongContentAdapterTest {
         val lifecycleOwner = TestLifecycleOwner()
 
         val beforeRendering = adapter.getRenderedSongContent().value.toString()
-        val awaiter = LiveDataAwaiter(adapter.getRenderedSongContent())
         runBlocking { adapter.renderSongContent(songContent,lifecycleOwner.lifecycleScope) }
-
-        assertNotEquals(beforeRendering, awaiter.getOrAwaitValue().toString())
+        assertNotEquals(beforeRendering, adapter.getRenderedSongContent().getOrAwaitValue().toString())
     }
+
+
+    @Rule
+    @JvmField
+    val instantExecutorRule = InstantTaskExecutorRule()
 }

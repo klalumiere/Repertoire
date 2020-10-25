@@ -1,6 +1,6 @@
 package com.example.repertoire
 
-import android.os.Looper.getMainLooper
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.launchActivity
@@ -10,10 +10,10 @@ import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -82,9 +82,13 @@ class SongViewHolderTest {
     fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
     @After
     fun preventExceptions() {
-        executeQueuedRunnables()
         closeDatabaseAllowingMainThreadQueries()
     }
+
+
+    @Rule
+    @JvmField
+    val instantExecutorRule = InstantTaskExecutorRule()
 }
 
 
@@ -195,9 +199,13 @@ class SongAdapterTest {
     fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
     @After
     fun preventExceptions() {
-        executeQueuedRunnables()
         closeDatabaseAllowingMainThreadQueries()
     }
+
+
+    @Rule
+    @JvmField
+    val instantExecutorRule = InstantTaskExecutorRule()
 }
 
 
@@ -245,8 +253,4 @@ private fun createSongAdapter(songs: List<Song>, trackerRhs: SelectionTracker<St
 private fun createSongViewHolder(activity: MainActivity): SongViewHolder {
     val group = activity.findViewById<RecyclerView>(R.id.song_list_view)
     return SongViewHolder.create(group)
-}
-
-private fun executeQueuedRunnables() {
-    shadowOf(getMainLooper()).idle()
 }

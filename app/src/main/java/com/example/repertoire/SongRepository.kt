@@ -34,8 +34,12 @@ class SongRepository(context: Context) {
         songDao.delete(uri.toString())
     }
 
+    fun setSongContent(content: String) {
+        songContent.value = SongContent.parse(content)
+    }
+
     fun setSongContent(uri: Uri) {
-        songContent.value = SongContent.parse(readSongFile(uri))
+        setSongContent(readSongFile(uri))
     }
 
 

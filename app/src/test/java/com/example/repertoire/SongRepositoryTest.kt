@@ -103,6 +103,15 @@ class SongRepositoryTest {
         assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
 
+    @Test
+    fun setSongContent() {
+        runBlocking { repository.setSongContent("J'entre avec l'aube") }
+        val expected = SongContent(listOf(
+            Verse(lyrics="J'entre avec l'aube", listOf()),
+        ))
+        assertEquals(expected, repository.getSongContent().getOrAwaitValue())
+    }
+
 
     @After
     fun closeDb() {

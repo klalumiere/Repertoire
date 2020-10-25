@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
@@ -12,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -24,57 +26,58 @@ class SongRepositoryTest {
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
-    private lateinit var register: SongRepository
-    private lateinit var songDao: SongDao
+    private lateinit var repository: SongRepository
 
     @Before
-    fun createRegister() {
+    fun createRepository() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock()
-        db = AppDatabase.createInMemoryDatabaseBuilder(context).allowMainThreadQueries().build()
-        register = SongRepository(contentResolver, db, context)
-        songDao = db.songDao()
+        db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
+        repository = SongRepository(context).apply {
+            injectContentResolverForTests(contentResolver)
+            injectDatabaseForTests(db)
+        }
     }
 
     @Test
     fun addTakesPersistableUriPermission() {
-        runBlocking { register.add(contentUri, songName) }
+        runBlocking { repository.add(contentUri, songName) }
         verify(contentResolver).takePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
     fun removeReleasesPersistableUriPermission() {
-        runBlocking { register.remove(contentUri) }
+        runBlocking { repository.remove(contentUri) }
         verify(contentResolver).releasePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
     fun addAddsSongToDb() {
-        runBlocking { register.add(contentUri, songName) }
+        runBlocking { repository.add(contentUri, songName) }
         val song = Song(
             uri = contentUri.toString(),
             name = songName
         )
-        assertEquals(songDao.getAll(), listOf(song))
+        assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
 
     @Test
     fun addRemovesExtensionFromSongName() {
-        runBlocking { register.add(contentUri, "Pantera - Walk.md") }
+        runBlocking { repository.add(contentUri, "Pantera - Walk.md") }
         val song = Song(
             uri = contentUri.toString(),
             name = "Pantera - Walk"
         )
-        assertEquals(songDao.getAll(), listOf(song))
+        assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
 
     @Test
     fun removeRemovesSongFromDb() {
-        runBlocking { register.add(contentUri, songName) }
-        runBlocking { register.remove(contentUri) }
-        assertTrue(songDao.getAll().isEmpty())
+        runBlocking { repository.add(contentUri, songName) }
+        runBlocking { repository.remove(contentUri) }
+        assertTrue(repository.getAllSongs().getOrAwaitValue().isEmpty())
     }
 
     @Test
@@ -89,19 +92,33 @@ class SongRepositoryTest {
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
         }
-        val register = SongRepository(contentResolver, db, context)
+        repository.injectContentResolverForTests(contentResolver)
 
-        runBlocking { register.add(contentUri) }
+        runBlocking { repository.add(contentUri) }
 
         val song = Song(
             uri = contentUri.toString(),
             name = songName
         )
-        assertEquals(songDao.getAll(), listOf(song))
+        assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
+
+    @Test
+    fun setSongContent() {
+        runBlocking { repository.setSongContent("J'entre avec l'aube") }
+        val expected = SongContent(listOf(
+            Verse(lyrics="J'entre avec l'aube", listOf()),
+        ))
+        assertEquals(expected, repository.getSongContent().getOrAwaitValue())
+    }
+
 
     @After
     fun closeDb() {
         db.close()
     }
+
+    @Rule
+    @JvmField
+    val instantExecutorRule = InstantTaskExecutorRule()
 }

@@ -12,20 +12,28 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
-                instance ?: createDatabase(context).also { instance = it }
+                instance ?: createDatabaseBuilder(context).build().also { instance = it }
             }
         }
 
-        // For instrumented tests
-        fun createInMemoryDatabaseBuilder(context: Context): Builder<AppDatabase> {
+
+        fun createInMemoryDatabaseBuilderForTests(context: Context): Builder<AppDatabase> {
             return Room.inMemoryDatabaseBuilder(context,AppDatabase::class.java)
         }
 
+        fun getInstanceAllowingMainThreadQueriesForTests(context: Context): AppDatabase {
+            return instance ?: synchronized(this) {
+                instance ?: createDatabaseBuilder(context)
+                    .allowMainThreadQueries()
+                    .build()
+                    .also { instance = it }
+            }
+        }
 
-        private fun createDatabase(context: Context): AppDatabase {
+
+        private fun createDatabaseBuilder(context: Context): Builder<AppDatabase> {
             return Room.databaseBuilder(context,AppDatabase::class.java,
-                context.getString(R.string.repertoire_db)
-            ).build()
+                context.getString(R.string.repertoire_db))
         }
 
         @Volatile private var instance: AppDatabase? = null

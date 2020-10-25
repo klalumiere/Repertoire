@@ -13,16 +13,23 @@ class SongContentAdapter(
     private val screenWidthInChar: Int,
     context: Context
 ) {
+    companion object {
+        fun convertColorToHtml(color: Int): String {
+            val x = Integer.toHexString(color).substring(2) // strip alpha value
+            return "#$x"
+        }
+    }
+
     fun getRenderedSongContent(): LiveData<Spanned> {
         return renderedSongContent
     }
 
     fun renderSongContent(content: SongContent, scope: LifecycleCoroutineScope) = scope.launch {
-        val colorString = Integer.toHexString(chordColor).substring(2) // strip alpha value
         val htmlText = content.renderHtmlText(screenWidthInChar,
-            "<font color='#$colorString'><b style='color:'>%s</b></font>")
+            "<font color='${convertColorToHtml(chordColor)}'><b>%s</b></font>")
         renderedSongContent.value = HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
+
 
     private val renderedSongContent = MutableLiveData<Spanned>()
     private val chordColor = ContextCompat.getColor(context, R.color.colorSecondary)

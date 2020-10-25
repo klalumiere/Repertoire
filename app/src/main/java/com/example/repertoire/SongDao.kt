@@ -6,9 +6,7 @@ import androidx.room.*
 @Dao
 interface SongDao {
     @Query("SELECT * FROM song ORDER BY name")
-    fun getAll(): List<Song>
-    @Query("SELECT * FROM song ORDER BY name")
-    fun getAllLive(): LiveData<List<Song>>
+    fun getAll(): LiveData<List<Song>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(song: Song)

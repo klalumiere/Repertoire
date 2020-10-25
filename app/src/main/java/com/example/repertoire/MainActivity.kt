@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -68,6 +69,14 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         songAdapter.tracker?.onSaveInstanceState(outState)
+
+    }
+
+
+    fun injectActivityResultRegistryForTest(registry: ActivityResultRegistry) {
+        addSongsLauncher = registerForActivityResult(contract, registry) { uris: List<Uri> ->
+            songViewModel.add(uris)
+        }
     }
 
 
@@ -114,7 +123,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
+    private var addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
         songViewModel.add(uris)
     }
     private lateinit var deleteAction: MenuItem

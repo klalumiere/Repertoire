@@ -1,6 +1,7 @@
 package com.example.repertoire
 
 import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
@@ -9,6 +10,7 @@ import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.empty
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -31,28 +33,28 @@ class AppDatabaseTest {
     @Test
     fun canInsert() {
         runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAll(),contains(arbitrarySong))
+        assertThat(songDao.getAllLive().getOrAwaitValue(),contains(arbitrarySong))
     }
 
     @Test
     fun canDelete() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.delete(arbitrarySong) }
-        assertThat(songDao.getAll(),empty())
+        assertThat(songDao.getAllLive().getOrAwaitValue(),empty())
     }
 
     @Test
     fun canDeleteFromUri() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.delete(arbitrarySong.uri) }
-        assertThat(songDao.getAll(),empty())
+        assertThat(songDao.getAllLive().getOrAwaitValue(),empty())
     }
 
     @Test
     fun ignoreDuplicateUri() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAll(),contains(arbitrarySong))
+        assertThat(songDao.getAllLive().getOrAwaitValue(),contains(arbitrarySong))
     }
 
     @Test
@@ -70,7 +72,7 @@ class AppDatabaseTest {
             name = "AC/DC - Back in Black"
         )
         songDao.insertAll(songL,songZ,songA)
-        assertThat(songDao.getAll(),contains(songA,songL,songZ))
+        assertThat(songDao.getAllLive().getOrAwaitValue(),contains(songA,songL,songZ))
     }
 
 
@@ -78,4 +80,8 @@ class AppDatabaseTest {
     fun closeDb() {
         db.close()
     }
+
+    @Rule
+    @JvmField
+    val instantExecutorRule = InstantTaskExecutorRule()
 }

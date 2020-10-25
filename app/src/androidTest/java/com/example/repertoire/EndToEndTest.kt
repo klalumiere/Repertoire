@@ -1,6 +1,7 @@
 package com.example.repertoire
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
@@ -18,7 +19,7 @@ import org.junit.runner.RunWith
 class EndToEndTest {
     @Test
     fun canAddSong() {
-        val assetUri = Uri.parse("file:///android_asset/Happy Birthday.md")
+        val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
         val testRegistry = object : ActivityResultRegistry() {
                 override fun <I, O> onLaunch(
                 requestCode: Int,
@@ -26,7 +27,7 @@ class EndToEndTest {
                 input: I,
                 options: ActivityOptionsCompat?
             ) {
-                dispatchResult(requestCode, assetUri)
+                dispatchResult(requestCode, listOf(assetUri))
             }
         }
 

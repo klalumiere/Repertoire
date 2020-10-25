@@ -13,6 +13,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestWatcher
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.robolectric.Shadows.shadowOf
@@ -81,7 +82,10 @@ class SongViewHolderTest {
 
 
     @Before
-    fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
+    fun allowMainThreadQueriesInDatabase() {
+        createDatabaseAllowingMainThreadQueries()
+        instantExecutorRule = InstantTaskExecutorRule() // Needs to be initialize after allowing main thread queries
+    }
     @After
     fun preventExceptions() {
         executeQueuedRunnables()
@@ -90,8 +94,7 @@ class SongViewHolderTest {
 
 
     @Rule
-    @JvmField
-    val instantExecutorRule = InstantTaskExecutorRule()
+    lateinit var instantExecutorRule: TestWatcher
 }
 
 
@@ -199,7 +202,10 @@ class SongAdapterTest {
 
 
     @Before
-    fun allowMainThreadQueriesInDatabase() = createDatabaseAllowingMainThreadQueries()
+    fun allowMainThreadQueriesInDatabase() {
+        createDatabaseAllowingMainThreadQueries()
+        instantExecutorRule = InstantTaskExecutorRule()  // Needs to be initialize after allowing main thread queries
+    }
     @After
     fun preventExceptions() {
         executeQueuedRunnables()
@@ -208,8 +214,7 @@ class SongAdapterTest {
 
 
     @Rule
-    @JvmField
-    val instantExecutorRule = InstantTaskExecutorRule()
+    lateinit var instantExecutorRule: TestWatcher
 }
 
 

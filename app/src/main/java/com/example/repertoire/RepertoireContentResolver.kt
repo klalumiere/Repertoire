@@ -54,3 +54,26 @@ class NativeContentResolver(context: Context): RepertoireContentResolver {
 
     private var resolver = context.contentResolver
 }
+
+class AssetContentResolver(context: Context): RepertoireContentResolver {
+    override fun openInputStream(uri: Uri): InputStream? {
+        return assets.open(convertToPath(uri))
+    }
+
+    override fun releasePersistableUriPermission(uri: Uri)
+    {}
+
+    override fun resolveName(uri: Uri): String {
+        return convertToPath(uri)
+    }
+
+    override fun takePersistableUriPermission(uri: Uri)
+    {}
+
+
+    private fun convertToPath(uri: Uri): String {
+        return uri.toString().removePrefix("file:///android_asset/")
+    }
+
+    private val assets = context.resources.assets
+}

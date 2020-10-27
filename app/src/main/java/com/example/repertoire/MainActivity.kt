@@ -129,5 +129,5 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var songAdapter: SongAdapter
-    private val songViewModel: SongViewModel by viewModels()
+    val songViewModel: SongViewModel by viewModels()
 }

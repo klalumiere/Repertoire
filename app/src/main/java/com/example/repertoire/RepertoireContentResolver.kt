@@ -72,7 +72,7 @@ class AssetContentResolver(context: Context): RepertoireContentResolver {
 
 
     private fun convertToPath(uri: Uri): String {
-        return uri.toString().removePrefix("file:///android_asset/")
+        return uri.toString().removePrefix("file:///android_asset/").replace("%20", " ")
     }
 
     private val assets = context.resources.assets

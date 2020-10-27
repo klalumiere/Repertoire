@@ -1,11 +1,13 @@
 package com.example.repertoire
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -19,6 +21,8 @@ import org.junit.runner.RunWith
 class EndToEndTest {
     @Test
     fun canAddSong() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        AppDatabase.getInstance(context).songDao().deleteAll()
         val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
         val testRegistry = object : ActivityResultRegistry() {
                 override fun <I, O> onLaunch(
@@ -34,10 +38,12 @@ class EndToEndTest {
         val scenario = launchActivity<MainActivity>()
         scenario.moveToState(Lifecycle.State.CREATED)
         scenario.onActivity { activity ->
+            activity.songViewModel.repository.injectContentResolverForTests(
+                AssetContentResolver(context))
             activity.injectActivityResultRegistryForTest(testRegistry)
         }
         scenario.moveToState(Lifecycle.State.RESUMED)
-//        onView(withId(R.id.addSongsFAB)).perform(click())
+        onView(withId(R.id.addSongsFAB)).perform(click())
         assertEquals(2, 1+1)
     }
 }

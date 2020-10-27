@@ -51,7 +51,7 @@ class EndToEndTest {
 private fun createFakeActivityResultRegistry(assetUri: Uri): ActivityResultRegistry {
     return object : ActivityResultRegistry() {
         override fun <I, O> onLaunch(requestCode: Int, contract: ActivityResultContract<I, O>,
-                input: I, options: ActivityOptionsCompat?
+            input: I, options: ActivityOptionsCompat?
         ) {
             dispatchResult(requestCode, listOf(assetUri))
         }

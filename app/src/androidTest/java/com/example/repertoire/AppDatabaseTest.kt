@@ -75,6 +75,17 @@ class AppDatabaseTest {
         assertThat(songDao.getAll().getOrAwaitValue(),contains(songA,songL,songZ))
     }
 
+    @Test
+    fun canDeleteAll() {
+        val anotherArbitrarySong = Song(
+            uri = "content://arbitrary/uri0",
+            name = "Led Zeppelin - Stairway to Heaven"
+        )
+        songDao.insertAll(arbitrarySong, anotherArbitrarySong)
+        songDao.deleteAll()
+        assertThat(songDao.getAll().getOrAwaitValue(),empty())
+    }
+
 
     @After
     fun closeDb() {

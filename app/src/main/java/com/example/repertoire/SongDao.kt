@@ -19,4 +19,7 @@ interface SongDao {
 
     @Query("DELETE FROM song WHERE uri = :uri")
     suspend fun delete(uri: String)
+
+    @Query("DELETE FROM song")
+    fun deleteAll()
 }

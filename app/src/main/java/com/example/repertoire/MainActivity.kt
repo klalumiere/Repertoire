@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,18 +19,24 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
-// TODO: End to end tests
-// TODO: Can add song
-// TODO: Can delete song
-// TODO: Can render song
-// TODO: Selection is preserved when device is turned
-// TODO: Added, deleted and added song is not selected
-
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS = "SongActivity::INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        intent.extras?.also {
+            if(it.containsKey(INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS)
+                && (it[INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS] as Boolean))
+            {
+                songViewModel.repository.injectContentResolverForTests(
+                    AssetContentResolver(this))
+            }
+        }
 
         addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
@@ -62,12 +69,18 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         songAdapter.tracker?.onRestoreInstanceState(savedInstanceState)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         songAdapter.tracker?.onSaveInstanceState(outState)
+    }
+
+
+    fun injectActivityResultRegistryForTest(registry: ActivityResultRegistry) {
+        addSongsLauncher = registerForActivityResult(contract, registry) { uris: List<Uri> ->
+            songViewModel.add(uris)
+        }
     }
 
 
@@ -114,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private val addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
+    private var addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
         songViewModel.add(uris)
     }
     private lateinit var deleteAction: MenuItem

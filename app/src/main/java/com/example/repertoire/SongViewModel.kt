@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = SongRepository(application)
+    val repository = SongRepository(application)
     val songList = repository.getAllSongs()
     val songContent = repository.getSongContent()
 

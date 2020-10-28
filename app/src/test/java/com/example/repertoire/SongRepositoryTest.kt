@@ -34,7 +34,10 @@ class SongRepositoryTest {
         contentResolver = mock()
         db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
         repository = SongRepository(context).apply {
-            injectContentResolverForTests(contentResolver)
+            val nativeResolver = NativeContentResolver(context).apply {
+                injectContentResolverForTests(contentResolver)
+            }
+            injectContentResolverForTests(nativeResolver)
             injectDatabaseForTests(db)
         }
     }
@@ -92,7 +95,10 @@ class SongRepositoryTest {
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
         }
-        repository.injectContentResolverForTests(contentResolver)
+        val nativeResolver = NativeContentResolver(context).apply {
+            injectContentResolverForTests(contentResolver)
+        }
+        repository.injectContentResolverForTests(nativeResolver)
 
         runBlocking { repository.add(contentUri) }
 

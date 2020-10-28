@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 // TODO: End to end tests
-// TODO: Selection is preserved when device is turned
 // TODO: Can render song
 
 class MainActivity : AppCompatActivity() {
@@ -60,13 +59,11 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         songAdapter.tracker?.onRestoreInstanceState(savedInstanceState)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         songAdapter.tracker?.onSaveInstanceState(outState)
-
     }
 
 

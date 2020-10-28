@@ -20,6 +20,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.junit.Before
@@ -72,6 +73,20 @@ class EndToEndTest {
         pressDeleteInOptionMenu()
 
         onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
+    }
+
+    @Test
+    fun deletedAndAddedIsNotSelected() {
+        val scenario = launchActivity<MainActivity>()
+        addSong(scenario)
+
+        onView(withId(R.id.song_list_view))
+            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+        pressDeleteInOptionMenu()
+        addSong(scenario)
+
+        onView(withId(R.id.song_list_view))
+            .check(matches(atPosition(0, not(isActivated()))))
     }
 
 

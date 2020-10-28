@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 // TODO: End to end tests
-// TODO: Added, deleted and added song is not selected
 // TODO: Selection is preserved when device is turned
 // TODO: Can render song
 

@@ -20,10 +20,23 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS = "SongActivity::INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        intent.extras?.also {
+            if(it.containsKey(INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS)
+                && (it[INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS] as Boolean))
+            {
+                songViewModel.repository.injectContentResolverForTests(
+                    AssetContentResolver(this))
+            }
+        }
 
         addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
@@ -120,5 +133,5 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var songAdapter: SongAdapter
-    val songViewModel: SongViewModel by viewModels()
+    private val songViewModel: SongViewModel by viewModels()
 }

@@ -6,7 +6,6 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
-import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultRegistry
@@ -30,15 +29,12 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
-import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-
-// TODO: use INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS for MainActivity
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
@@ -47,12 +43,13 @@ class EndToEndTest {
 
     @Test
     fun canAddSong() {
-        val scenario = launchActivity<MainActivity>()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<MainActivity>(intent)
 
         scenario.moveToState(Lifecycle.State.CREATED)
         scenario.onActivity { activity ->
-            activity.songViewModel.repository.injectContentResolverForTests(
-                AssetContentResolver(context))
             activity.injectActivityResultRegistryForTest(
                 createFakeActivityResultRegistry(assetUri))
         }
@@ -66,7 +63,10 @@ class EndToEndTest {
 
     @Test
     fun canSelectSong() {
-        val scenario = launchActivity<MainActivity>()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<MainActivity>(intent)
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -78,7 +78,10 @@ class EndToEndTest {
 
     @Test
     fun canDeleteSong() {
-        val scenario = launchActivity<MainActivity>()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<MainActivity>(intent)
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -90,7 +93,10 @@ class EndToEndTest {
 
     @Test
     fun deletedAndAddedIsNotSelected() {
-        val scenario = launchActivity<MainActivity>()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<MainActivity>(intent)
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -104,7 +110,10 @@ class EndToEndTest {
 
     @Test
     fun turningDevicePreservesSelection() {
-        val scenario = launchActivity<MainActivity>()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<MainActivity>(intent)
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -117,7 +126,10 @@ class EndToEndTest {
 
     @Test
     fun canTransitionToSongActivity() {
-        val scenario = launchActivity<MainActivity>()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<MainActivity>(intent)
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -148,8 +160,6 @@ class EndToEndTest {
     private fun addSong(scenario: ActivityScenario<MainActivity>) {
         scenario.moveToState(Lifecycle.State.CREATED)
         scenario.onActivity { activity ->
-            activity.songViewModel.repository.injectContentResolverForTests(
-                AssetContentResolver(context))
             activity.injectActivityResultRegistryForTest(
                 createFakeActivityResultRegistry(assetUri))
         }

@@ -14,6 +14,8 @@ class SongActivity : AppCompatActivity() {
     companion object {
         const val SONG_NAME = "SongActivity::SONG_NAME"
         const val SONG_URI_AS_STRING = "SongActivity::SONG_URI_AS_STRING"
+
+        const val INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS = "SongActivity::INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +28,12 @@ class SongActivity : AppCompatActivity() {
             name = bundle[SONG_NAME] as String,
             uri = bundle[SONG_URI_AS_STRING] as String
         )
+        if(bundle.containsKey(INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS)
+            && (bundle[INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS] as Boolean))
+        {
+            songViewModel.repository.injectContentResolverForTests(
+                AssetContentResolver(this))
+        }
 
         song_title_text_view.text = song.name
         song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }

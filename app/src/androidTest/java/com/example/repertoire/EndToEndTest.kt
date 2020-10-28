@@ -3,8 +3,10 @@ package com.example.repertoire
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultRegistry
@@ -28,6 +30,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -35,7 +38,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-// TODO: test canRenderSongDirectlyFromSongActivity
+// TODO: use INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS for MainActivity
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
@@ -121,6 +124,19 @@ class EndToEndTest {
             .perform(actionOnItemAtPosition<SongViewHolder>(0, click()))
 
         onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+    }
+
+    @Test
+    fun canRenderSong() {
+        val intent = Intent(context, SongActivity::class.java).apply {
+            putExtra(SongActivity.SONG_NAME, "Happy Birthday")
+            putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
+            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
+        }
+        val scenario = launchActivity<SongActivity>(intent)
+
+        onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+        onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
     }
 
 

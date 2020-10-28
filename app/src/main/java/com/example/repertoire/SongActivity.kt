@@ -35,6 +35,11 @@ class SongActivity : AppCompatActivity() {
                 AssetContentResolver(this))
         }
 
+        song_refresher.setOnRefreshListener {
+            Log.i("SontActivity", "onRefresh called from SwipeRefreshLayout")
+            song_refresher.isRefreshing = false
+        }
+
         song_title_text_view.text = song.name
         song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
     }

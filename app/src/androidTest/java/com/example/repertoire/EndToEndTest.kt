@@ -35,6 +35,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+// TODO: test canRenderSongDirectlyFromSongActivity
+
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
     private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
@@ -110,9 +112,8 @@ class EndToEndTest {
             .check(matches(atPosition(0, isActivated())))
     }
 
-    // TODO: Debug: Why is the content content non displayed?
     @Test
-    fun canRenderSong() {
+    fun canTransitionToSongActivity() {
         val scenario = launchActivity<MainActivity>()
         addSong(scenario)
 

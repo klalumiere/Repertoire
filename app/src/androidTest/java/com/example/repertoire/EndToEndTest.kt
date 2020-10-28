@@ -110,6 +110,18 @@ class EndToEndTest {
             .check(matches(atPosition(0, isActivated())))
     }
 
+    // TODO: Debug: Why is the content content non displayed?
+    @Test
+    fun canRenderSong() {
+        val scenario = launchActivity<MainActivity>()
+        addSong(scenario)
+
+        onView(withId(R.id.song_list_view))
+            .perform(actionOnItemAtPosition<SongViewHolder>(0, click()))
+
+        onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+    }
+
 
     @Before
     fun clearDatabase() {

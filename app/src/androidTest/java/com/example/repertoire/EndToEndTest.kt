@@ -12,6 +12,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -61,6 +62,18 @@ class EndToEndTest {
             .check(matches(atPosition(0, isActivated())))
     }
 
+    @Test
+    fun canDeleteSong() {
+        val scenario = launchActivity<MainActivity>()
+        addSong(scenario)
+
+        onView(withId(R.id.song_list_view))
+            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+        pressDeleteInOptionMenu()
+
+        onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
+    }
+
 
     @Before
     fun clearDatabase() {
@@ -77,6 +90,21 @@ class EndToEndTest {
         }
         scenario.moveToState(Lifecycle.State.RESUMED)
         onView(withId(R.id.addSongsFAB)).perform(click())
+    }
+
+    private fun createFakeActivityResultRegistry(assetUri: Uri): ActivityResultRegistry {
+        return object : ActivityResultRegistry() {
+            override fun <I, O> onLaunch(requestCode: Int, contract: ActivityResultContract<I, O>,
+                input: I, options: ActivityOptionsCompat?
+            ) {
+                dispatchResult(requestCode, listOf(assetUri))
+            }
+        }
+    }
+
+    private fun pressDeleteInOptionMenu() {
+        openActionBarOverflowOrOptionsMenu(context)
+        onView(withText("Delete")).perform(click())
     }
 }
 
@@ -96,16 +124,6 @@ private fun atPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View
     }
 }
 
-private fun createFakeActivityResultRegistry(assetUri: Uri): ActivityResultRegistry {
-    return object : ActivityResultRegistry() {
-        override fun <I, O> onLaunch(requestCode: Int, contract: ActivityResultContract<I, O>,
-            input: I, options: ActivityOptionsCompat?
-        ) {
-            dispatchResult(requestCode, listOf(assetUri))
-        }
-    }
-}
-
 private fun isActivated(): Matcher<View?> {
     return object : BoundedMatcher<View?, View>(View::class.java) {
         override fun describeTo(description: Description) {
@@ -114,6 +132,18 @@ private fun isActivated(): Matcher<View?> {
 
         override fun matchesSafely(view: View): Boolean {
             return view.isActivated
+        }
+    }
+}
+
+private fun isEmpty(): Matcher<View?> {
+    return object : BoundedMatcher<View?, RecyclerView>(RecyclerView::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("is empty.")
+        }
+
+        override fun matchesSafely(view: RecyclerView): Boolean {
+            return view.findViewHolderForAdapterPosition(0) == null
         }
     }
 }

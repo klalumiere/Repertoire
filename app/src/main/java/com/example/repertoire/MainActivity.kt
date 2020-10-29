@@ -33,8 +33,7 @@ class MainActivity : AppCompatActivity() {
             if(it.containsKey(INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS)
                 && (it[INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS] as Boolean))
             {
-                songViewModel.repository.injectContentResolverForTests(
-                    AssetContentResolver(this))
+                injectAssetContentResolverForTests()
             }
         }
 
@@ -81,6 +80,11 @@ class MainActivity : AppCompatActivity() {
         addSongsLauncher = registerForActivityResult(contract, registry) { uris: List<Uri> ->
             songViewModel.add(uris)
         }
+    }
+
+    fun injectAssetContentResolverForTests() {
+        songViewModel.repository.injectContentResolverForTests(
+                AssetContentResolver(this))
     }
 
 

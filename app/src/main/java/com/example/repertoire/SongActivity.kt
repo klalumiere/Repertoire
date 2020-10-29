@@ -31,20 +31,19 @@ class SongActivity : AppCompatActivity() {
         if(bundle.containsKey(INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS)
             && (bundle[INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS] as Boolean))
         {
-            songViewModel.repository.injectContentResolverForTests(
-                AssetContentResolver(this))
-        }
-
-        song_refresher.setOnRefreshListener {
-            Log.i("SontActivity", "onRefresh called from SwipeRefreshLayout")
-            song_refresher.isRefreshing = false
+            injectAssetContentResolverForTests()
         }
 
         song_title_text_view.text = song.name
         song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
+        song_refresher.setOnRefreshListener { refreshSong() }
     }
 
 
+    fun injectAssetContentResolverForTests() {
+        songViewModel.repository.injectContentResolverForTests(
+                AssetContentResolver(this))
+    }
 
 
     // Need to be called in or after `addOnGlobalLayoutListener` to call `paint` and `measuredWidth`
@@ -76,6 +75,10 @@ class SongActivity : AppCompatActivity() {
         songViewModel.setSongContent(Uri.parse(song.uri), lifecycle.coroutineScope)
     }
 
+    private fun refreshSong() {
+        songViewModel.setSongContent(Uri.parse(song.uri), lifecycle.coroutineScope)
+        song_refresher.isRefreshing = false
+    }
 
     private lateinit var song: Song
     private var songContentAdapter: SongContentAdapter? = null

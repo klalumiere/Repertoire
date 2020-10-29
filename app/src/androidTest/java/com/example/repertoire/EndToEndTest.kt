@@ -20,8 +20,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.BoundedMatcher
@@ -148,6 +147,21 @@ class EndToEndTest {
         val scenario = launchActivity<SongActivity>(intent)
 
         onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+        onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+    }
+
+    @Test
+    fun canSwipeToRefreshSong() {
+        val intent = Intent(context, SongActivity::class.java).apply {
+            putExtra(SongActivity.SONG_NAME, "Happy Birthday")
+            putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
+        }
+        val scenario = launchActivity<SongActivity>(intent)
+        // Here, we get the "Cannot read song" error message
+
+        scenario.onActivity { activity -> activity.injectAssetContentResolverForTests() }
+        onView(withId(R.id.song_refresher)).perform(swipeDown());
+
         onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
     }
 

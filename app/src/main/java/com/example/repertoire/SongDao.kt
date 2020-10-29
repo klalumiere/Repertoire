@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

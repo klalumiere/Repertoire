@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import android.content.ContentResolver
 import android.content.Context

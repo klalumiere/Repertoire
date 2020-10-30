@@ -9,6 +9,9 @@ jobs:
       image: circleci/android:api-30
       options: --entrypoint /bin/bash --workdir /home/circleci --env GITHUB_WORKSPACE=/home/circleci
     steps:
+      - run: env
+      - run: pwd
+      - run: ls
       - name: checkout
         uses: actions/checkout@v2.3.3
       - name: trivial

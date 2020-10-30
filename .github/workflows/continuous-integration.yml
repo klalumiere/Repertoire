@@ -6,8 +6,8 @@ jobs:
     name: Build Test Deploy
     runs-on: ubuntu-latest
     container:
-      image: circleci/android:api-30
-      options: --entrypoint /bin/bash --workdir /home/circleci --env GITHUB_WORKSPACE=/home/circleci
+      image: alpine
+      options: --entrypoint /bin/bash --workdir /etc --env GITHUB_WORKSPACE=/data
     steps:
       - run: env
       - run: pwd

@@ -4,6 +4,7 @@ on: push
 jobs:
   buildTestDeploy:
     name: Build Test Deploy
+    runs-on: ubuntu-latest
     container:
       image: circleci/android:api-30
     steps:

@@ -18,8 +18,8 @@ jobs:
       - name: Unit Tests
         run: ./gradlew test
       - name: Archive Unit Tests results
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          if: ${{ always() }}
           path: app/build/reports/tests
           retention-days: 7

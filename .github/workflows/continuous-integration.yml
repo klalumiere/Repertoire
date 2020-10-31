@@ -11,19 +11,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.3
-      - name: Test secret availability
-        run: |
-          echo ${{ secrets.FAKE_SECRET }} > test.txt
-          cat test.txt
       - name: Unit Tests
         run: ./gradlew test
-      - name: Fail
-        run: ls fileThatDoesNotExist
       - name: Archive Tests results
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          path: app/build/reports/tests
+          path: |
+            app/build/reports/androidTests/connected
+            app/build/reports/tests
           retention-days: 7
-      - name: This should not run
-        run: echo This should not run

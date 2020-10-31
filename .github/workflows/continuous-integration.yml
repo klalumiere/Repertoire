@@ -9,6 +9,9 @@ jobs:
       image: circleci/android:api-30
       options: --user root
     steps:
-      - run: id -u
       - name: checkout
         uses: actions/checkout@v2.3.3
+      - name: test secret availability
+        run: echo ${{ secrets.FAKE_SECRET }}
+      - name: unit tests
+        run: ./gradlew test

@@ -17,9 +17,13 @@ jobs:
           cat test.txt
       - name: Unit Tests
         run: ./gradlew test
-      - name: Archive Unit Tests results
+      - name: Fail
+        run: ls fileThatDoesNotExist
+      - name: Archive Tests results
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           path: app/build/reports/tests
           retention-days: 7
+      - name: This should not run
+        run: echo This should not run

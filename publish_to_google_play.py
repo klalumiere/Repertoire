@@ -14,6 +14,7 @@ SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH")
 TRACK = "internal"
 
 def main() -> int:
+    assert SERVICE_ACCOUNT_FILE, "Can't find Google Play Service Account JSON path."
     credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     credentials.refresh(Request())
     service = googleapiclient.discovery.build("androidpublisher", "v3", credentials=credentials)

@@ -44,7 +44,7 @@ jobs:
           REPERTOIRE_STORE_FILE_PATH: ${{ secrets.REPERTOIRE_STORE_FILE_PATH }}
           REPERTOIRE_STORE_PASSWORD: ${{ secrets.REPERTOIRE_STORE_PASSWORD }}
         run: |
-          echo ${{ secrets.FAKE_SECRET }} > "$REPERTOIRE_STORE_FILE_PATH.base64"
+          echo ${{ secrets.REPERTOIRE_KEYSTORE }} > "$REPERTOIRE_STORE_FILE_PATH.base64"
           base64 --decode "$REPERTOIRE_STORE_FILE_PATH.base64" > "$REPERTOIRE_STORE_FILE_PATH"
           rm -f "$REPERTOIRE_STORE_FILE_PATH.base64"
           ./gradlew bundleRelease

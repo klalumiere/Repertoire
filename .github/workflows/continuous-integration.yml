@@ -68,7 +68,7 @@ jobs:
           ./verify_version_was_incremented.py
           rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
       - name: Deploy
-        if: github.ref != 'refs/heads/master' && job.status == 'success'
+        if: github.ref == 'refs/heads/master' && job.status == 'success'
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH }}
         run: |

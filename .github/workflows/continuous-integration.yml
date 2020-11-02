@@ -62,7 +62,7 @@ jobs:
         run: |
           apt-get update && apt-get install --no-install-recommends python3-pip
           python3 -m pip install --requirement requirements.txt
-          echo ${{ secrets.FAKE_SECRET }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          echo ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
           base64 --decode "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64" > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
           rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
           ./verify_version_was_incremented.py
@@ -74,7 +74,7 @@ jobs:
         run: |
           apt-get update && apt-get install --no-install-recommends python3-pip
           python3 -m pip install --requirement requirements.txt
-          echo ${{ secrets.FAKE_SECRET }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          echo ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
           base64 --decode "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64" > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
           rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
           ./release_to_google_play.py

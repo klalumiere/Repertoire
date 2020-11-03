@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import android.content.Intent
 import android.view.LayoutInflater

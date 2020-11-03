@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule

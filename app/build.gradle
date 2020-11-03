@@ -8,11 +8,10 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        // TODO: Fix domain name
-        applicationId "com.example.repertoire"
+        applicationId "klalumiere.repertoire"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 1
+        versionCode 11
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,16 +21,28 @@ android {
             }
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("$System.env.REPERTOIRE_STORE_FILE_PATH")
+            storePassword "$System.env.REPERTOIRE_STORE_PASSWORD"
+            keyAlias "$System.env.REPERTOIRE_KEY_ALIAS"
+            keyPassword "$System.env.REPERTOIRE_KEY_PASSWORD"
+        }
+    }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
     lintOptions {
         disable "ObsoleteLintCustomCheck"
@@ -41,9 +52,6 @@ android {
             includeAndroidResources = true
             returnDefaultValues = true
         }
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 }
 

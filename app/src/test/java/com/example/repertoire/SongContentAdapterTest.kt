@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.lifecycleScope

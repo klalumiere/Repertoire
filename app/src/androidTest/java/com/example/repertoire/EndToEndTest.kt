@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import android.app.Activity
 import android.content.Context

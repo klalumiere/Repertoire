@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import org.junit.Assert.*
 import org.junit.Test
@@ -182,7 +182,7 @@ class VerseTest {
         val expected = """
             A                  E
             A million miles away
-            
+
         """.trimIndent()
         assertEquals(expected, verse.renderText(1000))
     }
@@ -195,7 +195,7 @@ class VerseTest {
             A million 
                      E
             miles away
-            
+
         """.trimIndent()
         assertEquals(expected, verse.renderText(10))
     }
@@ -206,7 +206,7 @@ class VerseTest {
         val expected = """
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
             A million miles away<br>
-            
+
         """.trimIndent()
         assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
     }
@@ -217,7 +217,7 @@ class VerseTest {
         val expected = """
             <b>F#</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
             J'entre avec l'aube<br>
-            
+
         """.trimIndent()
         assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
     }
@@ -228,7 +228,7 @@ class VerseTest {
         val expected = """
             <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b><br>
             A million miles away<br>
-            
+
         """.trimIndent()
         assertEquals(expected, verse.renderHtmlText(1000,"<b>%s</b>"))
     }
@@ -268,7 +268,7 @@ class SongContentTest {
             J'entre avec l'aube
             A                  E
             A million miles away
-            
+
         """.trimIndent()
         assertEquals(expected,SongContent.parse(songContent).renderText(1000))
     }
@@ -284,7 +284,7 @@ class SongContentTest {
             J'entre avec l'aube<br>
             <b>A</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>E</b><br>
             A million miles away<br>
-            
+
         """.trimIndent()
         assertEquals(expected,SongContent.parse(songContent).renderHtmlText(1000, "<b>%s</b>"))
     }

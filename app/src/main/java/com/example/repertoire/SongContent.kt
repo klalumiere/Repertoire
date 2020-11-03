@@ -1,4 +1,4 @@
-package com.example.repertoire
+package klalumiere.repertoire
 
 import kotlin.math.min
 import kotlin.text.StringBuilder

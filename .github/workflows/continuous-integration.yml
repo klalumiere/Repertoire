@@ -2,16 +2,95 @@ name: Continuous Integration
 on: push
 
 jobs:
-  build:
+  test:
+    if: github.ref != 'refs/heads/master'
     name: Test
     runs-on: macos-10.15
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2.3.3
-      - name: run tests
+      - name: Tests
         uses: reactivecircus/android-emulator-runner@v2.11.0
         with:
           api-level: 29
           script: |
             ./gradlew test
             ./gradlew connectedAndroidTest
+      - name: Archive Tests results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          path: |
+            app/build/reports/androidTests/connected
+            app/build/reports/tests
+          retention-days: 7
+
+  testDeploy:
+    name: Test Deploy
+    runs-on: ubuntu-latest
+    container:
+      image: circleci/android:api-30
+      options: --user root
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.3
+      - name: Unit Tests
+        run: ./gradlew test
+      - name: Bundle
+        env:
+          REPERTOIRE_KEY_ALIAS: ${{ secrets.REPERTOIRE_KEY_ALIAS }}
+          REPERTOIRE_KEY_PASSWORD: ${{ secrets.REPERTOIRE_KEY_PASSWORD }}
+          REPERTOIRE_STORE_FILE_PATH: ${{ secrets.REPERTOIRE_STORE_FILE_PATH }}
+          REPERTOIRE_STORE_PASSWORD: ${{ secrets.REPERTOIRE_STORE_PASSWORD }}
+        run: |
+          echo ${{ secrets.REPERTOIRE_KEYSTORE }} > "$REPERTOIRE_STORE_FILE_PATH.base64"
+          base64 --decode "$REPERTOIRE_STORE_FILE_PATH.base64" > "$REPERTOIRE_STORE_FILE_PATH"
+          rm -f "$REPERTOIRE_STORE_FILE_PATH.base64"
+          ./gradlew bundleRelease
+          rm -f "$REPERTOIRE_STORE_FILE_PATH"
+      - name: Ensure signing keys are erased
+        if: ${{ always() }}
+        env:
+          REPERTOIRE_STORE_FILE_PATH: ${{ secrets.REPERTOIRE_STORE_FILE_PATH }}
+        run: |
+          rm -f "$REPERTOIRE_STORE_FILE_PATH.base64"
+          rm -f "$REPERTOIRE_STORE_FILE_PATH"
+      - name: Verify Version
+        if: github.ref != 'refs/heads/master' && job.status == 'success'
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH }}
+        run: |
+          apt-get update && apt-get install --no-install-recommends python3-pip
+          python3 -m pip install --requirement requirements.txt
+          echo ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          base64 --decode "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64" > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
+          rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          ./verify_version_was_incremented.py
+          rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
+      - name: Deploy
+        if: github.ref == 'refs/heads/master' && job.status == 'success'
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH }}
+        run: |
+          apt-get update && apt-get install --no-install-recommends python3-pip
+          python3 -m pip install --requirement requirements.txt
+          echo ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          base64 --decode "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64" > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
+          rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          ./release_to_google_play.py
+          rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
+      - name: Ensure deploy keys are erased
+        if: ${{ always() }}
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH }}
+        run: |
+          rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
+      - name: Archive Tests results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          path: |
+            app/build/reports/androidTests/connected
+            app/build/reports/tests
+          retention-days: 7

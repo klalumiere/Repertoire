@@ -3,7 +3,7 @@ on: push
 
 jobs:
   deploy:
-    name: Test Deploy
+    name: Deploy
     runs-on: ubuntu-latest
     container:
       image: circleci/android:api-30

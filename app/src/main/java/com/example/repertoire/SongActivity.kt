@@ -36,7 +36,6 @@ class SongActivity : AppCompatActivity() {
 
         song_title_text_view.text = song.name
         song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
-        song_refresher.setOnRefreshListener { refreshSong() }
     }
 
 
@@ -73,11 +72,6 @@ class SongActivity : AppCompatActivity() {
         songViewModel.songContent.observe(this, songContentObserver)
         songContentAdapter?.getRenderedSongContent()?.observe(this, renderedSongContentObserver)
         songViewModel.setSongContent(Uri.parse(song.uri), lifecycle.coroutineScope)
-    }
-
-    private fun refreshSong() {
-        songViewModel.setSongContent(Uri.parse(song.uri), lifecycle.coroutineScope)
-        song_refresher.isRefreshing = false
     }
 
     private lateinit var song: Song

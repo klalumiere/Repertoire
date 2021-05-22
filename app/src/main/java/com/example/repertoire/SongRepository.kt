@@ -4,15 +4,21 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
-class SongRepository(context: Context) {
-    suspend fun add(uri: Uri) {
+class SongRepository(
+    context: Context,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
+    suspend fun add(uri: Uri) = withContext(ioDispatcher) {
         add(uri, resolveName(uri))
     }
 
-    suspend fun add(uri: Uri, name: String) {
+    suspend fun add(uri: Uri, name: String) = withContext(ioDispatcher) {
         resolver.takePersistableUriPermission(uri)
         songDao.insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
     }
@@ -25,7 +31,7 @@ class SongRepository(context: Context) {
         return songContent
     }
 
-    suspend fun remove(uri: Uri) {
+    suspend fun remove(uri: Uri) = withContext(ioDispatcher) {
         resolver.releasePersistableUriPermission(uri)
         songDao.delete(uri.toString())
     }

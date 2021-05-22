@@ -9,7 +9,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
@@ -28,12 +30,13 @@ class SongRepositoryTest {
     private lateinit var db: AppDatabase
     private lateinit var repository: SongRepository
 
+    @ExperimentalCoroutinesApi
     @Before
     fun createRepository() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock()
         db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
-        repository = SongRepository(context).apply {
+        repository = SongRepository(context, TestCoroutineDispatcher()).apply {
             val nativeResolver = NativeContentResolver(context).apply {
                 injectContentResolverForTests(contentResolver)
             }

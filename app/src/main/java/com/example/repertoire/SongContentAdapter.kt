@@ -5,11 +5,14 @@ import android.text.Spanned
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 class SongContentAdapter(
     val content: LiveData<SongContent>,
     private val screenWidthInChar: Int,
-    context: Context
+    context: Context,
+    private val cpuDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     companion object {
         fun convertColorToHtml(color: Int): String {
@@ -19,8 +22,7 @@ class SongContentAdapter(
     }
 
     val renderedSongContent = content.switchMap {
-        // TODO: add withContext to do this in another thread?
-        liveData {
+        liveData(cpuDispatcher) {
             emit(renderSongContent(it))
         }
     }

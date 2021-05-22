@@ -4,7 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -19,11 +21,12 @@ class SongContentAdapterTest {
         assertEquals("#26c6da", SongContentAdapter.convertColorToHtml(-14235942))
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun rendersSongContent() {
         val content = MutableLiveData<SongContent>()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val adapter = SongContentAdapter(content,42, context)
+        val adapter = SongContentAdapter(content,42, context, TestCoroutineDispatcher())
 
         val beforeRendering = adapter.renderedSongContent.value.toString()
         runBlocking {

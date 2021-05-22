@@ -82,11 +82,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun injectAssetContentResolverForTests() {
-        songViewModel.repository.injectContentResolverForTests(
-                AssetContentResolver(this))
-    }
-
 
     private fun createSelectionObserver(tracker: SelectionTracker<String>)
             : SelectionTracker.SelectionObserver<String>
@@ -121,6 +116,13 @@ class MainActivity : AppCompatActivity() {
         songAdapter.tracker?.clearSelection() // Important, otherwise, added songs might be selected
         songViewModel.remove(uris)
         return true
+    }
+
+
+    // Introduced for tests
+    private fun injectAssetContentResolverForTests() {
+        songViewModel.repository.injectContentResolverForTests(
+                AssetContentResolver(this))
     }
 
 

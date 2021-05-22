@@ -4,12 +4,10 @@ import android.content.Context
 import android.text.Spanned
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.launch
+import androidx.lifecycle.*
 
 class SongContentAdapter(
+    val content: LiveData<SongContent>,
     private val screenWidthInChar: Int,
     context: Context
 ) {
@@ -20,17 +18,19 @@ class SongContentAdapter(
         }
     }
 
-    fun getRenderedSongContent(): LiveData<Spanned> {
-        return renderedSongContent
+    val renderedSongContent = content.switchMap {
+        // TODO: add withContext to do this in another thread?
+        liveData {
+            emit(renderSongContent(it))
+        }
     }
 
-    fun renderSongContent(content: SongContent, scope: LifecycleCoroutineScope) = scope.launch {
+
+    private fun renderSongContent(content: SongContent): Spanned {
         val htmlText = content.renderHtmlText(screenWidthInChar,
             "<font color='${convertColorToHtml(chordColor)}'><b>%s</b></font>")
-        renderedSongContent.value = HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        return HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
-
-    private val renderedSongContent = MutableLiveData<Spanned>()
     private val chordColor = ContextCompat.getColor(context, R.color.colorSecondary)
 }

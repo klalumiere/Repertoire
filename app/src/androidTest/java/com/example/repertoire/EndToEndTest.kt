@@ -51,7 +51,7 @@ class EndToEndTest {
 
         scenario.moveToState(Lifecycle.State.CREATED)
         scenario.onActivity { activity ->
-            activity.injectActivityResultRegistryForTest(
+            activity.injectActivityResultRegistryForTests(
                 createFakeActivityResultRegistry(assetUri))
         }
         scenario.moveToState(Lifecycle.State.RESUMED)
@@ -154,7 +154,7 @@ class EndToEndTest {
     private fun addSong(scenario: ActivityScenario<MainActivity>) {
         scenario.moveToState(Lifecycle.State.CREATED)
         scenario.onActivity { activity ->
-            activity.injectActivityResultRegistryForTest(
+            activity.injectActivityResultRegistryForTests(
                 createFakeActivityResultRegistry(assetUri))
         }
         scenario.moveToState(Lifecycle.State.RESUMED)

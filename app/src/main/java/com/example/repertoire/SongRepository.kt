@@ -35,7 +35,6 @@ class SongRepository(
     }
 
 
-    // Introduced for tests
     fun injectDatabaseForTests(db: AppDatabase) {
         songDao = db.songDao()
     }

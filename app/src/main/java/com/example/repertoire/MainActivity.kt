@@ -64,8 +64,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    // Introduced for tests
-    fun injectActivityResultRegistryForTest(registry: ActivityResultRegistry) {
+    fun injectActivityResultRegistryForTests(registry: ActivityResultRegistry) {
         addSongsLauncher = registerForActivityResult(contract, registry) { uris: List<Uri> ->
             songViewModel.add(uris)
         }

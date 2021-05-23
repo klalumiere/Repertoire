@@ -7,7 +7,6 @@ import java.io.Closeable
 
 object DispatchersFactory {
     private var injected: CoroutineDispatcher? = null
-
     class InjectForTests(rhs: CoroutineDispatcher) : AutoCloseable, Closeable {
         init {
             injected = rhs

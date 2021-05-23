@@ -113,12 +113,22 @@ class SongRepositoryTest {
     }
 
     @Test
-    fun setSongContent() {
-        runBlocking { repository.setSongContent("J'entre avec l'aube") }
+    fun getSongContent() {
+        val lyrics = "J'entre avec l'aube"
+        val contentResolver = mock<ContentResolver> {
+            on {
+                openInputStream(same(contentUri))
+            } doReturn lyrics.byteInputStream()
+        }
+        val nativeResolver = NativeContentResolver(context).apply {
+            injectContentResolverForTests(contentResolver)
+        }
+        repository.injectContentResolverForTests(nativeResolver)
+
         val expected = SongContent(listOf(
-            Verse(lyrics="J'entre avec l'aube", listOf()),
+            Verse(lyrics=lyrics, listOf()),
         ))
-        assertEquals(expected, repository.getSongContent().getOrAwaitValue())
+        assertEquals(expected, repository.getSongContent(contentUri).getOrAwaitValue())
     }
 
 

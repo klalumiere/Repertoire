@@ -1,11 +1,12 @@
 package klalumiere.repertoire
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.testing.TestLifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -20,21 +21,23 @@ class SongContentAdapterTest {
         assertEquals("#26c6da", SongContentAdapter.convertColorToHtml(-14235942))
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun rendersSongContent() {
+        val content = MutableLiveData<SongContent>()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val adapter = SongContentAdapter(42, context)
-        val songContent = SongContent(listOf(
-            Verse(
-                lyrics="J'entre avec l'aube",
-                listOf(Chord(0,"F#"))
-            )
-        ))
-        val lifecycleOwner = TestLifecycleOwner()
+        val adapter = SongContentAdapter(content,42, context, TestCoroutineDispatcher())
 
-        val beforeRendering = adapter.getRenderedSongContent().value.toString()
-        runBlocking { adapter.renderSongContent(songContent,lifecycleOwner.lifecycleScope) }
-        assertNotEquals(beforeRendering, adapter.getRenderedSongContent().getOrAwaitValue().toString())
+        val beforeRendering = adapter.renderedSongContent.value.toString()
+        runBlocking {
+            content.value = SongContent(listOf(
+                Verse(
+                    lyrics="J'entre avec l'aube",
+                    listOf(Chord(0,"F#"))
+                )
+            ))
+        }
+        assertNotEquals(beforeRendering, adapter.renderedSongContent.getOrAwaitValue().toString())
     }
 
 

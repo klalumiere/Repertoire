@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,8 +28,8 @@ class SongRepository(
         return songDao.getAll()
     }
 
-    fun getSongContent(): LiveData<SongContent> {
-        return songContent
+    fun getSongContent(uri: Uri): LiveData<SongContent> = liveData(ioDispatcher) {
+        emit(SongContent.parse(readSongFile(uri)))
     }
 
     suspend fun remove(uri: Uri) = withContext(ioDispatcher) {
@@ -36,15 +37,8 @@ class SongRepository(
         songDao.delete(uri.toString())
     }
 
-    fun setSongContent(content: String) {
-        songContent.value = SongContent.parse(content)
-    }
 
-    fun setSongContent(uri: Uri) {
-        setSongContent(readSongFile(uri))
-    }
-
-
+    // Introduced for tests
     fun injectContentResolverForTests(resolverRhs: RepertoireContentResolver) {
         resolver = resolverRhs
     }
@@ -69,10 +63,10 @@ class SongRepository(
         return cannotReadFileErrorMessage
     }
 
+
     private val cannotReadFileErrorMessage =
         context.resources.getString(R.string.cannot_read_file_error_message)
 
     private var resolver: RepertoireContentResolver = NativeContentResolver(context)
     private var songDao = AppDatabase.getInstance(context).songDao()
-    private val songContent = MutableLiveData<SongContent>()
 }

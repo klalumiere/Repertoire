@@ -34,6 +34,7 @@ import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
@@ -144,7 +145,9 @@ class EndToEndTest {
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
             putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
         }
-        val scenario = launchActivity<SongActivity>(intent)
+        launchActivity<SongActivity>(intent)
+        sleep(100) // TODO: Use Hilt , inject `TestCoroutineDispatcher` and remove this horror
+        // TODO: Bonus: using hilt will also allow me to improve the other dependency injections
 
         onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
         onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))

@@ -28,16 +28,19 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
+    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
@@ -146,17 +149,22 @@ class EndToEndTest {
             putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
         }
         launchActivity<SongActivity>(intent)
-        sleep(100) // TODO: Use Hilt , inject `TestCoroutineDispatcher` and remove this horror
-        // TODO: Bonus: using hilt will also allow me to improve the other dependency injections
 
         onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
         onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
     }
 
 
+    @ExperimentalCoroutinesApi
     @Before
     fun clearDatabase() {
+        dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
         AppDatabase.getInstance(context).songDao().deleteAll()
+    }
+
+    @After
+    fun closeResources() {
+        dispatcherInjector.close()
     }
 
     private fun addSong(scenario: ActivityScenario<MainActivity>) {

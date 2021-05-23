@@ -47,6 +47,10 @@ android {
     lintOptions {
         disable "ObsoleteLintCustomCheck"
     }
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+    }
     testOptions {
         unitTests {
             includeAndroidResources = true
@@ -78,6 +82,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-beta01'
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
     implementation 'com.google.android.material:material:1.2.1' // content_main.xml ConstraintLayout
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation 'android.arch.core:core-testing:1.1.1'
     testImplementation 'androidx.lifecycle:lifecycle-runtime-testing:2.3.0-beta01'
@@ -85,7 +90,6 @@ dependencies {
     testImplementation 'androidx.test:core-ktx:1.3.0'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"
     testImplementation 'org.robolectric:robolectric:4.4'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])

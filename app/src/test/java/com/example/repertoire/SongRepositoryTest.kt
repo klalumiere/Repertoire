@@ -25,6 +25,7 @@ import org.robolectric.annotation.Config
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
+    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var db: AppDatabase
@@ -33,10 +34,11 @@ class SongRepositoryTest {
     @ExperimentalCoroutinesApi
     @Before
     fun createRepository() {
+        dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock()
         db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
-        repository = SongRepository(context, TestCoroutineDispatcher()).apply {
+        repository = SongRepository(context).apply {
             val nativeResolver = NativeContentResolver(context).apply {
                 injectContentResolverForTests(contentResolver)
             }
@@ -133,8 +135,9 @@ class SongRepositoryTest {
 
 
     @After
-    fun closeDb() {
+    fun closeResources() {
         db.close()
+        dispatcherInjector.close()
     }
 
     @Rule

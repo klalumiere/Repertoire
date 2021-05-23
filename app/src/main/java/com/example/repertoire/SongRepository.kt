@@ -3,17 +3,14 @@ package klalumiere.repertoire
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
 class SongRepository(
-    context: Context,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    context: Context
 ) {
     suspend fun add(uri: Uri) = withContext(ioDispatcher) {
         add(uri, resolveName(uri))
@@ -69,4 +66,5 @@ class SongRepository(
 
     private var resolver: RepertoireContentResolver = NativeContentResolver(context)
     private var songDao = AppDatabase.getInstance(context).songDao()
+    private val ioDispatcher: CoroutineDispatcher = DispatchersFactory.createIODispatcher()
 }

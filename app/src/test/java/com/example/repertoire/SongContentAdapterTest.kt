@@ -24,20 +24,22 @@ class SongContentAdapterTest {
     @ExperimentalCoroutinesApi
     @Test
     fun rendersSongContent() {
-        val content = MutableLiveData<SongContent>()
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val adapter = SongContentAdapter(content,42, context, TestCoroutineDispatcher())
+        DispatchersFactory.InjectForTests(TestCoroutineDispatcher()).use {
+            val content = MutableLiveData<SongContent>()
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            val adapter = SongContentAdapter(content,42, context)
 
-        val beforeRendering = adapter.renderedSongContent.value.toString()
-        runBlocking {
-            content.value = SongContent(listOf(
-                Verse(
-                    lyrics="J'entre avec l'aube",
-                    listOf(Chord(0,"F#"))
-                )
-            ))
+            val beforeRendering = adapter.renderedSongContent.value.toString()
+            runBlocking {
+                content.value = SongContent(listOf(
+                    Verse(
+                        lyrics="J'entre avec l'aube",
+                        listOf(Chord(0,"F#"))
+                    )
+                ))
+            }
+            assertNotEquals(beforeRendering, adapter.renderedSongContent.getOrAwaitValue().toString())
         }
-        assertNotEquals(beforeRendering, adapter.renderedSongContent.getOrAwaitValue().toString())
     }
 
 

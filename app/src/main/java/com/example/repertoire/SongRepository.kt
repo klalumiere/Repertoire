@@ -3,17 +3,14 @@ package klalumiere.repertoire
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
 class SongRepository(
-    context: Context,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    context: Context
 ) {
     suspend fun add(uri: Uri) = withContext(ioDispatcher) {
         add(uri, resolveName(uri))
@@ -37,11 +34,6 @@ class SongRepository(
         songDao.delete(uri.toString())
     }
 
-
-    // Introduced for tests
-    fun injectContentResolverForTests(resolverRhs: RepertoireContentResolver) {
-        resolver = resolverRhs
-    }
 
     fun injectDatabaseForTests(db: AppDatabase) {
         songDao = db.songDao()
@@ -67,6 +59,7 @@ class SongRepository(
     private val cannotReadFileErrorMessage =
         context.resources.getString(R.string.cannot_read_file_error_message)
 
-    private var resolver: RepertoireContentResolver = NativeContentResolver(context)
+    private var resolver: RepertoireContentResolver = RepertoireContentResolverFactory.create(context)
     private var songDao = AppDatabase.getInstance(context).songDao()
+    private val ioDispatcher: CoroutineDispatcher = DispatchersFactory.createIODispatcher()
 }

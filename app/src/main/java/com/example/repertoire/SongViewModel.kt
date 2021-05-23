@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
-    val repository = SongRepository(application) // Exposed for tests
+    private val repository = SongRepository(application)
     val songList = repository.getAllSongs()
 
     fun add(uris: List<Uri>) = viewModelScope.launch {
@@ -22,5 +22,4 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     fun remove(uris: List<Uri>) = viewModelScope.launch {
         uris.forEach { uri -> repository.remove(uri) }
     }
-
 }

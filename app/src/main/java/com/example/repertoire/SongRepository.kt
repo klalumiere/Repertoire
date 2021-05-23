@@ -36,10 +36,6 @@ class SongRepository(
 
 
     // Introduced for tests
-    fun injectContentResolverForTests(resolverRhs: RepertoireContentResolver) {
-        resolver = resolverRhs
-    }
-
     fun injectDatabaseForTests(db: AppDatabase) {
         songDao = db.songDao()
     }
@@ -64,7 +60,7 @@ class SongRepository(
     private val cannotReadFileErrorMessage =
         context.resources.getString(R.string.cannot_read_file_error_message)
 
-    private var resolver: RepertoireContentResolver = NativeContentResolver(context)
+    private var resolver: RepertoireContentResolver = RepertoireContentResolverFactory.create(context)
     private var songDao = AppDatabase.getInstance(context).songDao()
     private val ioDispatcher: CoroutineDispatcher = DispatchersFactory.createIODispatcher()
 }

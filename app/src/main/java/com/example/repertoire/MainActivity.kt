@@ -20,22 +20,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        const val INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS = "SongActivity::INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        intent.extras?.also {
-            if(it.containsKey(INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS)
-                && (it[INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS] as Boolean))
-            {
-                injectAssetContentResolverForTests()
-            }
-        }
 
         addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
@@ -76,6 +64,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // Introduced for tests
     fun injectActivityResultRegistryForTest(registry: ActivityResultRegistry) {
         addSongsLauncher = registerForActivityResult(contract, registry) { uris: List<Uri> ->
             songViewModel.add(uris)
@@ -116,13 +105,6 @@ class MainActivity : AppCompatActivity() {
         songAdapter.tracker?.clearSelection() // Important, otherwise, added songs might be selected
         songViewModel.remove(uris)
         return true
-    }
-
-
-    // Introduced for tests
-    private fun injectAssetContentResolverForTests() {
-        songViewModel.repository.injectContentResolverForTests(
-                AssetContentResolver(this))
     }
 
 

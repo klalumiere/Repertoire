@@ -1,25 +1,44 @@
 package klalumiere.repertoire
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.io.Closeable
 
 object DispatchersFactory {
-    private var injectedDispatcher: CoroutineDispatcher? = null
-    class InjectForTests(dispatcher: CoroutineDispatcher): AutoCloseable, Closeable {
+    private var injected: CoroutineDispatcher? = null
+
+    class InjectForTests(rhs: CoroutineDispatcher) : AutoCloseable, Closeable {
         init {
-            injectedDispatcher = dispatcher
+            injected = rhs
         }
+
         override fun close() {
-            injectedDispatcher = null
+            injected = null
         }
     }
 
     fun createIODispatcher(): CoroutineDispatcher {
-        return injectedDispatcher ?: Dispatchers.IO
+        return injected ?: Dispatchers.IO
     }
 
     fun createDefaultDispatcher(): CoroutineDispatcher {
-        return injectedDispatcher ?: Dispatchers.Default
+        return injected ?: Dispatchers.Default
+    }
+}
+
+object RepertoireContentResolverFactory {
+    private var injected: RepertoireContentResolver? = null
+    class InjectForTests(rhs: RepertoireContentResolver): AutoCloseable, Closeable {
+        init {
+            injected = rhs
+        }
+        override fun close() {
+            injected = null
+        }
+    }
+
+    fun create(context: Context): RepertoireContentResolver {
+        return injected ?: NativeContentResolver(context)
     }
 }

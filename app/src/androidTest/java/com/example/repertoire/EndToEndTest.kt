@@ -40,16 +40,14 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
-    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
     private val context = ApplicationProvider.getApplicationContext<Context>()
+    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
+    private lateinit var contentResolverInjector: RepertoireContentResolverFactory.InjectForTests
 
     @Test
     fun canAddSong() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
-        }
-        val scenario = launchActivity<MainActivity>(intent)
+        val scenario = launchActivity<MainActivity>()
 
         scenario.moveToState(Lifecycle.State.CREATED)
         scenario.onActivity { activity ->
@@ -66,10 +64,7 @@ class EndToEndTest {
 
     @Test
     fun canSelectSong() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
-        }
-        val scenario = launchActivity<MainActivity>(intent)
+        val scenario = launchActivity<MainActivity>()
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -81,10 +76,7 @@ class EndToEndTest {
 
     @Test
     fun canDeleteSong() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
-        }
-        val scenario = launchActivity<MainActivity>(intent)
+        val scenario = launchActivity<MainActivity>()
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -96,10 +88,7 @@ class EndToEndTest {
 
     @Test
     fun deletedAndAddedIsNotSelected() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
-        }
-        val scenario = launchActivity<MainActivity>(intent)
+        val scenario = launchActivity<MainActivity>()
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -113,10 +102,7 @@ class EndToEndTest {
 
     @Test
     fun turningDevicePreservesSelection() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
-        }
-        val scenario = launchActivity<MainActivity>(intent)
+        val scenario = launchActivity<MainActivity>()
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -129,10 +115,7 @@ class EndToEndTest {
 
     @Test
     fun canTransitionToSongActivity() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
-        }
-        val scenario = launchActivity<MainActivity>(intent)
+        val scenario = launchActivity<MainActivity>()
         addSong(scenario)
 
         onView(withId(R.id.song_list_view))
@@ -146,7 +129,6 @@ class EndToEndTest {
         val intent = Intent(context, SongActivity::class.java).apply {
             putExtra(SongActivity.SONG_NAME, "Happy Birthday")
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
-            putExtra(SongActivity.INJECT_ASSET_CONTENT_RESOLVER_FOR_TESTS, true)
         }
         launchActivity<SongActivity>(intent)
 
@@ -159,12 +141,14 @@ class EndToEndTest {
     @Before
     fun clearDatabase() {
         dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
+        contentResolverInjector = RepertoireContentResolverFactory.InjectForTests(AssetContentResolver(context))
         AppDatabase.getInstance(context).songDao().deleteAll()
     }
 
     @After
     fun closeResources() {
         dispatcherInjector.close()
+        contentResolverInjector.close()
     }
 
     private fun addSong(scenario: ActivityScenario<MainActivity>) {

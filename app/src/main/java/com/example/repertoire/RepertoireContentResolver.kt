@@ -44,6 +44,7 @@ class NativeContentResolver(context: Context): RepertoireContentResolver {
     }
 
 
+    // Introduced for tests
     fun injectContentResolverForTests(resolverRhs: ContentResolver) {
         resolver = resolverRhs
     }

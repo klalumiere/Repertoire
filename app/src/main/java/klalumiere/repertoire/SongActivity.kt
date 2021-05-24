@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_song.*
+import klalumiere.repertoire.databinding.ActivitySongBinding
 
 class SongActivity : AppCompatActivity() {
     companion object {
@@ -15,7 +15,9 @@ class SongActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_song)
+        binding = ActivitySongBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         supportActionBar?.hide()
 
         val bundle = intent.extras!!
@@ -24,18 +26,18 @@ class SongActivity : AppCompatActivity() {
             uri = bundle[SONG_URI_AS_STRING] as String
         )
 
-        song_title_text_view.text = song.name
-        song_text_view.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
+        binding.songTitleTextView.text = song.name
+        binding.songTextView.viewTreeObserver.addOnGlobalLayoutListener { onGlobalLayoutListener() }
     }
 
 
     // Need to be called in or after `addOnGlobalLayoutListener` to call `paint` and `measuredWidth`
     private fun getScreenWidthInChar(): Int {
-        val widthOfM = song_text_view.paint.measureText("M")
+        val widthOfM = binding.songTextView.paint.measureText("M")
         return if (widthOfM > 0) {
             // Assumes monospace.
             // Moreover, could be problematic with non extended ascii (e.g. arabic char)
-            (song_text_view.measuredWidth/widthOfM).toInt()
+            (binding.songTextView.measuredWidth/widthOfM).toInt()
         } else {
             Log.w("SongActivity", "The width of `M` is 0.")
             30
@@ -51,11 +53,11 @@ class SongActivity : AppCompatActivity() {
             this
         )
         songContentAdapter?.renderedSongContent?.observe(this, { content ->
-            song_text_view.text = content
+            binding.songTextView.text = content
         })
     }
 
-
+    private lateinit var binding: ActivitySongBinding
     private lateinit var song: Song
     private var songContentAdapter: SongContentAdapter? = null
     private val songViewModel: SongViewModel by viewModels()

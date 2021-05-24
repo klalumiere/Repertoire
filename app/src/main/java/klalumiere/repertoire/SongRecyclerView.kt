@@ -38,7 +38,7 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     }
     fun getItemDetails(): ItemDetailsLookup.ItemDetails<String> {
         return object : ItemDetailsLookup.ItemDetails<String>() {
-            override fun getPosition(): Int = adapterPosition
+            override fun getPosition(): Int = bindingAdapterPosition
             override fun getSelectionKey(): String? = song?.uri
         }
     }

@@ -16,24 +16,26 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import klalumiere.repertoire.databinding.ActivityMainBinding
+import klalumiere.repertoire.databinding.ContentMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+        setSupportActionBar(binding.toolbar)
 
-        addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
+        binding.addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
         linearLayoutManager = LinearLayoutManager(this)
         songAdapter = SongAdapter().apply {
-            tracker = createTracker(song_list_view, this)
+            tracker = createTracker(binding.contentMain.songListView, this)
         }
         val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
         songViewModel.songList.observe(this, observer)
-        song_list_view.apply {
+        binding.contentMain.songListView.apply {
             setHasFixedSize(true)
             layoutManager = linearLayoutManager
             adapter = songAdapter
@@ -106,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
+    private lateinit var binding: ActivityMainBinding
     private val contract = object : ActivityResultContracts.OpenMultipleDocuments() {
         override fun createIntent(context: Context, input: Array<out String>): Intent {
             return super.createIntent(context, input).apply {

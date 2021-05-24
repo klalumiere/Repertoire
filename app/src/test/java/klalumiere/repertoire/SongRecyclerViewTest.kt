@@ -76,7 +76,7 @@ class SongViewHolderTest {
         val scenario = launchActivity<MainActivity>()
         scenario.onActivity { activity ->
             val holder = createSongViewHolder(activity)
-            assertEquals(holder.adapterPosition, holder.getItemDetails().position)
+            assertEquals(holder.bindingAdapterPosition, holder.getItemDetails().position)
         }
     }
 

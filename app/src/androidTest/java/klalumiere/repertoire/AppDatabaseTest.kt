@@ -53,10 +53,15 @@ class AppDatabaseTest {
     }
 
     @Test
-    fun ignoreDuplicateUri() {
+    fun updateIfSameUri() {
         runBlocking { songDao.insert(arbitrarySong) }
-        runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAll().getOrAwaitValue(), equalTo(listOf(arbitrarySong)))
+        val anotherArbitrarySong = Song(
+            uri = arbitrarySong.uri,
+            name = "ZZ Top - La Grange",
+            content = "Rumors spreadin' 'round in that Texas town"
+        )
+        runBlocking { songDao.insert(anotherArbitrarySong) }
+        assertThat(songDao.getAll().getOrAwaitValue(), equalTo(listOf(anotherArbitrarySong)))
     }
 
     @Test

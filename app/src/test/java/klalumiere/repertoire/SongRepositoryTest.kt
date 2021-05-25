@@ -38,7 +38,7 @@ class SongRepositoryTest {
     fun createRepository() {
         dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        contentResolver = mock<ContentResolver> {
+        contentResolver = mock {
             on {
                 openInputStream(same(contentUri))
             } doReturn songContent.byteInputStream()

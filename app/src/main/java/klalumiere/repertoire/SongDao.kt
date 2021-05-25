@@ -17,7 +17,7 @@ interface SongDao {
     @Query("SELECT * FROM song ORDER BY name")
     fun getAll(): LiveData<List<Song>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(song: Song)
 
 

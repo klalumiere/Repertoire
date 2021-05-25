@@ -1,7 +1,5 @@
 package klalumiere.repertoire
 
-import androidx.room.AutoMigration
-import androidx.room.RoomDatabase
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4

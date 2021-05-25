@@ -28,7 +28,8 @@ class SongRepository(
     }
 
     fun getSongContent(uri: Uri): LiveData<SongContent> = liveData(ioDispatcher) {
-        emit(SongContent.parse(readSongFile(uri)))
+        val rawContent = songDao.get(uri.toString())?.content ?: readSongFile(uri)
+        emit(SongContent.parse(rawContent))
     }
 
     suspend fun remove(uri: Uri) = withContext(ioDispatcher) {

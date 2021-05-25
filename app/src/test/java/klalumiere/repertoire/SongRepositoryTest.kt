@@ -25,6 +25,7 @@ import org.robolectric.annotation.Config
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
+    private val songContent = "Sheets of empty canvas"
     private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
@@ -37,7 +38,11 @@ class SongRepositoryTest {
     fun createRepository() {
         dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        contentResolver = mock()
+        contentResolver = mock {
+            on {
+                openInputStream(same(contentUri))
+            } doReturn songContent.byteInputStream()
+        }
         val nativeResolver = NativeContentResolver(context).apply {
             injectContentResolverForTests(contentResolver)
         }
@@ -68,7 +73,8 @@ class SongRepositoryTest {
         runBlocking { repository.add(contentUri, songName) }
         val song = Song(
             uri = contentUri.toString(),
-            name = songName
+            name = songName,
+            content = songContent
         )
         assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
@@ -78,7 +84,8 @@ class SongRepositoryTest {
         runBlocking { repository.add(contentUri, "Pantera - Walk.md") }
         val song = Song(
             uri = contentUri.toString(),
-            name = "Pantera - Walk"
+            name = "Pantera - Walk",
+            content = songContent
         )
         assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
     }
@@ -101,6 +108,9 @@ class SongRepositoryTest {
                 query(same(contentUri),
                     anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
             } doReturn cursor
+            on {
+                openInputStream(same(contentUri))
+            } doReturn songContent.byteInputStream()
         }
         val nativeResolver = NativeContentResolver(context).apply {
             injectContentResolverForTests(contentResolver)
@@ -113,7 +123,8 @@ class SongRepositoryTest {
 
             val song = Song(
                 uri = contentUri.toString(),
-                name = songName
+                name = songName,
+                content = songContent
             )
             assertEquals(repository.getAllSongs().getOrAwaitValue(), listOf(song))
         }
@@ -121,26 +132,15 @@ class SongRepositoryTest {
 
     @Test
     fun getSongContent() {
-        val lyrics = "J'entre avec l'aube"
-        val contentResolver = mock<ContentResolver> {
-            on {
-                openInputStream(same(contentUri))
-            } doReturn lyrics.byteInputStream()
+        val repository = SongRepository(context).apply {
+            injectDatabaseForTests(db)
         }
-        val nativeResolver = NativeContentResolver(context).apply {
-            injectContentResolverForTests(contentResolver)
-        }
-        RepertoireContentResolverFactory.InjectForTests(nativeResolver).use {
-            val repository = SongRepository(context).apply {
-                injectDatabaseForTests(db)
-            }
-            val expected = SongContent(
-                listOf(
-                    Verse(lyrics = lyrics, listOf()),
-                )
+        val expected = SongContent(
+            listOf(
+                Verse(lyrics = songContent, listOf()),
             )
-            assertEquals(expected, repository.getSongContent(contentUri).getOrAwaitValue())
-        }
+        )
+        assertEquals(expected, repository.getSongContent(contentUri).getOrAwaitValue())
     }
 
 

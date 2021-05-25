@@ -10,8 +10,8 @@ android {
         applicationId "klalumiere.repertoire"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 18
-        versionName "1.2.2"
+        versionCode 19
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -54,6 +54,9 @@ android {
         exclude 'META-INF/AL2.0'
         exclude 'META-INF/LGPL2.1'
     }
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
     testOptions {
         unitTests {
             includeAndroidResources = true
@@ -68,6 +71,7 @@ dependencies {
     def room_version = "2.4.0-alpha02"
 
     androidTestImplementation "android.arch.core:core-testing:1.1.1"
+    androidTestImplementation "androidx.room:room-testing:$room_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.ext:junit:1.1.2"

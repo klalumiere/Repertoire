@@ -18,7 +18,9 @@ class SongRepository(
 
     suspend fun add(uri: Uri, name: String) = withContext(ioDispatcher) {
         resolver.takePersistableUriPermission(uri)
-        songDao.insert(Song(uri = uri.toString(), name = File(name).nameWithoutExtension))
+        val nameWithoutExtension = File(name).nameWithoutExtension
+        val content = readSongFile(uri)
+        songDao.insert(Song(uri=uri.toString(), name=nameWithoutExtension, content=content))
     }
 
     fun getAllSongs(): LiveData<List<Song>> {

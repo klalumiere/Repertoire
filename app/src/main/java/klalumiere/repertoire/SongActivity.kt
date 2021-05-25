@@ -23,7 +23,8 @@ class SongActivity : AppCompatActivity() {
         val bundle = intent.extras!!
         song = Song (
             name = bundle[SONG_NAME] as String,
-            uri = bundle[SONG_URI_AS_STRING] as String
+            uri = bundle[SONG_URI_AS_STRING] as String,
+            content = null
         )
 
         binding.songTitleTextView.text = song.name

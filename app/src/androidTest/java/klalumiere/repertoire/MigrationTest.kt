@@ -29,7 +29,7 @@ class MigrationTest {
             cursor.close()
             close()
         }
-        
+
 //        db = helper.runMigrationsAndValidate(testDbName, 2, true, MIGRATION_1_2)
 
         // MigrationTestHelper automatically verifies the schema changes,

@@ -24,7 +24,8 @@ import org.robolectric.annotation.Config
 class SongViewHolderTest {
     private val song = Song(
         uri = "content://arbitrary/uri",
-        name = "Pearl Jam - Black"
+        name = "Pearl Jam - Black",
+        content = "Sheets of empty canvas"
     )
 
     @Test
@@ -103,7 +104,8 @@ class SongItemCallbackTestTest {
     private val callback = SongItemCallback()
     private val song = Song(
         uri = "content://arbitrary/uri",
-        name = "Pearl Jam - Black"
+        name = "Pearl Jam - Black",
+        content = "Sheets of empty canvas"
     )
 
     @Test
@@ -115,7 +117,8 @@ class SongItemCallbackTestTest {
     fun songsWithSameUriAreTheSameItems() {
         val song2 = Song(
             uri = song.uri,
-            name = "anotherName"
+            name = "anotherName",
+            content = "anotherContent"
         )
         assertTrue(callback.areItemsTheSame(song,song2))
     }
@@ -124,7 +127,8 @@ class SongItemCallbackTestTest {
     fun songsWithDifferentUriAreNotTheSameItems() {
         val song2 = Song(
             uri = "content://anotherArbitrary/uri",
-            name = song.name
+            name = song.name,
+            content = song.content
         )
         assertFalse(callback.areItemsTheSame(song,song2))
     }
@@ -138,7 +142,18 @@ class SongItemCallbackTestTest {
     fun songsWithDifferentNameHaveNotTheSameContents() {
         val song2 = Song(
             uri = song.uri,
-            name = "anotherName"
+            name = "anotherName",
+            content = song.content
+        )
+        assertFalse(callback.areContentsTheSame(song,song2))
+    }
+
+    @Test
+    fun songsWithDifferentContentHaveNotTheSameContents() {
+        val song2 = Song(
+            uri = song.uri,
+            name = song.name,
+            content = "anotherContent"
         )
         assertFalse(callback.areContentsTheSame(song,song2))
     }
@@ -147,7 +162,8 @@ class SongItemCallbackTestTest {
     fun songsWithDifferentUriHaveNotTheSameContent() {
         val song2 = Song(
             uri = "content://anotherArbitrary/uri",
-            name = song.name
+            name = song.name,
+            content = song.content
         )
         assertFalse(callback.areContentsTheSame(song,song2))
     }
@@ -158,7 +174,8 @@ class SongItemCallbackTestTest {
 class SongAdapterTest {
     private val song = Song(
         uri = "content://arbitrary/uri",
-        name = "Pearl Jam - Black"
+        name = "Pearl Jam - Black",
+        content = "Sheets of empty canvas"
     )
 
     @Test
@@ -222,8 +239,8 @@ class SongAdapterTest {
 @Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongItemKeyProviderTest {
     private val songs = listOf(
-        Song(uri = "content://arbitrary/uri", name = "Pearl Jam - Black"),
-        Song(uri = "content://arbitrary/uri2", name = "Foo Fighters - Walk")
+        Song(uri = "content://arbitrary/uri", name = "Pearl Jam - Black", content = "Sheets of empty canvas"),
+        Song(uri = "content://arbitrary/uri2", name = "Foo Fighters - Walk", content = "A million miles away")
     )
 
     @Test

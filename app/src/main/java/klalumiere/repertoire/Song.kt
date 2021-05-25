@@ -9,5 +9,6 @@ import androidx.room.Index
 )
 data class Song(
     val uri: String,
-    val name: String
+    val name: String,
+    val content: String?
 )

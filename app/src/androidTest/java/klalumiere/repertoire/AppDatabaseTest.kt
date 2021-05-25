@@ -18,7 +18,8 @@ import org.junit.runner.RunWith
 class AppDatabaseTest {
     private val arbitrarySong = Song(
         uri = "content://arbitrary/uri",
-        name = "Led Zeppelin - Stairway to Heaven"
+        name = "Led Zeppelin - Stairway to Heaven",
+        content = "There’s a [l](Am)ady who’s [s](E+)ure"
     )
     private lateinit var db: AppDatabase
     private lateinit var songDao: SongDao
@@ -61,15 +62,18 @@ class AppDatabaseTest {
     fun songsAreOrderedAlphabeticallyByName() {
         val songL = Song(
             uri = "content://arbitrary/uri0",
-            name = "Led Zeppelin - Stairway to Heaven"
+            name = "Led Zeppelin - Stairway to Heaven",
+            content = "There’s a [l](Am)ady who’s [s](E+)ure"
         )
         val songZ = Song(
             uri = "content://arbitrary/uri1",
-            name = "ZZ Top - La Grange"
+            name = "ZZ Top - La Grange",
+            content = "Rumors spreadin' 'round in that Texas town"
         )
         val songA = Song(
             uri = "content://arbitrary/uri2",
-            name = "AC/DC - Back in Black"
+            name = "AC/DC - Back in Black",
+            content = "Back in black"
         )
         songDao.insertAll(songL,songZ,songA)
         assertThat(songDao.getAll().getOrAwaitValue(),contains(songA,songL,songZ))
@@ -79,7 +83,8 @@ class AppDatabaseTest {
     fun canDeleteAll() {
         val anotherArbitrarySong = Song(
             uri = "content://arbitrary/uri0",
-            name = "Led Zeppelin - Stairway to Heaven"
+            name = "Led Zeppelin - Stairway to Heaven",
+            content = "There’s a [l](Am)ady who’s [s](E+)ure"
         )
         songDao.insertAll(arbitrarySong, anotherArbitrarySong)
         songDao.deleteAll()

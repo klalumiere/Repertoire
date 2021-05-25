@@ -6,8 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.contains
-import org.hamcrest.Matchers.empty
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -16,8 +15,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class AppDatabaseTest {
+    private val uri = "content://arbitrary/uri"
     private val arbitrarySong = Song(
-        uri = "content://arbitrary/uri",
+        uri = uri,
         name = "Led Zeppelin - Stairway to Heaven",
         content = "There’s a [l](Am)ady who’s [s](E+)ure"
     )
@@ -34,7 +34,8 @@ class AppDatabaseTest {
     @Test
     fun canInsert() {
         runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAll().getOrAwaitValue(),contains(arbitrarySong))
+        val song = runBlocking { songDao.get(uri) }
+        assertThat(song, equalTo(arbitrarySong))
     }
 
     @Test
@@ -55,7 +56,7 @@ class AppDatabaseTest {
     fun ignoreDuplicateUri() {
         runBlocking { songDao.insert(arbitrarySong) }
         runBlocking { songDao.insert(arbitrarySong) }
-        assertThat(songDao.getAll().getOrAwaitValue(),contains(arbitrarySong))
+        assertThat(songDao.getAll().getOrAwaitValue(), equalTo(listOf(arbitrarySong)))
     }
 
     @Test

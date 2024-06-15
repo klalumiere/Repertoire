@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val contract = object : ActivityResultContracts.OpenMultipleDocuments() {
-        override fun createIntent(context: Context, input: Array<out String>): Intent {
+        override fun createIntent(context: Context, input: Array<String>): Intent {
             return super.createIntent(context, input).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
             }

@@ -20,7 +20,6 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongViewHolderTest {
     private val song = Song(
         uri = "content://arbitrary/uri",

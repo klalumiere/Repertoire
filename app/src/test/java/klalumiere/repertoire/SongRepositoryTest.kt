@@ -11,17 +11,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
@@ -36,7 +34,7 @@ class SongRepositoryTest {
     @ExperimentalCoroutinesApi
     @Before
     fun createRepository() {
-        dispatcherInjector = DispatchersFactory.InjectForTests(StandardTestDispatcher())
+        dispatcherInjector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock {
             on {

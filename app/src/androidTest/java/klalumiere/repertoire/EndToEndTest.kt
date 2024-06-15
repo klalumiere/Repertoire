@@ -29,7 +29,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -140,7 +140,7 @@ class EndToEndTest {
     @ExperimentalCoroutinesApi
     @Before
     fun clearDatabase() {
-        dispatcherInjector = DispatchersFactory.InjectForTests(StandardTestDispatcher())
+        dispatcherInjector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
         contentResolverInjector = RepertoireContentResolverFactory.InjectForTests(AssetContentResolver(context))
         AppDatabase.getInstance(context).songDao().deleteAll()
     }

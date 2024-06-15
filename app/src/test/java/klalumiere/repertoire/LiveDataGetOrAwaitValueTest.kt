@@ -10,7 +10,6 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class LiveDataGetOrAwaitValueTest {
     @Test
     fun getOrAwaitValue() {

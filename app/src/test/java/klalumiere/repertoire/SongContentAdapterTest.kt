@@ -6,15 +6,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongContentAdapterTest {
     @Test
     fun convertsColorToHtml() {
@@ -24,7 +22,7 @@ class SongContentAdapterTest {
     @ExperimentalCoroutinesApi
     @Test
     fun rendersSongContent() {
-        DispatchersFactory.InjectForTests(StandardTestDispatcher()).use {
+        DispatchersFactory.InjectForTests(UnconfinedTestDispatcher()).use {
             val content = MutableLiveData<SongContent>()
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             val adapter = SongContentAdapter(content,42, context)

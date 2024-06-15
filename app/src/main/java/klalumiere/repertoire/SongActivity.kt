@@ -22,8 +22,8 @@ class SongActivity : AppCompatActivity() {
 
         val bundle = intent.extras!!
         song = Song (
-            name = bundle[SONG_NAME] as String,
-            uri = bundle[SONG_URI_AS_STRING] as String,
+            name = bundle.getString(SONG_NAME).toString(),
+            uri = bundle.getString(SONG_URI_AS_STRING).toString(),
             content = null
         )
 

@@ -11,7 +11,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
@@ -36,7 +36,7 @@ class SongRepositoryTest {
     @ExperimentalCoroutinesApi
     @Before
     fun createRepository() {
-        dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
+        dispatcherInjector = DispatchersFactory.InjectForTests(StandardTestDispatcher())
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock {
             on {

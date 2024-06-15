@@ -6,7 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +24,7 @@ class SongContentAdapterTest {
     @ExperimentalCoroutinesApi
     @Test
     fun rendersSongContent() {
-        DispatchersFactory.InjectForTests(TestCoroutineDispatcher()).use {
+        DispatchersFactory.InjectForTests(StandardTestDispatcher()).use {
             val content = MutableLiveData<SongContent>()
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             val adapter = SongContentAdapter(content,42, context)

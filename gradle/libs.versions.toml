@@ -11,7 +11,7 @@ androidx_recyclerview_recyclerview = "1.3.2"
 # Updating `recyclerview-selection` to version `1.1.0` breaks `espresso`'s `longClick`,
 # which is used in `EndToEndTests.kt`. Hence, we don't update it for now. See issue at
 # https://issuetracker.google.com/issues/188992115
-androidx_recyclerview_recyclerview_selection = "1.1.0"
+androidx_recyclerview_recyclerview_selection = "1.0.0"
 androidx_room = "2.6.1"
 androidx_test_core_ktx = "1.5.0"
 androidx_test_espresso = "3.5.1"

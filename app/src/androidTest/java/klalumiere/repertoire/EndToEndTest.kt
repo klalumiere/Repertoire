@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -40,21 +39,17 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
-    private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
+    companion object {
+        private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
+    }
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var contentResolverInjector: RepertoireContentResolverFactory.InjectForTests
+    private lateinit var addSongsLauncherActivityResultRegistryFactory: AddSongsLauncherActivityResultRegistryFactory.InjectForTests
 
     @Test
     fun canAddSong() {
         val scenario = launchActivity<MainActivity>()
-
-        scenario.moveToState(Lifecycle.State.CREATED)
-        scenario.onActivity { activity ->
-            activity.injectActivityResultRegistryForTests(
-                createFakeActivityResultRegistry(assetUri))
-        }
-        scenario.moveToState(Lifecycle.State.RESUMED)
 
         onView(withId(R.id.addSongsFAB)).perform(click())
 
@@ -81,6 +76,7 @@ class EndToEndTest {
 
         onView(withId(R.id.song_list_view))
             .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+
         pressDeleteInOptionMenu()
 
         onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
@@ -142,6 +138,8 @@ class EndToEndTest {
     fun clearDatabase() {
         dispatcherInjector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
         contentResolverInjector = RepertoireContentResolverFactory.InjectForTests(AssetContentResolver(context))
+        addSongsLauncherActivityResultRegistryFactory = AddSongsLauncherActivityResultRegistryFactory
+            .InjectForTests(createFakeActivityResultRegistry(assetUri))
         AppDatabase.getInstance(context).songDao().deleteAll()
     }
 
@@ -149,22 +147,17 @@ class EndToEndTest {
     fun closeResources() {
         dispatcherInjector.close()
         contentResolverInjector.close()
+        addSongsLauncherActivityResultRegistryFactory.close()
     }
 
     private fun addSong(scenario: ActivityScenario<MainActivity>) {
-        scenario.moveToState(Lifecycle.State.CREATED)
-        scenario.onActivity { activity ->
-            activity.injectActivityResultRegistryForTests(
-                createFakeActivityResultRegistry(assetUri))
-        }
-        scenario.moveToState(Lifecycle.State.RESUMED)
         onView(withId(R.id.addSongsFAB)).perform(click())
     }
 
     private fun createFakeActivityResultRegistry(assetUri: Uri): ActivityResultRegistry {
         return object : ActivityResultRegistry() {
             override fun <I, O> onLaunch(requestCode: Int, contract: ActivityResultContract<I, O>,
-                input: I, options: ActivityOptionsCompat?
+                                         input: I, options: ActivityOptionsCompat?
             ) {
                 dispatchResult(requestCode, listOf(assetUri))
             }
@@ -176,6 +169,7 @@ class EndToEndTest {
         onView(withText("Delete")).perform(click())
     }
 }
+
 
 
 private class OrientationChange private constructor(private val orientation: Int) : ViewAction

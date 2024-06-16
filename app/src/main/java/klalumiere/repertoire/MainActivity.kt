@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import klalumiere.repertoire.databinding.ActivityMainBinding
 import klalumiere.repertoire.databinding.ContentMainBinding
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         setSupportActionBar(binding.toolbar)
 
+        addSongsLauncher = createAddSongsLauncher()
         binding.addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
         linearLayoutManager = LinearLayoutManager(this)
@@ -65,13 +68,18 @@ class MainActivity : AppCompatActivity() {
         songAdapter.tracker?.onSaveInstanceState(outState)
     }
 
-
-    fun injectActivityResultRegistryForTests(registry: ActivityResultRegistry) {
-        addSongsLauncher = registerForActivityResult(contract, registry) { uris: List<Uri> ->
-            songViewModel.add(uris)
+    private fun createAddSongsLauncher(): ActivityResultLauncher<Array<String>> {
+        val registry = AddSongsLauncherActivityResultRegistryFactory.create()
+        return if (registry == null) {
+            registerForActivityResult(contract) { uris: List<Uri> ->
+                songViewModel.add(uris)
+            }
+        } else {
+            registerForActivityResult(contract, registry) { uris: List<Uri> ->
+                songViewModel.add(uris)
+            }
         }
     }
-
 
     private fun createSelectionObserver(tracker: SelectionTracker<String>)
             : SelectionTracker.SelectionObserver<String>
@@ -116,9 +124,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private var addSongsLauncher = registerForActivityResult(contract) { uris: List<Uri> ->
-        songViewModel.add(uris)
-    }
+    private lateinit var addSongsLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var songAdapter: SongAdapter

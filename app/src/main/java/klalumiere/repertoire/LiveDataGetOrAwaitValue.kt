@@ -10,7 +10,7 @@ fun <T> LiveData<T>.getOrAwaitValue(time: Long = 2, timeUnit: TimeUnit = TimeUni
     var data: T? = null
     val latch = CountDownLatch(1)
     val observer = object : Observer<T> {
-        override fun onChanged(x: T?) {
+        override fun onChanged(x: T) {
             data = x
             latch.countDown()
             this@getOrAwaitValue.removeObserver(this)

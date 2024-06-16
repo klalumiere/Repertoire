@@ -1,6 +1,7 @@
 package klalumiere.repertoire
 
 import android.content.Context
+import androidx.activity.result.ActivityResultRegistry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.io.Closeable
@@ -39,5 +40,21 @@ object RepertoireContentResolverFactory {
 
     fun create(context: Context): RepertoireContentResolver {
         return injected ?: NativeContentResolver(context)
+    }
+}
+
+object AddSongsActivityResultRegistryFactory {
+    private var injected: ActivityResultRegistry? = null
+    class InjectForTests(rhs: ActivityResultRegistry): AutoCloseable, Closeable {
+        init {
+            injected = rhs
+        }
+        override fun close() {
+            injected = null
+        }
+    }
+
+    fun create(): ActivityResultRegistry? {
+        return injected
     }
 }

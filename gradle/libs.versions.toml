@@ -1,0 +1,60 @@
+[versions]
+agp = "8.5.0"
+android_arch_core_core_testing = "1.1.1"
+androidx_activity_activity_ktx = "1.9.0"
+androidx_appcompat_appcompat = "1.7.0"
+androidx_constraintlayout_constraintlayout = "2.1.4"
+androidx_core_core_ktx = "1.13.1"
+androidx_fragment_fragment_ktx = "1.8.0"
+androidx_lifecycle = "2.8.2"
+androidx_recyclerview_recyclerview = "1.3.2"
+# Updating `recyclerview-selection` to version `1.1.0` breaks `espresso`'s `longClick`,
+# which is used in `EndToEndTests.kt`. Hence, we don't update it for now. See issue at
+# https://issuetracker.google.com/issues/188992115
+androidx_recyclerview_recyclerview_selection = "1.0.0"
+androidx_room = "2.6.1"
+androidx_test_core_ktx = "1.5.0"
+androidx_test_espresso = "3.5.1"
+androidx_test_ext_junit = "1.1.5"
+com_google_android_material_material = "1.12.0"
+com_google_dagger_dagger_compiler = "2.51.1"
+com_nhaarman_mockitokotlin2_mockito_kotlin = "2.2.0"
+junit_junit = "4.13.2"
+kotlin = "2.0.0"
+kspVersion = "2.0.0-1.0.21"
+org_jetbrains_kotlinx_kotlinx_coroutines_test = "1.8.1"
+org_robolectric_robolectric = "4.12.2"
+
+[libraries]
+android-arch-core-core-testing = {  group = "android.arch.core", name = "core-testing", version.ref = "android_arch_core_core_testing" }
+androidx-activity-activity-ktx = {  group = "androidx.activity", name = "activity-ktx", version.ref = "androidx_activity_activity_ktx" }
+androidx-appcompat-appcompat = {  group = "androidx.appcompat", name = "appcompat", version.ref = "androidx_appcompat_appcompat" }
+androidx-constraintlayout-constraintlayout = {  group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx_constraintlayout_constraintlayout" }
+androidx-core-core-ktx = {  group = "androidx.core", name = "core-ktx", version.ref = "androidx_core_core_ktx" }
+androidx-fragment-fragment-ktx = {  group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidx_fragment_fragment_ktx" }
+androidx-lifecycle-lifecycle-livedata-ktx = {  group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidx_lifecycle" }
+androidx-lifecycle-lifecycle-runtime-ktx = {  group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx_lifecycle" }
+androidx-lifecycle-lifecycle-runtime-testing = {  group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "androidx_lifecycle" }
+androidx-lifecycle-lifecycle-viewmodel-ktx = {  group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx_lifecycle" }
+androidx-recyclerview-recyclerview = {  group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidx_recyclerview_recyclerview" }
+androidx-recyclerview-recyclerview-selection = {  group = "androidx.recyclerview", name = "recyclerview-selection", version.ref = "androidx_recyclerview_recyclerview_selection" }
+androidx-room-room-compiler = {  group = "androidx.room", name = "room-compiler", version.ref = "androidx_room" }
+androidx-room-room-ktx = {  group = "androidx.room", name = "room-ktx", version.ref = "androidx_room" }
+androidx-room-room-runtime = {  group = "androidx.room", name = "room-runtime", version.ref = "androidx_room" }
+androidx-room-room-testing = {  group = "androidx.room", name = "room-testing", version.ref = "androidx_room" }
+androidx-test-core-ktx = {  group = "androidx.test", name = "core-ktx", version.ref = "androidx_test_core_ktx" }
+androidx-test-espresso-espresso-contrib = {  group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "androidx_test_espresso" }
+androidx-test-espresso-espresso-core = {  group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx_test_espresso" }
+androidx-test-ext-junit = {  group = "androidx.test.ext", name = "junit", version.ref = "androidx_test_ext_junit" }
+com-google-android-material-material = {  group = "com.google.android.material", name = "material", version.ref = "com_google_android_material_material" }
+com-google-dagger-dagger-compiler = {  group = "com.google.dagger", name = "dagger-compiler", version.ref = "com_google_dagger_dagger_compiler" }
+com-nhaarman-mockitokotlin2-mockito-kotlin = {  group = "com.nhaarman.mockitokotlin2", name = "mockito-kotlin", version.ref = "com_nhaarman_mockitokotlin2_mockito_kotlin" }
+junit-junit = {  group = "junit", name = "junit", version.ref = "junit_junit" }
+org-jetbrains-kotlin-kotlin-stdlib = {  group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+org-jetbrains-kotlinx-kotlinx-coroutines-test = {  group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "org_jetbrains_kotlinx_kotlinx_coroutines_test" }
+org-robolectric-robolectric = {  group = "org.robolectric", name = "robolectric", version.ref = "org_robolectric_robolectric" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

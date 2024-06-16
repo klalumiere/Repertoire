@@ -11,9 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
@@ -29,7 +27,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -40,131 +40,129 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
-    private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
+    companion object {
+        private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
+    }
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var contentResolverInjector: RepertoireContentResolverFactory.InjectForTests
+    private lateinit var addSongsInjector: AddSongsActivityResultRegistryFactory.InjectForTests
 
     @Test
     fun canAddSong() {
-        val scenario = launchActivity<MainActivity>()
+        launchActivity<MainActivity>().use {
+            onView(withId(R.id.addSongsFAB)).perform(click())
 
-        scenario.moveToState(Lifecycle.State.CREATED)
-        scenario.onActivity { activity ->
-            activity.injectActivityResultRegistryForTests(
-                createFakeActivityResultRegistry(assetUri))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, withText("Happy Birthday"))))
         }
-        scenario.moveToState(Lifecycle.State.RESUMED)
-
-        onView(withId(R.id.addSongsFAB)).perform(click())
-
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, withText("Happy Birthday"))))
     }
 
     @Test
     fun canSelectSong() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
 
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, isActivated())))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, isActivated())))
+        }
     }
 
     @Test
     fun canDeleteSong() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
-        pressDeleteInOptionMenu()
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
 
-        onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
+            pressDeleteInOptionMenu()
+
+            onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
+        }
     }
 
     @Test
     fun deletedAndAddedIsNotSelected() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
-        pressDeleteInOptionMenu()
-        addSong(scenario)
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            pressDeleteInOptionMenu()
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, not(isActivated()))))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, not(isActivated()))))
+        }
     }
 
     @Test
     fun turningDevicePreservesSelection() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
-        onView(isRoot()).perform(OrientationChange.landscape())
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            onView(isRoot()).perform(OrientationChange.landscape())
 
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, isActivated())))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, isActivated())))
+
+            onView(isRoot()).perform(OrientationChange.portrait()) // necessary, otherwise, can make other tests fail
+        }
     }
 
     @Test
     fun canTransitionToSongActivity() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, click()))
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, click()))
 
-        onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+            onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+        }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun canRenderSong() {
+    fun canRenderSong() = runTest(StandardTestDispatcher()) {
         val intent = Intent(context, SongActivity::class.java).apply {
             putExtra(SongActivity.SONG_NAME, "Happy Birthday")
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
         }
-        launchActivity<SongActivity>(intent)
-
-        onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
-        onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+        launchActivity<SongActivity>(intent).use {
+            onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+            advanceUntilIdle()
+            onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+        }
     }
 
 
-    @ExperimentalCoroutinesApi
     @Before
     fun clearDatabase() {
-        dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
         contentResolverInjector = RepertoireContentResolverFactory.InjectForTests(AssetContentResolver(context))
+        addSongsInjector = AddSongsActivityResultRegistryFactory.InjectForTests(createFakeActivityResultRegistry(assetUri))
         AppDatabase.getInstance(context).songDao().deleteAll()
     }
 
     @After
     fun closeResources() {
-        dispatcherInjector.close()
         contentResolverInjector.close()
+        addSongsInjector.close()
     }
 
-    private fun addSong(scenario: ActivityScenario<MainActivity>) {
-        scenario.moveToState(Lifecycle.State.CREATED)
-        scenario.onActivity { activity ->
-            activity.injectActivityResultRegistryForTests(
-                createFakeActivityResultRegistry(assetUri))
-        }
-        scenario.moveToState(Lifecycle.State.RESUMED)
+    private fun addSong() {
         onView(withId(R.id.addSongsFAB)).perform(click())
     }
 
     private fun createFakeActivityResultRegistry(assetUri: Uri): ActivityResultRegistry {
         return object : ActivityResultRegistry() {
             override fun <I, O> onLaunch(requestCode: Int, contract: ActivityResultContract<I, O>,
-                input: I, options: ActivityOptionsCompat?
+                                         input: I, options: ActivityOptionsCompat?
             ) {
                 dispatchResult(requestCode, listOf(assetUri))
             }
@@ -176,6 +174,7 @@ class EndToEndTest {
         onView(withText("Delete")).perform(click())
     }
 }
+
 
 
 private class OrientationChange private constructor(private val orientation: Int) : ViewAction

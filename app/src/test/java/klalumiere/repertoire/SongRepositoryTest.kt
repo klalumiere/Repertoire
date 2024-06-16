@@ -10,33 +10,28 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
     private val songName = "Pearl Jam - Black"
     private val songContent = "Sheets of empty canvas"
-    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var contentResolverInjector: RepertoireContentResolverFactory.InjectForTests
     private lateinit var db: AppDatabase
     private lateinit var repository: SongRepository
 
-    @ExperimentalCoroutinesApi
     @Before
     fun createRepository() {
-        dispatcherInjector = DispatchersFactory.InjectForTests(TestCoroutineDispatcher())
         context = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = mock {
             on {
@@ -56,21 +51,21 @@ class SongRepositoryTest {
 
     @Test
     fun addTakesPersistableUriPermission() {
-        runBlocking { repository.add(contentUri, songName) }
+        runTest { repository.add(contentUri, songName) }
         verify(contentResolver).takePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
     fun removeReleasesPersistableUriPermission() {
-        runBlocking { repository.remove(contentUri) }
+        runTest { repository.remove(contentUri) }
         verify(contentResolver).releasePersistableUriPermission(contentUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
     fun addAddsSongToDb() {
-        runBlocking { repository.add(contentUri, songName) }
+        runTest { repository.add(contentUri, songName) }
         val song = Song(
             uri = contentUri.toString(),
             name = songName,
@@ -81,7 +76,7 @@ class SongRepositoryTest {
 
     @Test
     fun addRemovesExtensionFromSongName() {
-        runBlocking { repository.add(contentUri, "Pantera - Walk.md") }
+        runTest { repository.add(contentUri, "Pantera - Walk.md") }
         val song = Song(
             uri = contentUri.toString(),
             name = "Pantera - Walk",
@@ -92,8 +87,8 @@ class SongRepositoryTest {
 
     @Test
     fun removeRemovesSongFromDb() {
-        runBlocking { repository.add(contentUri, songName) }
-        runBlocking { repository.remove(contentUri) }
+        runTest { repository.add(contentUri, songName) }
+        runTest { repository.remove(contentUri) }
         assertTrue(repository.getAllSongs().getOrAwaitValue().isEmpty())
     }
 
@@ -119,7 +114,7 @@ class SongRepositoryTest {
             val repository = SongRepository(context).apply {
                 injectDatabaseForTests(db)
             }
-            runBlocking { repository.add(contentUri) }
+            runTest { repository.add(contentUri) }
 
             val song = Song(
                 uri = contentUri.toString(),
@@ -130,8 +125,10 @@ class SongRepositoryTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getSongContent() {
+        val injector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
         val repository = SongRepository(context).apply {
             injectDatabaseForTests(db)
         }
@@ -147,7 +144,6 @@ class SongRepositoryTest {
     @After
     fun closeResources() {
         db.close()
-        dispatcherInjector.close()
         contentResolverInjector.close()
     }
 

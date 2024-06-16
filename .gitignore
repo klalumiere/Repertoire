@@ -3,13 +3,7 @@
 .cxx
 .externalNativeBuild
 .gradle
-/.idea/assetWizardSettings.xml
-/.idea/caches
-/.idea/dictionaries/*.xml
-/.idea/libraries
-/.idea/modules.xml
-/.idea/navEditor.xml
-/.idea/workspace.xml
+/.idea
 /build
 /captures
 /local.properties

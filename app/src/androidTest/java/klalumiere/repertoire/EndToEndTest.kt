@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
@@ -26,6 +27,9 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -123,8 +127,9 @@ class EndToEndTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun canRenderSong() {
+    fun canRenderSong() = runTest(UnconfinedTestDispatcher()) {
         val intent = Intent(context, SongActivity::class.java).apply {
             putExtra(SongActivity.SONG_NAME, "Happy Birthday")
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())

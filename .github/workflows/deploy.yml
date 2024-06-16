@@ -1,9 +1,11 @@
-name: Deploy
-on: push
+on:
+  push: {}
 
 jobs:
   deploy:
-    name: Deploy
+    defaults:
+      run:
+        shell: bash
     runs-on: ubuntu-latest
     container:
       image: cimg/android:2024.04.1
@@ -54,6 +56,7 @@ jobs:
           echo ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }} > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
           base64 --decode "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64" > "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
           rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH.base64"
+          git config --global --add safe.directory "$PWD"
           ./release_to_google_play.py
           rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
       - name: Ensure deploy keys are erased

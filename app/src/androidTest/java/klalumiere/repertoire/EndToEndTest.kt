@@ -28,7 +28,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
@@ -129,13 +132,15 @@ class EndToEndTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun canRenderSong() = runTest(UnconfinedTestDispatcher()) {
+    fun canRenderSong() = runTest(StandardTestDispatcher()) {
         val intent = Intent(context, SongActivity::class.java).apply {
             putExtra(SongActivity.SONG_NAME, "Happy Birthday")
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
         }
         launchActivity<SongActivity>(intent).use {
             onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+            runCurrent()
+            advanceUntilIdle()
             onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
         }
     }

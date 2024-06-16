@@ -106,6 +106,8 @@ class EndToEndTest {
 
             onView(withId(R.id.song_list_view))
                 .check(matches(atPosition(0, isActivated())))
+
+            onView(isRoot()).perform(OrientationChange.portrait()) // necessary, otherwise, can make other tests fail
         }
     }
 

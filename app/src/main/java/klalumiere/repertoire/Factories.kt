@@ -43,7 +43,7 @@ object RepertoireContentResolverFactory {
     }
 }
 
-object AddSongsLauncherActivityResultRegistryFactory {
+object AddSongsActivityResultRegistryFactory {
     private var injected: ActivityResultRegistry? = null
     class InjectForTests(rhs: ActivityResultRegistry): AutoCloseable, Closeable {
         init {

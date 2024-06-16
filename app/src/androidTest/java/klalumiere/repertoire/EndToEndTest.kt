@@ -12,7 +12,6 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
@@ -27,8 +26,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -43,81 +40,85 @@ class EndToEndTest {
         private val assetUri = Uri.parse("file:///android_asset/Happy%20Birthday.md")
     }
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var contentResolverInjector: RepertoireContentResolverFactory.InjectForTests
-    private lateinit var addSongsLauncherActivityResultRegistryFactory: AddSongsLauncherActivityResultRegistryFactory.InjectForTests
+    private lateinit var addSongsInjector: AddSongsActivityResultRegistryFactory.InjectForTests
 
     @Test
     fun canAddSong() {
-        val scenario = launchActivity<MainActivity>()
+        launchActivity<MainActivity>().use {
+            onView(withId(R.id.addSongsFAB)).perform(click())
 
-        onView(withId(R.id.addSongsFAB)).perform(click())
-
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, withText("Happy Birthday"))))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, withText("Happy Birthday"))))
+        }
     }
 
     @Test
     fun canSelectSong() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
 
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, isActivated())))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, isActivated())))
+        }
     }
 
     @Test
     fun canDeleteSong() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
 
-        pressDeleteInOptionMenu()
+            pressDeleteInOptionMenu()
 
-        onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
+            onView(withId(R.id.song_list_view)).check(matches(isEmpty()))
+        }
     }
 
     @Test
     fun deletedAndAddedIsNotSelected() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
-        pressDeleteInOptionMenu()
-        addSong(scenario)
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            pressDeleteInOptionMenu()
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, not(isActivated()))))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, not(isActivated()))))
+        }
     }
 
     @Test
     fun turningDevicePreservesSelection() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
-        onView(isRoot()).perform(OrientationChange.landscape())
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+            onView(isRoot()).perform(OrientationChange.landscape())
 
-        onView(withId(R.id.song_list_view))
-            .check(matches(atPosition(0, isActivated())))
+            onView(withId(R.id.song_list_view))
+                .check(matches(atPosition(0, isActivated())))
+        }
     }
 
     @Test
     fun canTransitionToSongActivity() {
-        val scenario = launchActivity<MainActivity>()
-        addSong(scenario)
+        launchActivity<MainActivity>().use {
+            addSong()
 
-        onView(withId(R.id.song_list_view))
-            .perform(actionOnItemAtPosition<SongViewHolder>(0, click()))
+            onView(withId(R.id.song_list_view))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, click()))
 
-        onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+            onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+        }
     }
 
     @Test
@@ -126,31 +127,27 @@ class EndToEndTest {
             putExtra(SongActivity.SONG_NAME, "Happy Birthday")
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
         }
-        launchActivity<SongActivity>(intent)
-
-        onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
-        onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+        launchActivity<SongActivity>(intent).use {
+            onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
+            onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+        }
     }
 
 
-    @ExperimentalCoroutinesApi
     @Before
     fun clearDatabase() {
-        dispatcherInjector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
         contentResolverInjector = RepertoireContentResolverFactory.InjectForTests(AssetContentResolver(context))
-        addSongsLauncherActivityResultRegistryFactory = AddSongsLauncherActivityResultRegistryFactory
-            .InjectForTests(createFakeActivityResultRegistry(assetUri))
+        addSongsInjector = AddSongsActivityResultRegistryFactory.InjectForTests(createFakeActivityResultRegistry(assetUri))
         AppDatabase.getInstance(context).songDao().deleteAll()
     }
 
     @After
     fun closeResources() {
-        dispatcherInjector.close()
         contentResolverInjector.close()
-        addSongsLauncherActivityResultRegistryFactory.close()
+        addSongsInjector.close()
     }
 
-    private fun addSong(scenario: ActivityScenario<MainActivity>) {
+    private fun addSong() {
         onView(withId(R.id.addSongsFAB)).perform(click())
     }
 

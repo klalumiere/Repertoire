@@ -69,7 +69,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun createAddSongsLauncher(): ActivityResultLauncher<Array<String>> {
-        val registry = AddSongsLauncherActivityResultRegistryFactory.create()
+        val registry = AddSongsActivityResultRegistryFactory.create()
         return if (registry == null) {
             registerForActivityResult(contract) { uris: List<Uri> ->
                 songViewModel.add(uris)

@@ -70,7 +70,7 @@ jobs:
           rm -f "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH"
       - name: Archive Tests results
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: |
             app/build/reports/androidTests/connected

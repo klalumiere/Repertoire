@@ -169,7 +169,6 @@ class SongItemCallbackTestTest {
 }
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongAdapterTest {
     private val song = Song(
         uri = "content://arbitrary/uri",
@@ -235,7 +234,6 @@ class SongAdapterTest {
 
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [28]) // >= 29 not supported by Android Studio right now
 class SongItemKeyProviderTest {
     private val songs = listOf(
         Song(uri = "content://arbitrary/uri", name = "Pearl Jam - Black", content = "Sheets of empty canvas"),

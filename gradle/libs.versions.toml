@@ -23,7 +23,7 @@ junit_junit = "4.13.2"
 kotlin = "2.0.0"
 kspVersion = "2.0.0-1.0.21"
 org_jetbrains_kotlinx_kotlinx_coroutines_test = "1.8.1"
-org_robolectric_robolectric = "4.12.2"
+org_robolectric_robolectric = "4.15.1"
 
 [libraries]
 android-arch-core-core-testing = {  group = "android.arch.core", name = "core-testing", version.ref = "android_arch_core_core_testing" }

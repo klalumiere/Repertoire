@@ -1,23 +1,16 @@
-#!/usr/bin/env python3
-
-import os
 import subprocess
 
-from google.auth.transport.requests import Request
-from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload
+import google.auth
 import googleapiclient.discovery
 
 APP_ID = "klalumiere.repertoire"
 BUNDLE_FILE_PATH = "app/build/outputs/bundle/release/app-release.aab"
 SCOPES = [ "https://www.googleapis.com/auth/androidpublisher" ]
-SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH")
 TRACK = "internal"
 
 def main() -> int:
-    assert SERVICE_ACCOUNT_FILE, "Can't find Google Play Service Account JSON path."
-    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-    credentials.refresh(Request())
+    credentials, _ = google.auth.default()
     service = googleapiclient.discovery.build("androidpublisher", "v3", credentials=credentials)
 
     edit = service.edits().insert(body={}, packageName=APP_ID).execute()

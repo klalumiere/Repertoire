@@ -12,7 +12,7 @@ android {
         applicationId = "klalumiere.repertoire"
         minSdk = 22
         targetSdk = 35
-        versionCode = 28
+        versionCode = 29
         versionName = "2.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -24,10 +24,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("$System.env.REPERTOIRE_STORE_FILE_PATH")
-            storePassword "$System.env.REPERTOIRE_STORE_PASSWORD"
-            keyAlias "$System.env.REPERTOIRE_KEY_ALIAS"
-            keyPassword "$System.env.REPERTOIRE_KEY_PASSWORD"
+            storeFile file("$System.env.SIGNING_UPLOAD_KEY_JKS_PATH")
+            storePassword "$System.env.SIGNING_UPLOAD_KEY_PASSWORD"
+            keyAlias "upload"
+            keyPassword "$System.env.SIGNING_UPLOAD_KEY_PASSWORD"
         }
     }
 

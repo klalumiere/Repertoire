@@ -135,6 +135,7 @@ class EndToEndTest {
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
         }
         launchActivity<SongActivity>(intent).use {
+            advanceUntilIdle()
             onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
             advanceUntilIdle()
             onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))

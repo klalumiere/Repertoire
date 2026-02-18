@@ -20,25 +20,27 @@ jobs:
       - uses: actions/checkout@v6
       - name: Unit Tests
         run: ./gradlew test
+      - name: Prepare signing upload key
+        env:
+          SIGNING_UPLOAD_KEY_JKS_PATH: ${{ vars.SIGNING_UPLOAD_KEY_JKS_PATH }}
+        run: |
+          echo ${{ secrets.SIGNING_UPLOAD_KEY_JKS_BASE64 }} > "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"
+          base64 --decode "$SIGNING_UPLOAD_KEY_JKS_PATH.base64" > "$SIGNING_UPLOAD_KEY_JKS_PATH"
+          rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"
       - name: Bundle
         env:
-          REPERTOIRE_KEY_ALIAS: ${{ secrets.REPERTOIRE_KEY_ALIAS }}
-          REPERTOIRE_KEY_PASSWORD: ${{ secrets.REPERTOIRE_KEY_PASSWORD }}
-          REPERTOIRE_STORE_FILE_PATH: ${{ secrets.REPERTOIRE_STORE_FILE_PATH }}
-          REPERTOIRE_STORE_PASSWORD: ${{ secrets.REPERTOIRE_STORE_PASSWORD }}
+          SIGNING_UPLOAD_KEY_JKS_PATH: ${{ vars.SIGNING_UPLOAD_KEY_JKS_PATH }}
+          SIGNING_UPLOAD_KEY_PASSWORD: ${{ secrets.SIGNING_UPLOAD_KEY_PASSWORD }}
         run: |
-          echo ${{ secrets.REPERTOIRE_KEYSTORE }} > "$REPERTOIRE_STORE_FILE_PATH.base64"
-          base64 --decode "$REPERTOIRE_STORE_FILE_PATH.base64" > "$REPERTOIRE_STORE_FILE_PATH"
-          rm -f "$REPERTOIRE_STORE_FILE_PATH.base64"
           ./gradlew bundleRelease
-          rm -f "$REPERTOIRE_STORE_FILE_PATH"
-      - name: Ensure signing keys are erased
+          rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH"
+      - name: Ensure signing upload keys are erased
         if: ${{ always() }}
         env:
-          REPERTOIRE_STORE_FILE_PATH: ${{ secrets.REPERTOIRE_STORE_FILE_PATH }}
+          SIGNING_UPLOAD_KEY_JKS_PATH: ${{ vars.SIGNING_UPLOAD_KEY_JKS_PATH }}
         run: |
-          rm -f "$REPERTOIRE_STORE_FILE_PATH.base64"
-          rm -f "$REPERTOIRE_STORE_FILE_PATH"
+          rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"
+          rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH"
       - name: Install Python dependencies
         env:
           DEBIAN_FRONTEND: noninteractive

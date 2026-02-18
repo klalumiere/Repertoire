@@ -22,8 +22,10 @@ jobs:
         run: ./gradlew test
       - name: Prepare signing upload key
         env:
+          SIGNING_UPLOAD_KEY_JKS_DIR: ${{ vars.SIGNING_UPLOAD_KEY_JKS_DIR }}
           SIGNING_UPLOAD_KEY_JKS_PATH: ${{ vars.SIGNING_UPLOAD_KEY_JKS_PATH }}
         run: |
+          mkdir "$SIGNING_UPLOAD_KEY_JKS_DIR"
           echo ${{ secrets.SIGNING_UPLOAD_KEY_JKS_BASE64 }} > "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"
           base64 --decode "$SIGNING_UPLOAD_KEY_JKS_PATH.base64" > "$SIGNING_UPLOAD_KEY_JKS_PATH"
           rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"

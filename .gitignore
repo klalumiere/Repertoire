@@ -1,15 +1,18 @@
+# build
+.externalNativeBuild
+.gradle
+/app/release
+/build
+
 # IDE
-.claude/
+/.claude/
+/.idea/
 
 # macOS
 .DS_Store
 
+# ?
 .cxx
-.externalNativeBuild
-.gradle
 *.iml
-/.idea
-/app/release
-/build
 /captures
 /local.properties

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "klalumiere.repertoire"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "klalumiere.repertoire"
         minSdk = 22
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 30
         versionName = "2.1.2"
 

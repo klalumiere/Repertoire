@@ -47,7 +47,6 @@ class SongActivity : AppCompatActivity() {
 
     private fun onGlobalLayoutListener() {
         if(songContentAdapter != null) return
-        // Need to be called in or after `addOnGlobalLayoutListener`
         songContentAdapter = SongContentAdapter(
             songViewModel.getSongContent(Uri.parse(song.uri)),
             getScreenWidthInChar(),

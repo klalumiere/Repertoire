@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.nhaarman.mockitokotlin2.*
+import org.mockito.kotlin.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before

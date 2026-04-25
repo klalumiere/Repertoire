@@ -106,7 +106,7 @@ dependencies {
     testImplementation(libs.androidx.lifecycle.lifecycle.runtime.testing)
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.test.ext.junit)
-    testImplementation(libs.com.nhaarman.mockitokotlin2.mockito.kotlin)
+    testImplementation(libs.org.mockito.kotlin.mockito.kotlin)
     testImplementation(libs.junit.junit)
     testImplementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.test)
     testImplementation(libs.org.robolectric.robolectric)

@@ -18,6 +18,10 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - name: Unit Tests
         run: ./gradlew test
       - name: Prepare signing upload key

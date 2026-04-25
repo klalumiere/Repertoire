@@ -161,12 +161,12 @@ class VerseTest {
     }
 
     @Test
-    fun safeSubstringOnlyFirstCharacter() { // test boundaries
+    fun safeSubstringOnlyFirstCharacter() {
         assertEquals("a",Verse.safeSubstring("abcd",0,1))
     }
 
     @Test
-    fun safeSubstringOnlyLastCharacter() { // test boundaries
+    fun safeSubstringOnlyLastCharacter() {
         assertEquals("d",Verse.safeSubstring("abcd",3,1))
     }
 

@@ -6,6 +6,8 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.view.InputDevice
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultRegistry
@@ -18,6 +20,10 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.GeneralClickAction
+import androidx.test.espresso.action.GeneralLocation
+import androidx.test.espresso.action.Press
+import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
@@ -26,10 +32,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -63,7 +65,7 @@ class EndToEndTest {
             addSong()
 
             onView(withId(R.id.song_list_view))
-                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClickWithInputSource()))
 
             onView(withId(R.id.song_list_view))
                 .check(matches(atPosition(0, isActivated())))
@@ -76,7 +78,7 @@ class EndToEndTest {
             addSong()
 
             onView(withId(R.id.song_list_view))
-                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClickWithInputSource()))
 
             pressDeleteInOptionMenu()
 
@@ -90,7 +92,7 @@ class EndToEndTest {
             addSong()
 
             onView(withId(R.id.song_list_view))
-                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClickWithInputSource()))
             pressDeleteInOptionMenu()
             addSong()
 
@@ -105,7 +107,7 @@ class EndToEndTest {
             addSong()
 
             onView(withId(R.id.song_list_view))
-                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClick()))
+                .perform(actionOnItemAtPosition<SongViewHolder>(0, longClickWithInputSource()))
             onView(isRoot()).perform(OrientationChange.landscape())
 
             onView(withId(R.id.song_list_view))
@@ -127,18 +129,17 @@ class EndToEndTest {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun canRenderSong() = runTest(StandardTestDispatcher()) {
+    fun canRenderSong() {
         val intent = Intent(context, SongActivity::class.java).apply {
             putExtra(SongActivity.SONG_NAME, "Happy Birthday")
             putExtra(SongActivity.SONG_URI_AS_STRING, assetUri.toString())
         }
         launchActivity<SongActivity>(intent).use {
-            advanceUntilIdle()
             onView(withId(R.id.song_title_text_view)).check(matches(withText("Happy Birthday")))
-            advanceUntilIdle()
-            onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+            eventually {
+                onView(withId(R.id.song_text_view)).check(matches(withSubstring("Happy Birthday to You")))
+            }
         }
     }
 
@@ -254,6 +255,34 @@ private fun isActivated(): Matcher<View?> {
             return view.isActivated
         }
     }
+}
+
+// recyclerview-selection 1.1.0+ filters out motion events with InputDevice.SOURCE_UNKNOWN,
+// which is what espresso's built-in longClick() emits. Force SOURCE_TOUCHSCREEN.
+// See https://issuetracker.google.com/issues/188992115
+private fun longClickWithInputSource(): ViewAction = actionWithAssertions(
+    GeneralClickAction(
+        Tap.LONG,
+        GeneralLocation.CENTER,
+        Press.FINGER,
+        InputDevice.SOURCE_TOUCHSCREEN,
+        MotionEvent.BUTTON_PRIMARY
+    )
+)
+
+private fun eventually(timeoutMs: Long = 10_000, intervalMs: Long = 100, block: () -> Unit) {
+    val deadline = System.currentTimeMillis() + timeoutMs
+    var lastError: Throwable? = null
+    while (System.currentTimeMillis() < deadline) {
+        try {
+            block()
+            return
+        } catch (t: Throwable) {
+            lastError = t
+            Thread.sleep(intervalMs)
+        }
+    }
+    throw lastError ?: AssertionError("eventually() timed out after ${timeoutMs}ms")
 }
 
 private fun isEmpty(): Matcher<View?> {

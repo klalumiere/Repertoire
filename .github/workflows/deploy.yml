@@ -10,18 +10,17 @@ jobs:
       contents: 'read'
       id-token: 'write'
     runs-on: ubuntu-latest
-    container:
-      image: cimg/android:2024.04.1
-      options: --user root
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
       - name: Unit Tests
         run: ./gradlew test
       - name: Prepare signing upload key
@@ -47,17 +46,14 @@ jobs:
         run: |
           rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"
           rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
       - name: Install Python dependencies
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: |
-          apt-get update && apt-get install --no-install-recommends python3-pip
-          python -m pip install --requirement requirements.txt
+        run: python -m pip install --requirement requirements.txt
       - uses: 'google-github-actions/auth@v3'
         with:
           workload_identity_provider: 'projects/727006907851/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
           service_account: 'publishgoogleplay@pc-api-9058766712512086413-546.iam.gserviceaccount.com'
       - name: Deploy
-        run: |
-          git config --global --add safe.directory "$PWD"
-          python release_to_google_play.py
+        run: python release_to_google_play.py

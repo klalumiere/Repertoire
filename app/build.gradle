@@ -10,9 +10,9 @@ android {
 
     defaultConfig {
         applicationId = "klalumiere.repertoire"
-        minSdk = 22
+        minSdk = 24
         targetSdk = 36
-        versionCode = 30
+        versionCode = 31
         versionName = "2.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -43,12 +43,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '21'
     }
 
     lint {
@@ -74,15 +74,13 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(libs.android.arch.core.core.testing)
+    androidTestImplementation(libs.androidx.arch.core.core.testing)
     androidTestImplementation(libs.androidx.room.room.testing)
     androidTestImplementation(libs.androidx.test.core.ktx)
     androidTestImplementation(libs.androidx.test.espresso.espresso.contrib)
     androidTestImplementation(libs.androidx.test.espresso.espresso.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.test)
-
-    annotationProcessor(libs.com.google.dagger.dagger.compiler)
 
     implementation(libs.androidx.activity.activity.ktx)
     implementation(libs.androidx.appcompat.appcompat)
@@ -100,9 +98,8 @@ dependencies {
     implementation(libs.org.jetbrains.kotlin.kotlin.stdlib)
 
     ksp(libs.androidx.room.room.compiler)
-    ksp(libs.com.google.dagger.dagger.compiler)
 
-    testImplementation(libs.android.arch.core.core.testing)
+    testImplementation(libs.androidx.arch.core.core.testing)
     testImplementation(libs.androidx.lifecycle.lifecycle.runtime.testing)
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.test.ext.junit)

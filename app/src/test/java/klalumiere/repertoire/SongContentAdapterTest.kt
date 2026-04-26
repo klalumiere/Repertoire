@@ -27,7 +27,7 @@ class SongContentAdapterTest {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             val adapter = SongContentAdapter(content,42, context)
 
-            val beforeRendering = adapter.renderedSongContent.value.toString()
+            val beforeRendering = adapter.renderedSongContent.value?.toString()
             runBlocking {
                 content.value = SongContent(listOf(
                     Verse(

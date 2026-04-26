@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "klalumiere.repertoire"
-        minSdk = 22
+        minSdk = 24
         targetSdk = 36
         versionCode = 31
         versionName = "2.1.2"

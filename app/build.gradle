@@ -74,7 +74,7 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(libs.android.arch.core.core.testing)
+    androidTestImplementation(libs.androidx.arch.core.core.testing)
     androidTestImplementation(libs.androidx.room.room.testing)
     androidTestImplementation(libs.androidx.test.core.ktx)
     androidTestImplementation(libs.androidx.test.espresso.espresso.contrib)
@@ -102,7 +102,7 @@ dependencies {
     ksp(libs.androidx.room.room.compiler)
     ksp(libs.com.google.dagger.dagger.compiler)
 
-    testImplementation(libs.android.arch.core.core.testing)
+    testImplementation(libs.androidx.arch.core.core.testing)
     testImplementation(libs.androidx.lifecycle.lifecycle.runtime.testing)
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.test.ext.junit)

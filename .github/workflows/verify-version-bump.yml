@@ -2,7 +2,7 @@ name: Verify version bump
 on:
   push:
     branches-ignore:
-      - master
+      - main
 
 jobs:
   verify:
@@ -19,13 +19,13 @@ jobs:
           new_code=$(grep --extended-regexp '^\s*versionCode\s*=\s*[0-9]+' app/build.gradle \
             | head --lines=1 \
             | grep --only-matching --extended-regexp '[0-9]+')
-          old_code=$(git show origin/master:app/build.gradle \
+          old_code=$(git show origin/main:app/build.gradle \
             | grep --extended-regexp '^\s*versionCode\s*=\s*[0-9]+' \
             | head --lines=1 \
             | grep --only-matching --extended-regexp '[0-9]+')
           echo "old versionCode: $old_code"
           echo "new versionCode: $new_code"
           if [ "$new_code" -le "$old_code" ]; then
-            echo "Error: versionCode must be greater than master ($new_code <= $old_code)"
+            echo "Error: versionCode must be greater than main ($new_code <= $old_code)"
             exit 1
           fi

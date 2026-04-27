@@ -20,7 +20,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Unit Tests
         run: ./gradlew test
       - name: Prepare signing upload key
@@ -46,7 +46,7 @@ jobs:
         run: |
           rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH.base64"
           rm -f "$SIGNING_UPLOAD_KEY_JKS_PATH"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
       - name: Install Python dependencies

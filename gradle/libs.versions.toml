@@ -1,5 +1,5 @@
 [versions]
-agp = "8.10.1"
+agp = "9.2.0"
 androidx_arch_core_core_testing = "2.2.0"
 androidx_activity_activity_ktx = "1.11.0"
 androidx_appcompat_appcompat = "1.7.1"
@@ -9,14 +9,14 @@ androidx_fragment_fragment_ktx = "1.8.9"
 androidx_lifecycle = "2.10.0"
 androidx_recyclerview_recyclerview = "1.4.0"
 androidx_recyclerview_recyclerview_selection = "1.1.0"
-androidx_room = "2.7.0"
+androidx_room = "2.7.2"
 androidx_test_core_ktx = "1.6.1"
 androidx_test_espresso = "3.7.0"
 androidx_test_ext_junit = "1.2.1"
 com_google_android_material_material = "1.13.0"
 junit_junit = "4.13.2"
-kotlin = "2.2.21"
-kspVersion = "2.2.21-2.0.5"
+kotlin = "2.3.21"
+kspVersion = "2.3.7"
 org_jetbrains_kotlinx_kotlinx_coroutines_test = "1.10.2"
 org_mockito_kotlin_mockito_kotlin = "5.4.0"
 org_robolectric_robolectric = "4.16.1"
@@ -52,4 +52,3 @@ org-robolectric-robolectric = {  group = "org.robolectric", name = "robolectric"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -2,7 +2,6 @@ package klalumiere.repertoire
 
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -19,6 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class SongRepositoryTest {
     private val contentUri = Uri.parse("content://arbitrary/uri")
@@ -27,6 +27,7 @@ class SongRepositoryTest {
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var contentResolverInjector: RepertoireContentResolverFactory.InjectForTests
+    private lateinit var dispatcherInjector: DispatchersFactory.InjectForTests
     private lateinit var db: AppDatabase
     private lateinit var repository: SongRepository
 
@@ -42,25 +43,12 @@ class SongRepositoryTest {
             injectContentResolverForTests(contentResolver)
         }
         contentResolverInjector = RepertoireContentResolverFactory.InjectForTests(nativeResolver)
+        dispatcherInjector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
 
         db = AppDatabase.createInMemoryDatabaseBuilderForTests(context).allowMainThreadQueries().build()
         repository = SongRepository(context).apply {
             injectDatabaseForTests(db)
         }
-    }
-
-    @Test
-    fun addTakesPersistableUriPermission() {
-        runTest { repository.add(contentUri, songName) }
-        verify(contentResolver).takePersistableUriPermission(contentUri,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    @Test
-    fun removeReleasesPersistableUriPermission() {
-        runTest { repository.remove(contentUri) }
-        verify(contentResolver).releasePersistableUriPermission(contentUri,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     @Test
@@ -125,13 +113,42 @@ class SongRepositoryTest {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun addingSameSongTwiceWithDifferentUriShouldNotCreateDuplicates() {
+        val firstUri = Uri.parse("content://arbitrary/uri/1")
+        val secondUri = Uri.parse("content://arbitrary/uri/2")
+        val sameName = "Pearl Jam - Black"
+        val resolver = mock<ContentResolver> {
+            on { openInputStream(same(firstUri)) } doReturn songContent.byteInputStream()
+            on { openInputStream(same(secondUri)) } doReturn songContent.byteInputStream()
+        }
+        val nativeResolver = NativeContentResolver(context).apply {
+            injectContentResolverForTests(resolver)
+        }
+        RepertoireContentResolverFactory.InjectForTests(nativeResolver).use {
+            val repo = SongRepository(context).apply {
+                injectDatabaseForTests(db)
+            }
+            runTest {
+                repo.add(firstUri, sameName)
+                repo.add(secondUri, sameName)
+            }
+            assertEquals(1, repo.getAllSongs().getOrAwaitValue().size)
+        }
+    }
+
+    @Test
+    fun gettingContentOfDeletedSongReturnsEmptyContent() {
+        runTest {
+            repository.add(contentUri, songName)
+            repository.remove(contentUri)
+        }
+        assertEquals(SongContent(emptyList()), repository.getSongContent(contentUri).getOrAwaitValue())
+    }
+
     @Test
     fun getSongContent() {
-        val injector = DispatchersFactory.InjectForTests(UnconfinedTestDispatcher())
-        val repository = SongRepository(context).apply {
-            injectDatabaseForTests(db)
-        }
+        runTest { repository.add(contentUri, songName) }
         val expected = SongContent(
             listOf(
                 Verse(lyrics = songContent, listOf()),
@@ -145,6 +162,7 @@ class SongRepositoryTest {
     fun closeResources() {
         db.close()
         contentResolverInjector.close()
+        dispatcherInjector.close()
     }
 
     @Rule

@@ -14,6 +14,9 @@ interface SongDao {
     @Query("SELECT * FROM song WHERE uri = :uri LIMIT 1")
     suspend fun get(uri: String): Song?
 
+    @Query("SELECT * FROM song WHERE name = :name LIMIT 1")
+    suspend fun getByName(name: String): Song?
+
     @Query("SELECT * FROM song ORDER BY name")
     fun getAll(): LiveData<List<Song>>
 

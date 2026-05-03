@@ -17,8 +17,12 @@ class SongRepository(
     }
 
     suspend fun add(uri: Uri, name: String) = withContext(ioDispatcher) {
-        resolver.takePersistableUriPermission(uri)
         val nameWithoutExtension = File(name).nameWithoutExtension
+        songDao.getByName(nameWithoutExtension)?.let { existing ->
+            resolver.releasePersistableUriPermission(Uri.parse(existing.uri))
+            songDao.delete(existing.uri)
+        }
+        resolver.takePersistableUriPermission(uri)
         val content = readSongFile(uri)
         songDao.insert(Song(uri=uri.toString(), name=nameWithoutExtension, content=content))
     }

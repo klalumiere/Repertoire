@@ -6,4 +6,8 @@
     <string name="name_not_found_error_message">Name Not Found</string>
     <string name="repertoire_db">RepertoireDb</string>
     <string name="song_list">Song list</string>
+    <plurals name="song_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
 </resources>

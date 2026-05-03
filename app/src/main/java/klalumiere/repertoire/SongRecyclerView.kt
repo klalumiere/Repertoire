@@ -63,6 +63,27 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val nameView = view.findViewById(android.R.id.text1) as TextView
 }
 
+class SongCountViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    companion object {
+        fun create(parent: ViewGroup): SongCountViewHolder {
+            val itemLayout = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.view_song_count, parent, false)
+            return SongCountViewHolder(itemLayout)
+        }
+    }
+
+    fun bind(count: Int) {
+        countView.text = view.resources.getQuantityString(R.plurals.song_count, count, count)
+    }
+
+    fun getCountText(): CharSequence {
+        return countView.text
+    }
+
+    private val countView = view.findViewById<TextView>(R.id.song_count_view)
+}
+
 class SongItemCallback : DiffUtil.ItemCallback<Song>() {
     override fun areItemsTheSame(old: Song, new: Song): Boolean  {
         return old.uri == new.uri
@@ -72,21 +93,40 @@ class SongItemCallback : DiffUtil.ItemCallback<Song>() {
     }
 }
 
-class SongAdapter : ListAdapter<Song, SongViewHolder>(DIFF_CALLBACK) {
+class SongAdapter : ListAdapter<Song, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
     companion object {
         val DIFF_CALLBACK = SongItemCallback()
+        const val VIEW_TYPE_SONG = 0
+        const val VIEW_TYPE_FOOTER = 1
     }
 
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        val song = getItem(position)
-        holder.bind(song)
-        tracker?.let {
-            holder.setActivated(it.isSelected(song.uri))
+    override fun getItemCount(): Int {
+        val songCount = currentList.size
+        return if (songCount == 0) 0 else songCount + 1
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == currentList.size) VIEW_TYPE_FOOTER else VIEW_TYPE_SONG
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is SongViewHolder -> {
+                val song = getItem(position)
+                holder.bind(song)
+                tracker?.let {
+                    holder.setActivated(it.isSelected(song.uri))
+                }
+            }
+            is SongCountViewHolder -> holder.bind(currentList.size)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        return SongViewHolder.create(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_FOOTER -> SongCountViewHolder.create(parent)
+            else -> SongViewHolder.create(parent)
+        }
     }
 
 
@@ -96,8 +136,8 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(DIFF_CALLBACK) {
 class SongItemKeyProvider(private val adapter: SongAdapter)
     : ItemKeyProvider<String>(SCOPE_CACHED)
 {
-    override fun getKey(position: Int): String {
-        return adapter.currentList[position].uri
+    override fun getKey(position: Int): String? {
+        return adapter.currentList.getOrNull(position)?.uri
     }
     override fun getPosition(key: String): Int {
         return adapter.currentList.indexOfFirst { it.uri == key }
@@ -108,6 +148,7 @@ class SongItemDetailsLookup(private val recyclerView: RecyclerView) : ItemDetail
 {
     override fun getItemDetails(event: MotionEvent): ItemDetails<String>? {
         val view = recyclerView.findChildViewUnder(event.x, event.y) ?: return null
-        return (recyclerView.getChildViewHolder(view) as SongViewHolder).getItemDetails()
+        val holder = recyclerView.getChildViewHolder(view)
+        return (holder as? SongViewHolder)?.getItemDetails()
     }
 }

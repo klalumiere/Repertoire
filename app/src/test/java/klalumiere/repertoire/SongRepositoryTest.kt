@@ -125,6 +125,54 @@ class SongRepositoryTest {
         }
     }
 
+    @Test
+    fun addingSameSongTwiceWithDifferentUriShouldNotCreateDuplicates() {
+        val firstUri = Uri.parse("content://arbitrary/uri/1")
+        val secondUri = Uri.parse("content://arbitrary/uri/2")
+        val sameName = "Pearl Jam - Black"
+        val resolver = mock<ContentResolver> {
+            on { openInputStream(same(firstUri)) } doReturn songContent.byteInputStream()
+            on { openInputStream(same(secondUri)) } doReturn songContent.byteInputStream()
+        }
+        val nativeResolver = NativeContentResolver(context).apply {
+            injectContentResolverForTests(resolver)
+        }
+        RepertoireContentResolverFactory.InjectForTests(nativeResolver).use {
+            val repo = SongRepository(context).apply {
+                injectDatabaseForTests(db)
+            }
+            runTest {
+                repo.add(firstUri, sameName)
+                repo.add(secondUri, sameName)
+            }
+            assertEquals(1, repo.getAllSongs().getOrAwaitValue().size)
+        }
+    }
+
+    @Test
+    fun gettingContentOfDeletedSongDoesNotCrashWhenUriPermissionWasRevoked() {
+        val callCount = java.util.concurrent.atomic.AtomicInteger(0)
+        val resolver = mock<ContentResolver> {
+            on { openInputStream(same(contentUri)) } doAnswer {
+                if (callCount.getAndIncrement() == 0) songContent.byteInputStream()
+                else throw SecurityException("URI permission was released")
+            }
+        }
+        val nativeResolver = NativeContentResolver(context).apply {
+            injectContentResolverForTests(resolver)
+        }
+        RepertoireContentResolverFactory.InjectForTests(nativeResolver).use {
+            val repo = SongRepository(context).apply {
+                injectDatabaseForTests(db)
+            }
+            runTest {
+                repo.add(contentUri, songName)
+                repo.remove(contentUri)
+            }
+            assertNotNull(repo.getSongContent(contentUri).getOrAwaitValue())
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getSongContent() {

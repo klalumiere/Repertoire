@@ -2,7 +2,6 @@ package klalumiere.repertoire
 
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -10,18 +9,12 @@ import java.io.InputStream
 
 interface RepertoireContentResolver {
     fun openInputStream(uri: Uri): InputStream?
-    fun releasePersistableUriPermission(uri: Uri)
     fun resolveName(uri: Uri): String
-    fun takePersistableUriPermission(uri: Uri)
 }
 
 class NativeContentResolver(context: Context): RepertoireContentResolver {
     override fun openInputStream(uri: Uri): InputStream? {
         return resolver.openInputStream(uri)
-    }
-
-    override fun releasePersistableUriPermission(uri: Uri) {
-        resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     override fun resolveName(uri: Uri): String {
@@ -37,10 +30,6 @@ class NativeContentResolver(context: Context): RepertoireContentResolver {
             }
         }
         return name
-    }
-
-    override fun takePersistableUriPermission(uri: Uri) {
-        resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
 
@@ -60,15 +49,9 @@ class AssetContentResolver(context: Context): RepertoireContentResolver {
         return assets.open(convertToPath(uri))
     }
 
-    override fun releasePersistableUriPermission(uri: Uri)
-    {}
-
     override fun resolveName(uri: Uri): String {
         return convertToPath(uri)
     }
-
-    override fun takePersistableUriPermission(uri: Uri)
-    {}
 
 
     private fun convertToPath(uri: Uri): String {

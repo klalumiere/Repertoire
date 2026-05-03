@@ -19,10 +19,8 @@ class SongRepository(
     suspend fun add(uri: Uri, name: String) = withContext(ioDispatcher) {
         val nameWithoutExtension = File(name).nameWithoutExtension
         songDao.getByName(nameWithoutExtension)?.let { existing ->
-            resolver.releasePersistableUriPermission(Uri.parse(existing.uri))
             songDao.delete(existing.uri)
         }
-        resolver.takePersistableUriPermission(uri)
         val content = readSongFile(uri)
         songDao.insert(Song(uri=uri.toString(), name=nameWithoutExtension, content=content))
     }
@@ -32,12 +30,11 @@ class SongRepository(
     }
 
     fun getSongContent(uri: Uri): LiveData<SongContent> = liveData(ioDispatcher) {
-        val rawContent = songDao.get(uri.toString())?.content ?: readSongFile(uri)
-        emit(SongContent.parse(rawContent))
+        val rawContent = songDao.get(uri.toString())?.content
+        emit(if (rawContent != null) SongContent.parse(rawContent) else SongContent(emptyList()))
     }
 
     suspend fun remove(uri: Uri) = withContext(ioDispatcher) {
-        resolver.releasePersistableUriPermission(uri)
         songDao.delete(uri.toString())
     }
 

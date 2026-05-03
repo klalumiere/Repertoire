@@ -63,6 +63,27 @@ class SongViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val nameView = view.findViewById(android.R.id.text1) as TextView
 }
 
+class SongCountViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    companion object {
+        fun create(parent: ViewGroup): SongCountViewHolder {
+            val itemLayout = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.view_song_count, parent, false)
+            return SongCountViewHolder(itemLayout)
+        }
+    }
+
+    fun bind(count: Int) {
+        countView.text = view.resources.getQuantityString(R.plurals.song_count, count, count)
+    }
+
+    fun getCountText(): CharSequence {
+        return countView.text
+    }
+
+    private val countView = view.findViewById<TextView>(R.id.song_count_view)
+}
+
 class SongItemCallback : DiffUtil.ItemCallback<Song>() {
     override fun areItemsTheSame(old: Song, new: Song): Boolean  {
         return old.uri == new.uri
@@ -93,11 +114,36 @@ class SongAdapter : ListAdapter<Song, SongViewHolder>(DIFF_CALLBACK) {
     var tracker: SelectionTracker<String>? = null
 }
 
+class SongCountAdapter : RecyclerView.Adapter<SongCountViewHolder>() {
+    fun setCount(newCount: Int) {
+        val oldCount = count
+        count = newCount
+        when {
+            oldCount == 0 && newCount > 0 -> notifyItemInserted(0)
+            oldCount > 0 && newCount == 0 -> notifyItemRemoved(0)
+            oldCount > 0 && newCount > 0 && oldCount != newCount -> notifyItemChanged(0)
+        }
+    }
+
+    override fun getItemCount(): Int = if (count == 0) 0 else 1
+
+    override fun onBindViewHolder(holder: SongCountViewHolder, position: Int) {
+        holder.bind(count)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongCountViewHolder {
+        return SongCountViewHolder.create(parent)
+    }
+
+
+    private var count: Int = 0
+}
+
 class SongItemKeyProvider(private val adapter: SongAdapter)
     : ItemKeyProvider<String>(SCOPE_CACHED)
 {
-    override fun getKey(position: Int): String {
-        return adapter.currentList[position].uri
+    override fun getKey(position: Int): String? {
+        return adapter.currentList.getOrNull(position)?.uri
     }
     override fun getPosition(key: String): Int {
         return adapter.currentList.indexOfFirst { it.uri == key }
@@ -108,6 +154,7 @@ class SongItemDetailsLookup(private val recyclerView: RecyclerView) : ItemDetail
 {
     override fun getItemDetails(event: MotionEvent): ItemDetails<String>? {
         val view = recyclerView.findChildViewUnder(event.x, event.y) ?: return null
-        return (recyclerView.getChildViewHolder(view) as SongViewHolder).getItemDetails()
+        val holder = recyclerView.getChildViewHolder(view)
+        return (holder as? SongViewHolder)?.getItemDetails()
     }
 }

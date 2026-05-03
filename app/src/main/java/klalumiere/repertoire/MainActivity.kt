@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import klalumiere.repertoire.databinding.ActivityMainBinding
@@ -42,16 +43,19 @@ open class MainActivity : AppCompatActivity() {
         binding.addSongsFAB.setOnClickListener { addSongsLauncher.launch(arrayOf("text/*")) }
 
         linearLayoutManager = LinearLayoutManager(this)
-        songAdapter = SongAdapter().apply {
-            tracker = createTracker(binding.contentMain.songListView, this)
-        }
-        val observer = Observer<List<Song>> { list -> songAdapter.submitList(list) }
-        songViewModel.songList.observe(this, observer)
+        songAdapter = SongAdapter()
+        songCountAdapter = SongCountAdapter()
         binding.contentMain.songListView.apply {
             setHasFixedSize(true)
             layoutManager = linearLayoutManager
-            adapter = songAdapter
+            adapter = ConcatAdapter(songAdapter, songCountAdapter)
         }
+        songAdapter.tracker = createTracker(binding.contentMain.songListView, songAdapter)
+        val observer = Observer<List<Song>> { list ->
+            songAdapter.submitList(list)
+            songCountAdapter.setCount(list.size)
+        }
+        songViewModel.songList.observe(this, observer)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,7 +108,6 @@ open class MainActivity : AppCompatActivity() {
     private fun createTracker(view: RecyclerView, adapter: SongAdapter)
             : SelectionTracker<String>
     {
-        view.adapter = adapter // Required, otherwise throws
         val tracker = SelectionTracker
             .Builder(
                 "SongSelection",
@@ -137,5 +140,6 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var deleteAction: MenuItem
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var songAdapter: SongAdapter
+    private lateinit var songCountAdapter: SongCountAdapter
     private val songViewModel: SongViewModel by viewModels()
 }

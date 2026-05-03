@@ -93,44 +93,50 @@ class SongItemCallback : DiffUtil.ItemCallback<Song>() {
     }
 }
 
-class SongAdapter : ListAdapter<Song, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class SongAdapter : ListAdapter<Song, SongViewHolder>(DIFF_CALLBACK) {
     companion object {
         val DIFF_CALLBACK = SongItemCallback()
-        const val VIEW_TYPE_SONG = 0
-        const val VIEW_TYPE_FOOTER = 1
     }
 
-    override fun getItemCount(): Int {
-        val songCount = currentList.size
-        return if (songCount == 0) 0 else songCount + 1
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (position == currentList.size) VIEW_TYPE_FOOTER else VIEW_TYPE_SONG
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is SongViewHolder -> {
-                val song = getItem(position)
-                holder.bind(song)
-                tracker?.let {
-                    holder.setActivated(it.isSelected(song.uri))
-                }
-            }
-            is SongCountViewHolder -> holder.bind(currentList.size)
+    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
+        val song = getItem(position)
+        holder.bind(song)
+        tracker?.let {
+            holder.setActivated(it.isSelected(song.uri))
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            VIEW_TYPE_FOOTER -> SongCountViewHolder.create(parent)
-            else -> SongViewHolder.create(parent)
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+        return SongViewHolder.create(parent)
     }
 
 
     var tracker: SelectionTracker<String>? = null
+}
+
+class SongCountAdapter : RecyclerView.Adapter<SongCountViewHolder>() {
+    fun setCount(newCount: Int) {
+        val oldCount = count
+        count = newCount
+        when {
+            oldCount == 0 && newCount > 0 -> notifyItemInserted(0)
+            oldCount > 0 && newCount == 0 -> notifyItemRemoved(0)
+            oldCount > 0 && newCount > 0 && oldCount != newCount -> notifyItemChanged(0)
+        }
+    }
+
+    override fun getItemCount(): Int = if (count == 0) 0 else 1
+
+    override fun onBindViewHolder(holder: SongCountViewHolder, position: Int) {
+        holder.bind(count)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongCountViewHolder {
+        return SongCountViewHolder.create(parent)
+    }
+
+
+    private var count: Int = 0
 }
 
 class SongItemKeyProvider(private val adapter: SongAdapter)

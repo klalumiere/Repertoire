@@ -235,17 +235,6 @@ class SongAdapterTest {
 
 @RunWith(AndroidJUnit4::class)
 class SongCountViewHolderTest {
-    private val song = Song(
-        uri = "content://arbitrary/uri",
-        name = "Pearl Jam - Black",
-        content = "Sheets of empty canvas"
-    )
-    private val anotherSong = Song(
-        uri = "content://arbitrary/uri2",
-        name = "Foo Fighters - Walk",
-        content = "A million miles away"
-    )
-
     @Test
     fun footerCountTextUsesSingularForOneSong() {
         val scenario = launchActivity<MainActivity>()
@@ -266,48 +255,63 @@ class SongCountViewHolderTest {
         }
     }
 
+
+    @Before
+    fun allowMainThreadQueriesInDatabase() {
+        createDatabaseAllowingMainThreadQueries()
+        instantExecutorRule = InstantTaskExecutorRule()  // Needs to be initialize after allowing main thread queries
+    }
+    @After
+    fun preventExceptions() {
+        executeQueuedRunnables()
+        closeDatabaseAllowingMainThreadQueries()
+    }
+
+
+    @Rule
+    lateinit var instantExecutorRule: TestWatcher
+}
+
+
+@RunWith(AndroidJUnit4::class)
+class SongCountAdapterTest {
     @Test
-    fun adapterItemCount_includesFooter_whenListIsNotEmpty() {
-        val adapter = createSongAdapter(listOf(song, anotherSong))
-        assertEquals(3, adapter.itemCount)
+    fun itemCountIsZero_initially() {
+        assertEquals(0, SongCountAdapter().itemCount)
     }
 
     @Test
-    fun adapterItemCount_isZero_whenListIsEmpty() {
-        val adapter = createSongAdapter(emptyList())
+    fun itemCountIsOne_afterSetCountToPositive() {
+        val adapter = SongCountAdapter().apply { setCount(5) }
+        assertEquals(1, adapter.itemCount)
+    }
+
+    @Test
+    fun itemCountIsZero_afterSetCountBackToZero() {
+        val adapter = SongCountAdapter().apply {
+            setCount(5)
+            setCount(0)
+        }
         assertEquals(0, adapter.itemCount)
     }
 
     @Test
-    fun adapterViewType_isFooter_atLastPosition() {
-        val adapter = createSongAdapter(listOf(song, anotherSong))
-        assertEquals(SongAdapter.VIEW_TYPE_FOOTER, adapter.getItemViewType(2))
-    }
-
-    @Test
-    fun adapterViewType_isSong_atSongPosition() {
-        val adapter = createSongAdapter(listOf(song, anotherSong))
-        assertEquals(SongAdapter.VIEW_TYPE_SONG, adapter.getItemViewType(0))
-    }
-
-    @Test
-    fun adapterOnBindViewHolder_bindsFooterWithSongCount() {
+    fun onBindViewHolder_bindsCurrentCountToHolder() {
         val scenario = launchActivity<MainActivity>()
         scenario.onActivity { activity ->
             val holder = createSongCountViewHolder(activity)
-            createSongAdapter(listOf(song, anotherSong)).onBindViewHolder(holder, 2)
-            assertEquals("2 songs", holder.getCountText())
+            val adapter = SongCountAdapter().apply { setCount(7) }
+            adapter.onBindViewHolder(holder, 0)
+            assertEquals("7 songs", holder.getCountText())
         }
     }
 
     @Test
-    fun adapterOnCreateViewHolder_createsFooter_forFooterViewType() {
+    fun onCreateViewHolder_createsSongCountViewHolder() {
         val scenario = launchActivity<MainActivity>()
         scenario.onActivity { activity ->
             val group = activity.findViewById<RecyclerView>(R.id.song_list_view)
-            val holder = createSongAdapter(listOf(song))
-                .onCreateViewHolder(group, SongAdapter.VIEW_TYPE_FOOTER)
-            assertTrue(holder is SongCountViewHolder)
+            assertNotEquals(null, SongCountAdapter().onCreateViewHolder(group, 0))
         }
     }
 

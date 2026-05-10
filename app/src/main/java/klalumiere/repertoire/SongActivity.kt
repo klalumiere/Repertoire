@@ -16,7 +16,7 @@ class SongActivity : AppCompatActivity() {
     companion object {
         const val SONG_NAME = "SongActivity::SONG_NAME"
         const val SONG_URI_AS_STRING = "SongActivity::SONG_URI_AS_STRING"
-        private const val OVERLAP_LINES = 3
+        private const val OVERLAP_LINES = 6
     }
 
     @SuppressLint("ClickableViewAccessibility")

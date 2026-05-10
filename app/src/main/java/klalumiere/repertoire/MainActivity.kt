@@ -69,6 +69,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_delete -> onDeleteOptionItemSelected()
+            R.id.action_random -> onRandomOptionItemSelected()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -147,6 +148,16 @@ open class MainActivity : AppCompatActivity() {
         val uris = songAdapter.tracker!!.selection.map { Uri.parse(it) }
         songAdapter.tracker?.clearSelection() // Important, otherwise, added songs might be selected
         songViewModel.remove(uris)
+        return true
+    }
+
+    private fun onRandomOptionItemSelected(): Boolean {
+        val song = songAdapter.currentList.randomOrNull() ?: return true
+        val intent = Intent(this, SongActivity::class.java).apply {
+            putExtra(SongActivity.SONG_NAME, song.name)
+            putExtra(SongActivity.SONG_URI_AS_STRING, song.uri)
+        }
+        startActivity(intent)
         return true
     }
 

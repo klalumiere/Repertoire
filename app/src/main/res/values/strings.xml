@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Repertoire</string>
     <string name="action_delete">Delete</string>
+    <string name="action_random">Random song</string>
     <string name="action_search">Search</string>
     <string name="add_songs">Add songs</string>
     <string name="cannot_read_file_error_message">Cannot read file 😞.\nDid you move it?\nTry adding it again.</string>

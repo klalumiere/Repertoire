@@ -70,8 +70,19 @@ open class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_delete -> onDeleteOptionItemSelected()
             R.id.action_random -> onRandomOptionItemSelected()
+            R.id.action_select_all -> onSelectAllOptionItemSelected()
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val action = menu.findItem(R.id.action_select_all)
+        val total = songAdapter.currentList.size
+        val selected = songAdapter.tracker?.selection?.size() ?: 0
+        val allSelected = total > 0 && selected == total
+        action.setTitle(if (allSelected) R.string.action_deselect_all else R.string.action_select_all)
+        action.isEnabled = total > 0
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -148,6 +159,17 @@ open class MainActivity : AppCompatActivity() {
         val uris = songAdapter.tracker!!.selection.map { Uri.parse(it) }
         songAdapter.tracker?.clearSelection() // Important, otherwise, added songs might be selected
         songViewModel.remove(uris)
+        return true
+    }
+
+    private fun onSelectAllOptionItemSelected(): Boolean {
+        val tracker = songAdapter.tracker ?: return true
+        val keys = songAdapter.currentList.map { it.uri }
+        if (keys.isNotEmpty() && tracker.selection.size() == keys.size) {
+            tracker.clearSelection()
+        } else {
+            tracker.setItemsSelected(keys, true)
+        }
         return true
     }
 

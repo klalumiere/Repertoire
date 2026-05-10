@@ -4,12 +4,17 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = SongRepository(application)
-    val songList = repository.getAllSongs()
+    private val query = MutableLiveData("")
+    val songList: LiveData<List<Song>> = query.switchMap { q ->
+        if (q.isBlank()) repository.getAllSongs() else repository.getMatching(q)
+    }
 
     fun add(uris: List<Uri>) = viewModelScope.launch {
         uris.forEach { uri -> repository.add(uri) }
@@ -21,5 +26,9 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
 
     fun remove(uris: List<Uri>) = viewModelScope.launch {
         uris.forEach { uri -> repository.remove(uri) }
+    }
+
+    fun setQuery(q: String) {
+        if (query.value != q) query.value = q
     }
 }

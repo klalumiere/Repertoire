@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
@@ -61,6 +62,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         deleteAction = menu.findItem(R.id.action_delete)
+        configureSearchAction(menu.findItem(R.id.action_search))
         return true
     }
 
@@ -79,6 +81,26 @@ open class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         songAdapter.tracker?.onSaveInstanceState(outState)
+    }
+
+    private fun configureSearchAction(searchItem: MenuItem) {
+        val searchView = searchItem.actionView as SearchView
+        searchView.queryHint = getString(R.string.action_search)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                songViewModel.setQuery(newText ?: "")
+                return true
+            }
+        })
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean = true
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                songViewModel.setQuery("")
+                return true
+            }
+        })
+        searchView.clearFocus()
     }
 
     private fun createAddSongsLauncher(): ActivityResultLauncher<Array<String>> {

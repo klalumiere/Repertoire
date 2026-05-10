@@ -29,6 +29,10 @@ class SongRepository(
         return songDao.getAll()
     }
 
+    fun getMatching(query: String): LiveData<List<Song>> {
+        return songDao.getMatching(query)
+    }
+
     fun getSongContent(uri: Uri): LiveData<SongContent> = liveData(ioDispatcher) {
         val rawContent = songDao.get(uri.toString())?.content
         emit(if (rawContent != null) SongContent.parse(rawContent) else SongContent(emptyList()))

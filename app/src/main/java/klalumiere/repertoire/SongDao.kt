@@ -20,6 +20,16 @@ interface SongDao {
     @Query("SELECT * FROM song ORDER BY name")
     fun getAll(): LiveData<List<Song>>
 
+    @Query("""
+        SELECT * FROM song
+        WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%'
+           OR LOWER(content) LIKE '%' || LOWER(:query) || '%'
+        ORDER BY
+            CASE WHEN LOWER(name) LIKE '%' || LOWER(:query) || '%' THEN 0 ELSE 1 END,
+            name
+    """)
+    fun getMatching(query: String): LiveData<List<Song>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(song: Song)
 

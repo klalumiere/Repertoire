@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 
 class SongContentAdapter(
     val content: LiveData<SongContent>,
-    private val screenWidthInChar: Int,
+    initialScreenWidthInChar: Int,
     context: Context
 ) {
     companion object {
@@ -19,14 +19,22 @@ class SongContentAdapter(
         }
     }
 
-    val renderedSongContent = content.switchMap {
-        liveData(cpuDispatcher) {
-            emit(renderSongContent(it))
+    fun setScreenWidthInChar(value: Int) {
+        if (screenWidthInChar.value != value) screenWidthInChar.value = value
+    }
+
+    private val screenWidthInChar = MutableLiveData(initialScreenWidthInChar)
+
+    val renderedSongContent: LiveData<Spanned> = screenWidthInChar.switchMap { width ->
+        content.switchMap { songContent ->
+            liveData(cpuDispatcher) {
+                emit(renderSongContent(songContent, width))
+            }
         }
     }
 
 
-    private fun renderSongContent(content: SongContent): Spanned {
+    private fun renderSongContent(content: SongContent, screenWidthInChar: Int): Spanned {
         val htmlText = content.renderHtmlText(screenWidthInChar,
             "<font color='${convertColorToHtml(chordColor)}'><b>%s</b></font>")
         return HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_COMPACT)

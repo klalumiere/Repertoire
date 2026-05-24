@@ -13,6 +13,7 @@ import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -161,7 +162,7 @@ class SongActivity : AppCompatActivity() {
             TranspositionPreference.get(this)
         )
         songContentAdapter?.renderedSongContent?.observe(this, { content ->
-            binding.songTextView.text = content
+            binding.songTextView.setText(content, TextView.BufferType.SPANNABLE)
             highlightSpan = null
         })
     }

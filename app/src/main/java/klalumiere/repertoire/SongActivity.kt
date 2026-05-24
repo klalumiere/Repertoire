@@ -87,8 +87,8 @@ class SongActivity : AppCompatActivity() {
             gestureDetector.onTouchEvent(event)
             scaleGestureDetector.isInProgress
         }
-        binding.songScrollView.setOnScrollChangeListener { _, _, _, _, _ ->
-            updateHighlight()
+        binding.songScrollView.setOnScrollChangeListener { _, _, _, _, oldScrollY ->
+            if (highlightSpan == null) anchorHighlight(oldScrollY)
             highlightHandler.removeCallbacks(removeHighlightRunnable)
             highlightHandler.postDelayed(removeHighlightRunnable, HIGHLIGHT_FADE_DELAY_MS)
         }
@@ -99,14 +99,14 @@ class SongActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun updateHighlight() {
+    private fun anchorHighlight(scrollY: Int) {
         val textView = binding.songTextView
         val layout = textView.layout ?: return
         val spannable = textView.text as? Spannable ?: return
         val scrollView = binding.songScrollView
 
-        val viewportBottomY = scrollView.scrollY + scrollView.height - textView.top
-        val viewportTopY = (scrollView.scrollY - textView.top).coerceAtLeast(0)
+        val viewportBottomY = scrollY + scrollView.height - textView.top
+        val viewportTopY = (scrollY - textView.top).coerceAtLeast(0)
 
         val lastLine = layout.getLineForVertical(viewportBottomY).coerceAtMost(layout.lineCount - 1)
         val topVisibleLine = layout.getLineForVertical(viewportTopY)
@@ -116,7 +116,6 @@ class SongActivity : AppCompatActivity() {
         val start = layout.getLineStart(firstLine)
         val end = layout.getLineEnd(lastLine)
 
-        highlightSpan?.let { spannable.removeSpan(it) }
         val newSpan = BackgroundColorSpan(highlightColor)
         spannable.setSpan(newSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         highlightSpan = newSpan

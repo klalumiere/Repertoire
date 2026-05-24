@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.widget.PopupMenu
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
@@ -24,21 +26,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import klalumiere.repertoire.databinding.ActivityMainBinding
 import klalumiere.repertoire.databinding.ContentMainBinding
-
-private val TRANSPOSE_ITEM_IDS: Map<Int, Int> = mapOf(
-    R.id.transpose_0 to 0,
-    R.id.transpose_1 to 1,
-    R.id.transpose_2 to 2,
-    R.id.transpose_3 to 3,
-    R.id.transpose_4 to 4,
-    R.id.transpose_5 to 5,
-    R.id.transpose_6 to 6,
-    R.id.transpose_7 to 7,
-    R.id.transpose_8 to 8,
-    R.id.transpose_9 to 9,
-    R.id.transpose_10 to 10,
-    R.id.transpose_11 to 11
-)
 
 open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,15 +69,11 @@ open class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        TRANSPOSE_ITEM_IDS[item.itemId]?.let { semitones ->
-            TranspositionPreference.set(this, semitones)
-            invalidateOptionsMenu()
-            return true
-        }
         return when (item.itemId) {
             R.id.action_delete -> onDeleteOptionItemSelected()
             R.id.action_random -> onRandomOptionItemSelected()
             R.id.action_select_all -> onSelectAllOptionItemSelected()
+            R.id.action_transpose -> onTransposeOptionItemSelected()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -104,11 +87,8 @@ open class MainActivity : AppCompatActivity() {
         action.isEnabled = total > 0
 
         val current = TranspositionPreference.get(this)
-        val transposeItem = menu.findItem(R.id.action_transpose)
-        transposeItem.title = getString(R.string.action_transpose_with_value, current)
-        TRANSPOSE_ITEM_IDS.forEach { (id, semitones) ->
-            menu.findItem(id)?.isChecked = (semitones == current)
-        }
+        menu.findItem(R.id.action_transpose).title =
+            getString(R.string.action_transpose_with_value, current)
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -200,6 +180,26 @@ open class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private fun onTransposeOptionItemSelected(): Boolean {
+        val anchor: View = findViewById(R.id.action_transpose) ?: binding.toolbar
+        val popup = PopupMenu(this, anchor)
+        val current = TranspositionPreference.get(this)
+        for (n in TranspositionPreference.MIN..TranspositionPreference.MAX) {
+            popup.menu.add(GROUP_TRANSPOSE, n, n, "+$n").apply {
+                isCheckable = true
+                isChecked = (n == current)
+            }
+        }
+        popup.menu.setGroupCheckable(GROUP_TRANSPOSE, true, true)
+        popup.setOnMenuItemClickListener { item ->
+            TranspositionPreference.set(this, item.itemId)
+            invalidateOptionsMenu()
+            true
+        }
+        popup.show()
+        return true
+    }
+
     private fun onRandomOptionItemSelected(): Boolean {
         val song = songAdapter.currentList.randomOrNull() ?: return true
         val intent = Intent(this, SongActivity::class.java).apply {
@@ -208,6 +208,10 @@ open class MainActivity : AppCompatActivity() {
         }
         startActivity(intent)
         return true
+    }
+
+    companion object {
+        private const val GROUP_TRANSPOSE = 1
     }
 
     private lateinit var binding: ActivityMainBinding

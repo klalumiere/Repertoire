@@ -7,37 +7,20 @@
         android:orderInCategory="10"
         android:title="@string/action_transpose"
         android:icon="@drawable/ic_music_note_24"
-        app:showAsAction="always">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item android:id="@+id/transpose_0"  android:title="+0"  />
-                <item android:id="@+id/transpose_1"  android:title="+1"  />
-                <item android:id="@+id/transpose_2"  android:title="+2"  />
-                <item android:id="@+id/transpose_3"  android:title="+3"  />
-                <item android:id="@+id/transpose_4"  android:title="+4"  />
-                <item android:id="@+id/transpose_5"  android:title="+5"  />
-                <item android:id="@+id/transpose_6"  android:title="+6"  />
-                <item android:id="@+id/transpose_7"  android:title="+7"  />
-                <item android:id="@+id/transpose_8"  android:title="+8"  />
-                <item android:id="@+id/transpose_9"  android:title="+9"  />
-                <item android:id="@+id/transpose_10" android:title="+10" />
-                <item android:id="@+id/transpose_11" android:title="+11" />
-            </group>
-        </menu>
-    </item>
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_search"
         android:orderInCategory="50"
         android:title="@string/action_search"
         android:icon="@drawable/ic_search_24"
-        app:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
     <item
         android:id="@+id/action_random"
         android:orderInCategory="60"
         android:title="@string/action_random"
         android:icon="@drawable/ic_dice_24"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_select_all"
         android:orderInCategory="70"

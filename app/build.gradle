@@ -11,8 +11,8 @@ android {
         applicationId = "klalumiere.repertoire"
         minSdk = 24
         targetSdk = 36
-        versionCode = 49
-        versionName = "2.10.0"
+        versionCode = 50
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

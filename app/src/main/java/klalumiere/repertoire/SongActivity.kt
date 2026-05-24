@@ -3,6 +3,11 @@ package klalumiere.repertoire
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Spannable
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
 import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
@@ -10,6 +15,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import klalumiere.repertoire.databinding.ActivitySongBinding
@@ -20,6 +26,8 @@ class SongActivity : AppCompatActivity() {
         const val SONG_URI_AS_STRING = "SongActivity::SONG_URI_AS_STRING"
         private const val MIN_TEXT_SCALE = 0.5f
         private const val MAX_TEXT_SCALE = 5.0f
+        private const val HIGHLIGHT_LINE_COUNT = 10
+        private const val HIGHLIGHT_FADE_DELAY_MS = 2000L
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -78,6 +86,47 @@ class SongActivity : AppCompatActivity() {
             gestureDetector.onTouchEvent(event)
             scaleGestureDetector.isInProgress
         }
+        binding.songScrollView.setOnScrollChangeListener { _, _, _, _, _ ->
+            updateHighlight()
+            highlightHandler.removeCallbacks(removeHighlightRunnable)
+            highlightHandler.postDelayed(removeHighlightRunnable, HIGHLIGHT_FADE_DELAY_MS)
+        }
+    }
+
+    override fun onDestroy() {
+        highlightHandler.removeCallbacks(removeHighlightRunnable)
+        super.onDestroy()
+    }
+
+    private fun updateHighlight() {
+        val textView = binding.songTextView
+        val layout = textView.layout ?: return
+        val spannable = textView.text as? Spannable ?: return
+        val scrollView = binding.songScrollView
+
+        val viewportBottomY = scrollView.scrollY + scrollView.height - textView.top
+        val viewportTopY = (scrollView.scrollY - textView.top).coerceAtLeast(0)
+
+        val lastLine = layout.getLineForVertical(viewportBottomY).coerceAtMost(layout.lineCount - 1)
+        val topVisibleLine = layout.getLineForVertical(viewportTopY)
+        val firstLine = (lastLine - HIGHLIGHT_LINE_COUNT + 1).coerceAtLeast(topVisibleLine)
+        if (lastLine < 0 || firstLine > lastLine) return
+
+        val start = layout.getLineStart(firstLine)
+        val end = layout.getLineEnd(lastLine)
+
+        highlightSpan?.let { spannable.removeSpan(it) }
+        val newSpan = BackgroundColorSpan(highlightColor)
+        spannable.setSpan(newSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        highlightSpan = newSpan
+    }
+
+    private fun removeHighlight() {
+        val spannable = binding.songTextView.text as? Spannable ?: return
+        highlightSpan?.let {
+            spannable.removeSpan(it)
+            highlightSpan = null
+        }
     }
 
     private fun applyTextScale() {
@@ -113,6 +162,7 @@ class SongActivity : AppCompatActivity() {
         )
         songContentAdapter?.renderedSongContent?.observe(this, { content ->
             binding.songTextView.text = content
+            highlightSpan = null
         })
     }
 
@@ -123,4 +173,8 @@ class SongActivity : AppCompatActivity() {
     private var defaultSongTextSizePx: Float = 0f
     private var defaultTitleTextSizePx: Float = 0f
     private var textScale: Float = 1f
+    private val highlightHandler = Handler(Looper.getMainLooper())
+    private val removeHighlightRunnable = Runnable { removeHighlight() }
+    private var highlightSpan: BackgroundColorSpan? = null
+    private val highlightColor by lazy { ContextCompat.getColor(this, R.color.colorHighlight) }
 }

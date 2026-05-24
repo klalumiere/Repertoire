@@ -10,7 +10,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 class SongContentAdapter(
     val content: LiveData<SongContent>,
     initialScreenWidthInChar: Int,
-    context: Context
+    context: Context,
+    private val semitones: Int = 0
 ) {
     companion object {
         fun convertColorToHtml(color: Int): String {
@@ -28,7 +29,7 @@ class SongContentAdapter(
     val renderedSongContent: LiveData<Spanned> = screenWidthInChar.switchMap { width ->
         content.switchMap { songContent ->
             liveData(cpuDispatcher) {
-                emit(renderSongContent(songContent, width))
+                emit(renderSongContent(songContent.transposed(semitones), width))
             }
         }
     }

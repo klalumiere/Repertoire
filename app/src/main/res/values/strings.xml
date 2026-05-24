@@ -5,6 +5,8 @@
     <string name="action_random">Random song</string>
     <string name="action_search">Search</string>
     <string name="action_select_all">Select all</string>
+    <string name="action_transpose">Transpose</string>
+    <string name="action_transpose_with_value">Transpose (+%d)</string>
     <string name="add_songs">Add songs</string>
     <string name="cannot_read_file_error_message">Cannot read file 😞.\nDid you move it?\nTry adding it again.</string>
     <string name="name_not_found_error_message">Name Not Found</string>

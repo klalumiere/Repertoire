@@ -28,7 +28,7 @@ class SongActivity : AppCompatActivity() {
         private const val MIN_TEXT_SCALE = 0.5f
         private const val MAX_TEXT_SCALE = 5.0f
         private const val HIGHLIGHT_LINE_COUNT = 10
-        private const val HIGHLIGHT_FADE_DELAY_MS = 2000L
+        private const val HIGHLIGHT_FADE_DELAY_MS = 1000L
     }
 
     @SuppressLint("ClickableViewAccessibility")

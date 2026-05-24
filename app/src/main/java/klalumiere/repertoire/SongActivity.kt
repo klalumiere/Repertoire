@@ -18,7 +18,6 @@ class SongActivity : AppCompatActivity() {
     companion object {
         const val SONG_NAME = "SongActivity::SONG_NAME"
         const val SONG_URI_AS_STRING = "SongActivity::SONG_URI_AS_STRING"
-        private const val OVERLAP_LINES = 6
         private const val MIN_TEXT_SCALE = 0.5f
         private const val MAX_TEXT_SCALE = 5.0f
     }
@@ -52,18 +51,6 @@ class SongActivity : AppCompatActivity() {
         defaultTitleTextSizePx = binding.songTitleTextView.textSize
 
         val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                val lineHeight = binding.songTextView.lineHeight
-                val pageScroll = (binding.songScrollView.height - OVERLAP_LINES * lineHeight)
-                        .coerceAtLeast(lineHeight)
-                if (e.x < binding.songScrollView.width / 2f) {
-                    binding.songScrollView.smoothScrollBy(0, -pageScroll)
-                } else {
-                    binding.songScrollView.smoothScrollBy(0, pageScroll)
-                }
-                return true
-            }
-
             override fun onDoubleTap(e: MotionEvent): Boolean {
                 textScale = 1f
                 applyTextScale()

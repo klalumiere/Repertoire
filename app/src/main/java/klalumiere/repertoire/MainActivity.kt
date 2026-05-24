@@ -25,6 +25,21 @@ import androidx.recyclerview.widget.RecyclerView
 import klalumiere.repertoire.databinding.ActivityMainBinding
 import klalumiere.repertoire.databinding.ContentMainBinding
 
+private val TRANSPOSE_ITEM_IDS: Map<Int, Int> = mapOf(
+    R.id.transpose_0 to 0,
+    R.id.transpose_1 to 1,
+    R.id.transpose_2 to 2,
+    R.id.transpose_3 to 3,
+    R.id.transpose_4 to 4,
+    R.id.transpose_5 to 5,
+    R.id.transpose_6 to 6,
+    R.id.transpose_7 to 7,
+    R.id.transpose_8 to 8,
+    R.id.transpose_9 to 9,
+    R.id.transpose_10 to 10,
+    R.id.transpose_11 to 11
+)
+
 open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +82,11 @@ open class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        TRANSPOSE_ITEM_IDS[item.itemId]?.let { semitones ->
+            TranspositionPreference.set(this, semitones)
+            invalidateOptionsMenu()
+            return true
+        }
         return when (item.itemId) {
             R.id.action_delete -> onDeleteOptionItemSelected()
             R.id.action_random -> onRandomOptionItemSelected()
@@ -82,6 +102,13 @@ open class MainActivity : AppCompatActivity() {
         val allSelected = total > 0 && selected == total
         action.setTitle(if (allSelected) R.string.action_deselect_all else R.string.action_select_all)
         action.isEnabled = total > 0
+
+        val current = TranspositionPreference.get(this)
+        val transposeItem = menu.findItem(R.id.action_transpose)
+        transposeItem.title = getString(R.string.action_transpose_with_value, current)
+        TRANSPOSE_ITEM_IDS.forEach { (id, semitones) ->
+            menu.findItem(id)?.isChecked = (semitones == current)
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 

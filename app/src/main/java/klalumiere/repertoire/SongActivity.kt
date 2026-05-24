@@ -108,7 +108,8 @@ class SongActivity : AppCompatActivity() {
         songContentAdapter = SongContentAdapter(
             songViewModel.getSongContent(Uri.parse(song.uri)),
             getScreenWidthInChar(),
-            this
+            this,
+            TranspositionPreference.get(this)
         )
         songContentAdapter?.renderedSongContent?.observe(this, { content ->
             binding.songTextView.text = content

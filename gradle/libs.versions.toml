@@ -8,7 +8,11 @@ androidx_core_core_ktx = "1.19.1"
 androidx_fragment_fragment_ktx = "1.9.1"
 androidx_lifecycle = "2.11.0"
 androidx_recyclerview_recyclerview = "1.4.0"
-androidx_recyclerview_recyclerview_selection = "1.2.0"
+# Held back: 1.2.0 and 1.3.0-rc01 register the long press backstop for TOOL_TYPE_UNKNOWN
+# instead of TOOL_TYPE_FINGER, so the ACTION_UP that follows a long press is no longer
+# swallowed and the item click fires too: long pressing a song selects it and immediately
+# opens it. See SelectionTracker.Builder.build() and EventBackstop.onInterceptTouchEvent.
+androidx_recyclerview_recyclerview_selection = "1.1.0"
 androidx_room = "2.8.5"
 androidx_test_core_ktx = "1.7.0"
 androidx_test_espresso = "3.7.0"
@@ -17,7 +21,8 @@ com_google_android_material_material = "1.14.0"
 junit_junit = "4.13.2"
 kotlin = "2.3.21"
 kspVersion = "2.3.12"
-org_jetbrains_kotlinx_kotlinx_coroutines_test = "1.11.0"
+org_jetbrains_kotlinx_kotlinx_coroutines = "1.11.0"
+org_jetbrains_kotlinx_kotlinx_serialization = "1.11.0"
 org_mockito_kotlin_mockito_kotlin = "6.4.0"
 org_robolectric_robolectric = "4.17"
 
@@ -46,7 +51,10 @@ com-google-android-material-material = {  group = "com.google.android.material",
 org-mockito-kotlin-mockito-kotlin = {  group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "org_mockito_kotlin_mockito_kotlin" }
 junit-junit = {  group = "junit", name = "junit", version.ref = "junit_junit" }
 org-jetbrains-kotlin-kotlin-stdlib = {  group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
-org-jetbrains-kotlinx-kotlinx-coroutines-test = {  group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "org_jetbrains_kotlinx_kotlinx_coroutines_test" }
+org-jetbrains-kotlinx-kotlinx-coroutines-core = {  group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "org_jetbrains_kotlinx_kotlinx_coroutines" }
+org-jetbrains-kotlinx-kotlinx-coroutines-test = {  group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "org_jetbrains_kotlinx_kotlinx_coroutines" }
+org-jetbrains-kotlinx-kotlinx-serialization-core = {  group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "org_jetbrains_kotlinx_kotlinx_serialization" }
+org-jetbrains-kotlinx-kotlinx-serialization-json = {  group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "org_jetbrains_kotlinx_kotlinx_serialization" }
 org-robolectric-robolectric = {  group = "org.robolectric", name = "robolectric", version.ref = "org_robolectric_robolectric" }
 
 [plugins]

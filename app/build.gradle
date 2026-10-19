@@ -80,6 +80,15 @@ kotlin {
 }
 
 dependencies {
+    // AGP pins the instrumentation test APK to the versions the app APK resolves, so a test
+    // dependency that is newer than the matching library in the app fails at run time. Keep both
+    // sides of these two libraries on a single version.
+    constraints {
+        implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core)
+        implementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.core)
+        androidTestImplementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.json)
+    }
+
     androidTestImplementation(libs.androidx.arch.core.core.testing)
     androidTestImplementation(libs.androidx.room.room.testing)
     androidTestImplementation(libs.androidx.test.core.ktx)

@@ -6,6 +6,7 @@ import googleapiclient.discovery
 
 APP_ID = "klalumiere.repertoire"
 BUNDLE_FILE_PATH = "app/build/outputs/bundle/release/app-release.aab"
+RELEASE_NOTE_MAX_LENGTH = 500
 SCOPES = [ "https://www.googleapis.com/auth/androidpublisher" ]
 TRACK = "internal"
 
@@ -20,7 +21,9 @@ def main() -> int:
             packageName=APP_ID,
             media_body=MediaFileUpload(BUNDLE_FILE_PATH, mimetype="application/octet-stream")).execute()
 
-    release_note = subprocess.check_output(["git", "log", "-1", "--pretty=%B"]).decode().replace("\n","")
+    # Google Play rejects release notes longer than 500 characters, so use only the commit subject
+    release_note = subprocess.check_output(["git", "log", "-1", "--pretty=%s"]).decode().strip()
+    release_note = release_note[:RELEASE_NOTE_MAX_LENGTH]
     track_body = {
         "releases": [
             {

@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "klalumiere.repertoire"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "klalumiere.repertoire"
         minSdk = 24
         targetSdk = 36
-        versionCode = 53
-        versionName = "3.0.3"
+        versionCode = 54
+        versionName = "3.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -64,6 +64,11 @@ android {
         unitTests {
             includeAndroidResources = true
             returnDefaultValues = true
+
+            // Robolectric reaches into JDK internals to emulate FileDescriptor and shared memory
+            all {
+                it.jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+            }
         }
     }
 }
